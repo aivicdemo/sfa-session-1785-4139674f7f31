@@ -2,58 +2,59 @@ import { APIGatewayProxyEvent } from 'aws-lambda';
 
 export type Role = 'admin' | 'operator' | 'viewer';
 
-export interface AuthContext {
+export interface RBACContext {
   userId: string;
   role: Role;
-  loginId: string;
+  email: string;
 }
 
 export const ROLE_PERMISSIONS: Record<Role, Set<string>> = {
   admin: new Set([
-    'GET_RESOURCES',
-    'POST_RESOURCES',
-    'PUT_RESOURCES',
-    'DELETE_RESOURCES',
-    'BULK_IMPORT',
-    'VIEW_AUDIT_LOG',
+    'read:all',
+    'write:all',
+    'delete:all',
+    'bulk:import',
+    'audit:read',
   ]),
   operator: new Set([
-    'GET_RESOURCES',
-    'POST_RESOURCES',
-    'PUT_RESOURCES',
-    'BULK_IMPORT',
+    'read:all',
+    'write:all',
+    'bulk:import',
+    'audit:read',
   ]),
   viewer: new Set([
-    'GET_RESOURCES',
+    'read:all',
+    'audit:read',
   ]),
 };
 
-export function extractAuthContext(event: APIGatewayProxyEvent): AuthContext {
-  const authHeader = event.headers['Authorization'] || '';
-  const token = authHeader.replace('Bearer ', '');
-  
-  if (!token) {
-    throw new Error('Missing authorization token');
+export function extractRBACContext(event: APIGatewayProxyEvent): RBACContext | null {
+  const authHeader = event.headers['Authorization'] || event.headers['authorization'];
+  if (!authHeader) {
+    return null;
   }
-  
+
   try {
+    const token = authHeader.replace('Bearer ', '');
     const decoded = JSON.parse(Buffer.from(token, 'base64').toString('utf-8'));
     return {
-      userId: decoded.userId,
-      role: decoded.role as Role,
-      loginId: decoded.loginId,
+      userId: decoded.userId || '',
+      role: (decoded.role || 'viewer') as Role,
+      email: decoded.email || '',
     };
-  } catch (error) {
-    throw new Error('Invalid authorization token');
+  } catch {
+    return null;
   }
 }
 
-export function hasPermission(role: Role, action: string): boolean {
-  return ROLE_PERMISSIONS[role]?.has(action) ?? false;
+export function hasPermission(role: Role, permission: string): boolean {
+  const permissions = ROLE_PERMISSIONS[role];
+  return permissions.has(permission);
 }
 
-export function requirePermission(role: Role, action: string): void {
-  if (!hasPermission(role, action)) {
-    throw new Error(`Forbidden: ${action}`);
+export function requirePermission(role: Role, permission: string): boolean {
+  if (!hasPermission(role, permission)) {
+    return false;
   }
+  return true;
 }
