@@ -1,0 +1,19 @@
+import { describe, test, expect } from '@jest/globals';
+import { confirmExtractionRange } from '../../src/logic/it-1-br-2-1-1';
+
+describe('営業担当者の行動パターンと成約実績の自動分析・レポート機能', () => {
+  // SCEN-063
+  test('営業プロセスログ抽出範囲確定機能 - 抽出対象期間の開始日と終了日が同日のとき期間が確定される', () => {
+    const start_date = new Date('2024-01-15T00:00:00Z');
+    const end_date = new Date('2024-01-15T00:00:00Z');
+
+    const result = confirmExtractionRange({
+      start_date,
+      end_date,
+    });
+
+    expect(result.confirmed_start_date).toEqual(new Date('2024-01-15T00:00:00Z'));
+    expect(result.confirmed_end_date).toEqual(new Date('2024-01-15T00:00:00Z'));
+    expect(result.period_days).toBe(1);
+  });
+});
