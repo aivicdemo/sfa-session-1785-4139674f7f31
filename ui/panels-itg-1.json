@@ -1,0 +1,3843 @@
+{
+  "systemId": "itg-1",
+  "systemName": "営業プロセス監査・分析管理システム",
+  "cssTheme": "```css\n:root {\n  /* Primary Color - kintone Blue */\n  --primary: #4a90e2;\n  --primary-hover: #357abd;\n  \n  /* Background Colors - Light Theme with Blue Tint */\n  --bg-main: #f0f4f9;\n  --bg-card: #ffffff;\n  --bg-sidebar: #e8ecf3;\n  \n  /* Border & Divider */\n  --border: #d0dae8;\n  \n  /* Text Colors */\n  --text: #1a1a1a;\n  --text-muted: #666666;\n  \n  /* Top Bar */\n  --top-bar-bg: #ffffff;\n  --top-bar-border: #d0dae8;\n}\n```",
+  "screens": [
+    {
+      "id": "scr-1785570818400",
+      "name": "営業プロセス監査ダッシュボード",
+      "purpose": "営業プロセス実行状況の監視、営業担当者の行動パターン分析、成約実績との相関分析、AIエージェント推論精度の自動監視、プロセス遵守率・データ品質スコア、不適切パターン検出、成功パターン適用状況、ヘルスチェック診断結果を統合的に可視化し、営業プロセスの健全性を監査・管理するダッシュボード",
+      "items": [
+        "営業プロセス実行状況サマリーパネル",
+        "営業担当者ごとの行動パターン分析レポート表示エリア",
+        "成約実績との相関分析グラフ",
+        "AIエージェント推論精度監視ウィジェット",
+        "推論精度低下アラート表示パネル",
+        "プロセス遵守率スコア表示",
+        "データ品質スコア表示",
+        "不適切パターン検出結果リスト",
+        "成功パターン適用状況トラッキング",
+        "営業行動分析結果の可視化チャート",
+        "プロセス乖離検出結果表示",
+        "成約相関分析結果テーブル"
+      ]
+    },
+    {
+      "id": "scr-1785570831723",
+      "name": "営業事例・成功パターン検索・学習",
+      "purpose": "営業担当者が過去の成功事例を検索・分析し、成功パターンを学習することで営業プロセスの最適化と案件成功率の向上を支援する",
+      "items": [
+        "検索条件入力フォーム",
+        "顧客業種フィルター",
+        "案件金額範囲フィルター",
+        "成約期間フィルター",
+        "営業担当者フィルター",
+        "成功パターンキーワード検索",
+        "検索実行ボタン",
+        "事例一覧表示",
+        "事例分類マトリクス表示",
+        "成功パターン分類タブ",
+        "事例詳細表示パネル",
+        "成約実績情報表示"
+      ]
+    },
+    {
+      "id": "scr-1785570844176",
+      "name": "営業プロセス分析レポート生成・確認",
+      "purpose": "営業プロセスのログを抽出・分析し、レポートを生成・確認・ダウンロードするとともに、生成履歴を管理する",
+      "items": [
+        "営業プロセスログ抽出条件設定パネル",
+        "抽出対象期間選択",
+        "抽出対象営業担当者フィルタ",
+        "抽出対象顧客フィルタ",
+        "抽出対象営業案件フィルタ",
+        "営業活動タイプ選択",
+        "ログ抽出実行ボタン",
+        "抽出結果プレビュー表示",
+        "レポート生成条件設定パネル",
+        "分析対象データ範囲選択",
+        "レポートテンプレート選択",
+        "分析指標選択（成約率、活動頻度、プロセス進捗等）"
+      ]
+    }
+  ],
+  "screenPanels": [
+    {
+      "screenId": "scr-1785570818400",
+      "panelHtml": "<div style=\"display: flex; flex-direction: column; height: 100%; background: var(--bg-main);\">\n  <!-- ヘッダー / Breadcrumb -->\n  <div style=\"padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--bg-card);\">\n    <div style=\"font-size: 11px; color: var(--text-muted); margin-bottom: 6px;\">\n      匠SFA / 営業プロセス監査・分析管理システム / 営業プロセス監査ダッシュボード\n    </div>\n    <div style=\"font-size: 18px; font-weight: 600; color: var(--text);\">営業プロセス監査ダッシュボード</div>\n  </div>\n\n  <!-- メインコンテンツ（スクロール可能） -->\n  <div style=\"flex: 1; overflow-y: auto; padding: 16px;\">\n    \n    <!-- KPI カード群（4枚） -->\n    <div style=\"display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;\">\n      \n      <!-- KPI 1: 営業活動総件数 -->\n      <div class=\"card\" style=\"padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;\">\n        <div style=\"font-size: 12px; color: var(--text-muted); margin-bottom: 8px;\">営業活動総件数</div>\n        <div style=\"font-size: 28px; font-weight: 700; color: var(--primary);\" data-testid=\"kpi-activity-count\">-</div>\n        <div style=\"font-size: 11px; color: var(--text-muted); margin-top: 6px;\">今月</div>\n      </div>\n\n      <!-- KPI 2: 成約実績件数 -->\n      <div class=\"card\" style=\"padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;\">\n        <div style=\"font-size: 12px; color: var(--text-muted); margin-bottom: 8px;\">成約実績件数</div>\n        <div style=\"font-size: 28px; font-weight: 700; color: var(--primary);\" data-testid=\"kpi-contract-count\">-</div>\n        <div style=\"font-size: 11px; color: var(--text-muted); margin-top: 6px;\">今月</div>\n      </div>\n\n      <!-- KPI 3: 成約金額合計 -->\n      <div class=\"card\" style=\"padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;\">\n        <div style=\"font-size: 12px; color: var(--text-muted); margin-bottom: 8px;\">成約金額合計</div>\n        <div style=\"font-size: 24px; font-weight: 700; color: var(--primary);\" data-testid=\"kpi-contract-amount\">-</div>\n        <div style=\"font-size: 11px; color: var(--text-muted); margin-top: 6px;\">今月</div>\n      </div>\n\n      <!-- KPI 4: プロセス遵守率 -->\n      <div class=\"card\" style=\"padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;\">\n        <div style=\"font-size: 12px; color: var(--text-muted); margin-bottom: 8px;\">プロセス遵守率</div>\n        <div style=\"font-size: 28px; font-weight: 700; color: var(--primary);\" data-testid=\"kpi-compliance-rate\">-</div>\n        <div style=\"font-size: 11px; color: var(--text-muted); margin-top: 6px;\">全体</div>\n      </div>\n\n    </div>\n\n    <!-- グラフ群（2列レイアウト） -->\n    <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;\">\n      \n      <!-- グラフ 1: 月別成約件数推移 -->\n      <div class=\"card\" style=\"padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;\">\n        <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px;\">月別成約件数推移</div>\n        <div class=\"chart-wrap\" style=\"position: relative; height: 240px; max-height: 260px;\">\n          <canvas id=\"chart-monthly-contracts\"></canvas>\n        </div>\n      </div>\n\n      <!-- グラフ 2: 営業担当者別成約率 -->\n      <div class=\"card\" style=\"padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;\">\n        <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px;\">営業担当者別成約率（TOP 10）</div>\n        <div class=\"chart-wrap\" style=\"position: relative; height: 240px; max-height: 260px;\">\n          <canvas id=\"chart-sales-rep-rate\"></canvas>\n        </div>\n      </div>\n\n    </div>\n\n    <!-- 2行目グラフ群 -->\n    <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;\">\n      \n      <!-- グラフ 3: 活動種別分布 -->\n      <div class=\"card\" style=\"padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;\">\n        <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px;\">営業活動種別分布</div>\n        <div class=\"chart-wrap\" style=\"position: relative; height: 240px; max-height: 260px;\">\n          <canvas id=\"chart-activity-type\"></canvas>\n        </div>\n      </div>\n\n      <!-- グラフ 4: AIエージェント推論精度推移 -->\n      <div class=\"card\" style=\"padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;\">\n        <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px;\">AIエージェント推論精度推移</div>\n        <div class=\"chart-wrap\" style=\"position: relative; height: 240px; max-height: 260px;\">\n          <canvas id=\"chart-ai-accuracy\"></canvas>\n        </div>\n      </div>\n\n    </div>\n\n    <!-- アラート・異常検知パネル -->\n    <div class=\"card\" style=\"padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 20px;\">\n      <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px;\">⚠️ 推論精度低下アラート</div>\n      <div id=\"alert-panel\" style=\"max-height: 200px; overflow-y: auto;\">\n        <div style=\"font-size: 12px; color: var(--text-muted); padding: 8px;\">読込中...</div>\n      </div>\n    </div>\n\n    <!-- 不適切パターン検出結果 -->\n    <div class=\"card\" style=\"padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 20px;\">\n      <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px;\">🔍 不適切パターン検出結果</div>\n      <div class=\"table-wrap\" style=\"overflow-x: auto;\">\n        <table data-testid=\"anomaly-list\" style=\"width: 100%; font-size: 12px; border-collapse: collapse;\">\n          <thead>\n            <tr style=\"background: var(--bg-sidebar); border-bottom: 1px solid var(--border);\">\n              <th style=\"padding: 8px; text-align: left; color: var(--text); font-weight: 600;\">営業担当者</th>\n              <th style=\"padding: 8px; text-align: left; color: var(--text); font-weight: 600;\">パターン種別</th>\n              <th style=\"padding: 8px; text-align: left; color: var(--text); font-weight: 600;\">検出日時</th>\n              <th style=\"padding: 8px; text-align: left; color: var(--text); font-weight: 600;\">重要度</th>\n              <th style=\"padding: 8px; text-align: left; color: var(--text); font-weight: 600;\">詳細</th>\n            </tr>\n          </thead>\n          <tbody id=\"anomaly-tbody\">\n            <tr style=\"border-bottom: 1px solid var(--border);\">\n              <td colspan=\"5\" style=\"padding: 12px; text-align: center; color: var(--text-muted);\">データ読込中...</td>\n            </tr>\n          </tbody>\n        </table>\n      </div>\n    </div>\n\n    <!-- 成功パターン適用状況 -->\n    <div class=\"card\" style=\"padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 20px;\">\n      <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px;\">✅ 成功パターン適用状況</div>\n      <div class=\"table-wrap\" style=\"overflow-x: auto;\">\n        <table data-testid=\"success-pattern-list\" style=\"width: 100%; font-size: 12px; border-collapse: collapse;\">\n          <thead>\n            <tr style=\"background: var(--bg-sidebar); border-bottom: 1px solid var(--border);\">\n              <th style=\"padding: 8px; text-align: left; color: var(--text); font-weight: 600;\">営業案件</th>\n              <th style=\"padding: 8px; text-align: left; color: var(--text); font-weight: 600;\">適用パターン</th>\n              <th style=\"padding: 8px; text-align: left; color: var(--text); font-weight: 600;\">適用日</th>\n              <th style=\"padding: 8px; text-align: left; color: var(--text); font-weight: 600;\">成果</th>\n            </tr>\n          </thead>\n          <tbody id=\"success-pattern-tbody\">\n            <tr style=\"border-bottom: 1px solid var(--border);\">\n              <td colspan=\"4\" style=\"padding: 12px; text-align: center; color: var(--text-muted);\">データ読込中...</td>\n            </tr>\n          </tbody>\n        </table>\n      </div>\n    </div>\n\n    <!-- 成約相関分析結果 -->\n    <div class=\"card\" style=\"padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 20px;\">\n      <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px;\">📊 成約相関分析結果</div>\n      <div class=\"table-wrap\" style=\"overflow-x: auto;\">\n        <table data-testid=\"correlation-list\" style=\"width: 100%; font-size: 12px; border-collapse: collapse;\">\n          <thead>\n            <tr style=\"background: var(--bg-sidebar); border-bottom: 1px solid var(--border);\">\n              <th style=\"padding: 8px; text-align: left; color: var(--text); font-weight: 600;\">営業担当者</th>\n              <th style=\"padding: 8px; text-align: left; color: var(--text); font-weight: 600;\">活動件数</th>\n              <th style=\"padding: 8px; text-align: left; color: var(--text); font-weight: 600;\">成約件数</th>\n              <th style=\"padding: 8px; text-align: left; color: var(--text); font-weight: 600;\">成約率</th>\n              <th style=\"padding: 8px; text-align: left; color: var(--text); font-weight: 600;\">相関度</th>\n            </tr>\n          </thead>\n          <tbody id=\"correlation-tbody\">\n            <tr style=\"border-bottom: 1px solid var(--border);\">\n              <td colspan=\"5\" style=\"padding: 12px; text-align: center; color: var(--text-muted);\">データ読込中...</td>\n            </tr>\n          </tbody>\n        </table>\n      </div>\n    </div>\n\n  </div>\n\n  <!-- フッター / アクションボタン -->\n  <div style=\"padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg-card); display: flex; gap: 8px; justify-content: flex-end;\">\n    <button class=\"action-btn secondary\" data-testid=\"settings-button\" style=\"padding: 8px 16px; font-size: 12px;\">\n      システム設定\n    </button>\n    <button class=\"action-btn secondary\" data-testid=\"success-pattern-button\" style=\"padding: 8px 16px; font-size: 12px;\">\n      成功パターン検索\n    </button>\n    <button class=\"action-btn\" data-testid=\"report-button\" style=\"padding: 8px 16px; font-size: 12px;\">\n      レポート生成\n    </button>\n  </div>\n\n</div>",
+      "initJs": "",
+      "method": "ai"
+    },
+    {
+      "screenId": "scr-1785570831723",
+      "panelHtml": "<div style=\"display: flex; flex-direction: column; height: 100%; background: var(--bg-main); color: var(--text);\">\n  <!-- ヘッダー領域 -->\n  <div style=\"padding: 12px 16px; background: var(--bg-card); border-bottom: 1px solid var(--border); flex-shrink: 0;\">\n    <div style=\"font-size: 12px; color: var(--text-muted); margin-bottom: 4px;\">\n      匠SFA / 営業プロセス監査・分析管理システム / 営業事例・成功パターン検索・学習\n    </div>\n    <h1 style=\"margin: 0; font-size: 18px; font-weight: 600; color: var(--text);\">営業事例・成功パターン検索・学習</h1>\n  </div>\n\n  <!-- メインコンテンツ（3カラムレイアウト） -->\n  <div style=\"display: flex; flex: 1; overflow: hidden; gap: 12px; padding: 12px;\">\n    \n    <!-- 左サイドバー：検索フィルタ -->\n    <div style=\"width: 280px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; overflow-y: auto; flex-shrink: 0;\">\n      <h3 style=\"margin: 0 0 12px 0; font-size: 13px; font-weight: 600; color: var(--text);\">検索条件</h3>\n      \n      <!-- キーワード検索 -->\n      <div style=\"margin-bottom: 12px;\">\n        <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">成功パターンキーワード</label>\n        <input type=\"text\" data-testid=\"keyword-search\" placeholder=\"例：初回訪問、提案資料...\" \n          style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); border-radius: 4px; background: var(--bg-main); color: var(--text); font-size: 12px; box-sizing: border-box;\">\n      </div>\n\n      <!-- 顧客業種フィルター -->\n      <div style=\"margin-bottom: 12px;\">\n        <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">顧客業種</label>\n        <select data-testid=\"industry-filter\" \n          style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); border-radius: 4px; background: var(--bg-main); color: var(--text); font-size: 12px; box-sizing: border-box;\">\n          <option value=\"\">すべて</option>\n          <option value=\"IT\">IT・通信</option>\n          <option value=\"製造\">製造業</option>\n          <option value=\"金融\">金融・保険</option>\n          <option value=\"小売\">小売・流通</option>\n          <option value=\"医療\">医療・福祉</option>\n          <option value=\"建設\">建設・不動産</option>\n        </select>\n      </div>\n\n      <!-- 案件金額範囲フィルター -->\n      <div style=\"margin-bottom: 12px;\">\n        <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">案件金額範囲（万円）</label>\n        <div style=\"display: flex; gap: 6px; margin-bottom: 4px;\">\n          <input type=\"number\" data-testid=\"amount-min\" placeholder=\"最小\" \n            style=\"flex: 1; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); border-radius: 4px; background: var(--bg-main); color: var(--text); font-size: 12px; box-sizing: border-box;\">\n          <span style=\"align-self: center; color: var(--text-muted); font-size: 12px;\">〜</span>\n          <input type=\"number\" data-testid=\"amount-max\" placeholder=\"最大\" \n            style=\"flex: 1; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); border-radius: 4px; background: var(--bg-main); color: var(--text); font-size: 12px; box-sizing: border-box;\">\n        </div>\n      </div>\n\n      <!-- 成約期間フィルター -->\n      <div style=\"margin-bottom: 12px;\">\n        <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">成約期間</label>\n        <div style=\"display: flex; gap: 6px; margin-bottom: 4px;\">\n          <input type=\"date\" data-testid=\"date-from\" \n            style=\"flex: 1; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); border-radius: 4px; background: var(--bg-main); color: var(--text); font-size: 12px; box-sizing: border-box;\">\n          <span style=\"align-self: center; color: var(--text-muted); font-size: 12px;\">〜</span>\n          <input type=\"date\" data-testid=\"date-to\" \n            style=\"flex: 1; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); border-radius: 4px; background: var(--bg-main); color: var(--text); font-size: 12px; box-sizing: border-box;\">\n        </div>\n      </div>\n\n      <!-- 営業担当者フィルター -->\n      <div style=\"margin-bottom: 12px;\">\n        <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">営業担当者</label>\n        <select data-testid=\"salesperson-filter\" \n          style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); border-radius: 4px; background: var(--bg-main); color: var(--text); font-size: 12px; box-sizing: border-box;\">\n          <option value=\"\">すべて</option>\n          <option value=\"all-top\">全営業（成績上位）</option>\n          <option value=\"all-bottom\">全営業（成績下位）</option>\n        </select>\n      </div>\n\n      <!-- 成功パターン分類フィルター -->\n      <div style=\"margin-bottom: 16px;\">\n        <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">成功パターン分類</label>\n        <select data-testid=\"pattern-filter\" \n          style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); border-radius: 4px; background: var(--bg-main); color: var(--text); font-size: 12px; box-sizing: border-box;\">\n          <option value=\"\">すべて</option>\n          <option value=\"初回接触\">初回接触型</option>\n          <option value=\"提案\">提案型</option>\n          <option value=\"交渉\">交渉型</option>\n          <option value=\"クロージング\">クロージング型</option>\n        </select>\n      </div>\n\n      <!-- 検索ボタン -->\n      <button data-testid=\"search-button\" \n        style=\"width: 100%; padding: 8px 12px; background: var(--primary); color: #fff; border: none; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; margin-bottom: 6px;\">\n        検索\n      </button>\n      <button data-testid=\"reset-button\" \n        style=\"width: 100%; padding: 8px 12px; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;\">\n        リセット\n      </button>\n    </div>\n\n    <!-- 中央：事例一覧 + タブ -->\n    <div style=\"flex: 1; display: flex; flex-direction: column; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; overflow: hidden;\">\n      \n      <!-- タブ -->\n      <div style=\"display: flex; border-bottom: 1px solid var(--border); background: var(--bg-main); flex-shrink: 0;\">\n        <button data-testid=\"tab-list\" class=\"tab-btn\" data-tab=\"list\" \n          style=\"flex: 1; padding: 10px; font-size: 12px; font-weight: 600; color: var(--text); background: transparent; border: none; cursor: pointer; border-bottom: 2px solid var(--primary); text-align: center;\">\n          事例一覧\n        </button>\n        <button data-testid=\"tab-matrix\" class=\"tab-btn\" data-tab=\"matrix\" \n          style=\"flex: 1; padding: 10px; font-size: 12px; font-weight: 600; color: var(--text-muted); background: transparent; border: none; cursor: pointer; border-bottom: 2px solid transparent; text-align: center;\">\n          成功パターン分析\n        </button>\n        <button data-testid=\"tab-detail\" class=\"tab-btn\" data-tab=\"detail\" \n          style=\"flex: 1; padding: 10px; font-size: 12px; font-weight: 600; color: var(--text-muted); background: transparent; border: none; cursor: pointer; border-bottom: 2px solid transparent; text-align: center;\">\n          詳細表示\n        </button>\n      </div>\n\n      <!-- タブコンテンツ：事例一覧 -->\n      <div id=\"tab-list-content\" style=\"flex: 1; overflow-y: auto; padding: 0;\">\n        <table data-testid=\"case-list\" style=\"width: 100%; border-collapse: collapse; font-size: 12px;\">\n          <thead style=\"background: var(--bg-main); position: sticky; top: 0;\">\n            <tr>\n              <th style=\"padding: 8px 12px; text-align: left; color: var(--text); font-weight: 600; border-bottom: 1px solid var(--border); width: 25%;\">案件名</th>\n              <th style=\"padding: 8px 12px; text-align: left; color: var(--text); font-weight: 600; border-bottom: 1px solid var(--border); width: 15%;\">顧客業種</th>\n              <th style=\"padding: 8px 12px; text-align: right; color: var(--text); font-weight: 600; border-bottom: 1px solid var(--border); width: 15%;\">成約金額</th>\n              <th style=\"padding: 8px 12px; text-align: center; color: var(--text); font-weight: 600; border-bottom: 1px solid var(--border); width: 15%;\">成約日</th>\n              <th style=\"padding: 8px 12px; text-align: center; color: var(--text); font-weight: 600; border-bottom: 1px solid var(--border); width: 15%;\">営業担当者</th>\n              <th style=\"padding: 8px 12px; text-align: center; color: var(--text); font-weight: 600; border-bottom: 1px solid var(--border); width: 15%;\">パターン</th>\n            </tr>\n          </thead>\n          <tbody id=\"case-tbody\">\n            <tr style=\"background: var(--bg-card);\">\n              <td colspan=\"6\" style=\"padding: 20px; text-align: center; color: var(--text-muted); font-size: 12px;\">データを読み込み中...</td>\n            </tr>\n          </tbody>\n        </table>\n      </div>\n\n      <!-- タブコンテンツ：成功パターン分析マトリクス -->\n      <div id=\"tab-matrix-content\" style=\"flex: 1; overflow: auto; padding: 12px; display: none;\">\n        <canvas id=\"pattern-matrix\" style=\"max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 4px;\"></canvas>\n        <div style=\"margin-top: 12px; font-size: 11px; color: var(--text-muted);\">\n          <p style=\"margin: 4px 0;\"><strong>横軸:</strong> 初回接触から成約までの日数</p>\n          <p style=\"margin: 4px 0;\"><strong>縦軸:</strong> 成約金額（万円）</p>\n          <p style=\"margin: 4px 0;\"><strong>●の大きさ:</strong> 営業活動件数</p>\n        </div>\n      </div>\n\n      <!-- タブコンテンツ：詳細表示 -->\n      <div id=\"tab-detail-content\" style=\"flex: 1; overflow-y: auto; padding: 12px; display: none;\">\n        <div id=\"detail-panel\" style=\"background: var(--bg-main); padding: 12px; border-radius: 4px; border: 1px solid var(--border);\">\n          <p style=\"color: var(--text-muted); font-size: 12px; margin: 0;\">事例を選択してください</p>\n        </div>\n      </div>\n    </div>\n\n    <!-- 右サイドバー：成約実績情報 -->\n    <div style=\"width: 240px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; overflow-y: auto; flex-shrink: 0;\">\n      <h3 style=\"margin: 0 0 12px 0; font-size: 13px; font-weight: 600; color: var(--text);\">成約実績サマリー</h3>\n      \n      <!-- KPI カード -->\n      <div style=\"background: var(--bg-main); padding: 10px; border-radius: 4px; margin-bottom: 10px; border-left: 3px solid var(--primary);\">\n        <div style=\"font-size: 11px; color: var(--text-muted); margin-bottom: 2px;\">総成約件数</div>\n        <div data-testid=\"kpi-total-deals\" style=\"font-size: 18px; font-weight: 700; color: var(--primary);\">0</div>\n      </div>\n\n      <div style=\"background: var(--bg-main); padding: 10px; border-radius: 4px; margin-bottom: 10px; border-left: 3px solid var(--primary);\">\n        <div style=\"font-size: 11px; color: var(--text-muted); margin-bottom: 2px;\">総成約金額</div>\n        <div data-testid=\"kpi-total-amount\" style=\"font-size: 16px; font-weight: 700; color: var(--primary);\">0万円</div>\n      </div>\n\n      <div style=\"background: var(--bg-main); padding: 10px; border-radius: 4px; margin-bottom: 10px; border-left: 3px solid var(--primary);\">\n        <div style=\"font-size: 11px; color: var(--text-muted); margin-bottom: 2px;\">平均成約金額</div>\n        <div data-testid=\"kpi-avg-amount\" style=\"font-size: 16px; font-weight: 700; color: var(--primary);\">0万円</div>\n      </div>\n\n      <div style=\"background: var(--bg-main); padding: 10px; border-radius: 4px; margin-bottom: 12px; border-left: 3px solid var(--primary);\">\n        <div style=\"font-size: 11px; color: var(--text-muted); margin-bottom: 2px;\">平均成約期間</div>\n        <div data-testid=\"kpi-avg-days\" style=\"font-size: 16px; font-weight: 700; color: var(--primary);\">0日</div>\n      </div>\n\n      <hr style=\"border: none; border-top: 1px solid var(--border); margin: 12px 0;\">\n\n      <!-- 成功パターン分布 -->\n      <h4 style=\"margin: 0 0 8px 0; font-size: 12px; font-weight: 600; color: var(--text);\">成功パターン分布</h4>\n      <div id=\"pattern-distribution\" style=\"font-size: 11px; color: var(--text);\">\n        <div style=\"display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border);\">\n          <span>初回接触型</span>\n          <span data-testid=\"pattern-initial\" style=\"font-weight: 600;\">0件</span>\n        </div>\n        <div style=\"display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border);\">\n          <span>提案型</span>\n          <span data-testid=\"pattern-proposal\" style=\"font-weight: 600;\">0件</span>\n        </div>\n        <div style=\"display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border);\">\n          <span>交渉型</span>\n          <span data-testid=\"pattern-negotiation\" style=\"font-weight: 600;\">0件</span>\n        </div>\n        <div style=\"display: flex; justify-content: space-between; padding: 4px 0;\">\n          <span>クロージング型</span>\n          <span data-testid=\"pattern-closing\" style=\"font-weight: 600;\">0件</span>\n        </div>\n      </div>\n\n      <hr style=\"border: none; border-top: 1px solid var(--border); margin: 12px 0;\">\n\n      <!-- アクション -->\n      <button data-testid=\"export-csv-button\" \n        style=\"width: 100%; padding: 8px 12px; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; margin-bottom: 6px;\">\n        CSVエクスポート\n      </button>\n      <button data-testid=\"back-to-dashboard\" \n        style=\"width: 100%; padding: 8px 12px; background: var(--primary); color: #fff; border: none; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; margin-bottom: 6px;\">\n        ダッシュボードに戻る\n      </button>\n      <button data-testid=\"view-analysis-report\" \n        style=\"width: 100%; padding: 8px 12px; background: transparent; color: var(--primary); border: 1px solid var(--primary); border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;\">\n        分析レポートを確認\n      </button>\n    </div>\n  </div>\n</div>\n\n<!-- 詳細パネル用モーダル（初期非表示） -->\n<div id=\"detail-modal\" class=\"modal-overlay\" style=\"display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0, 0, 0, 0.55); display: flex; align-items: center; justify-content: center;\">\n  <div style=\"background: var(--bg-card); color: var(--text); padding: 24px; border-radius: 8px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.4);\">\n    <div style=\"display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;\">\n      <h2 id=\"modal-title\" style=\"margin: 0; font-size: 16px; font-weight: 600;\">事例詳細</h2>\n      <button id=\"modal-close\" style=\"background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);\">×</button>\n    </div>\n    <div id=\"modal-content\" style=\"font-size: 12px; line-height: 1.6; color: var(--text);\">\n      <!-- 詳細内容がここに挿入される -->\n    </div>\n  </div>\n</div>",
+      "initJs": "",
+      "method": "ai"
+    },
+    {
+      "screenId": "scr-1785570844176",
+      "panelHtml": "<div style=\"display: flex; flex-direction: column; height: 100%; background: var(--bg-main); color: var(--text);\">\n  <!-- ヘッダー領域 -->\n  <div style=\"padding: 12px 16px; background: var(--bg-card); border-bottom: 1px solid var(--border); flex-shrink: 0;\">\n    <div style=\"font-size: 11px; color: var(--text-muted); margin-bottom: 6px;\">\n      匠SFA / 営業プロセス監査・分析管理システム / 営業プロセス分析レポート生成・確認\n    </div>\n    <div style=\"display: flex; justify-content: space-between; align-items: center;\">\n      <h1 style=\"margin: 0; font-size: 18px; font-weight: 600;\">営業プロセス分析レポート生成・確認</h1>\n      <button class=\"action-btn secondary\" data-testid=\"back-to-dashboard\" style=\"padding: 6px 12px; font-size: 12px;\">\n        ダッシュボードに戻る\n      </button>\n    </div>\n  </div>\n\n  <!-- メインコンテンツ -->\n  <div style=\"flex: 1; overflow-y: auto; padding: 16px;\">\n    <!-- ステッパー -->\n    <div style=\"display: flex; gap: 8px; margin-bottom: 20px; align-items: center;\">\n      <div class=\"step-indicator\" data-step=\"1\" style=\"display: flex; align-items: center; gap: 8px; cursor: pointer;\">\n        <div style=\"width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px;\">1</div>\n        <span style=\"font-size: 12px; font-weight: 500;\">ログ抽出条件</span>\n      </div>\n      <div style=\"flex: 1; height: 2px; background: var(--border);\"></div>\n      <div class=\"step-indicator\" data-step=\"2\" style=\"display: flex; align-items: center; gap: 8px; cursor: pointer; opacity: 0.5;\">\n        <div style=\"width: 32px; height: 32px; border-radius: 50%; background: var(--border); color: var(--text-muted); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px;\">2</div>\n        <span style=\"font-size: 12px; font-weight: 500;\">抽出結果</span>\n      </div>\n      <div style=\"flex: 1; height: 2px; background: var(--border);\"></div>\n      <div class=\"step-indicator\" data-step=\"3\" style=\"display: flex; align-items: center; gap: 8px; cursor: pointer; opacity: 0.5;\">\n        <div style=\"width: 32px; height: 32px; border-radius: 50%; background: var(--border); color: var(--text-muted); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px;\">3</div>\n        <span style=\"font-size: 12px; font-weight: 500;\">レポート生成</span>\n      </div>\n      <div style=\"flex: 1; height: 2px; background: var(--border);\"></div>\n      <div class=\"step-indicator\" data-step=\"4\" style=\"display: flex; align-items: center; gap: 8px; cursor: pointer; opacity: 0.5;\">\n        <div style=\"width: 32px; height: 32px; border-radius: 50%; background: var(--border); color: var(--text-muted); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px;\">4</div>\n        <span style=\"font-size: 12px; font-weight: 500;\">完了</span>\n      </div>\n    </div>\n\n    <!-- ステップ 1: ログ抽出条件 -->\n    <div id=\"step-1-panel\" class=\"step-panel\" style=\"display: block;\">\n      <div class=\"card\" style=\"padding: 16px; margin-bottom: 16px;\">\n        <h2 style=\"margin: 0 0 12px 0; font-size: 14px; font-weight: 600;\">営業プロセスログ抽出条件</h2>\n        \n        <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;\">\n          <!-- 抽出対象期間 -->\n          <div>\n            <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">抽出対象期間（開始日）</label>\n            <input type=\"date\" data-testid=\"extract-start-date\" name=\"extractStartDate\" class=\"input\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); background: var(--bg-card); border-radius: 4px; font-size: 12px;\" />\n          </div>\n          <div>\n            <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">抽出対象期間（終了日）</label>\n            <input type=\"date\" data-testid=\"extract-end-date\" name=\"extractEndDate\" class=\"input\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); background: var(--bg-card); border-radius: 4px; font-size: 12px;\" />\n          </div>\n        </div>\n\n        <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;\">\n          <!-- 営業担当者フィルタ -->\n          <div>\n            <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">営業担当者</label>\n            <select data-testid=\"salesperson-filter\" name=\"salespersonId\" class=\"input\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); background: var(--bg-card); border-radius: 4px; font-size: 12px;\">\n              <option value=\"\">全員</option>\n              <option value=\"sp-001\">田中太郎</option>\n              <option value=\"sp-002\">鈴木花子</option>\n              <option value=\"sp-003\">佐藤次郎</option>\n            </select>\n          </div>\n          <!-- 顧客フィルタ -->\n          <div>\n            <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">顧客</label>\n            <select data-testid=\"customer-filter\" name=\"customerId\" class=\"input\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); background: var(--bg-card); border-radius: 4px; font-size: 12px;\">\n              <option value=\"\">全顧客</option>\n              <option value=\"cust-001\">株式会社ABC</option>\n              <option value=\"cust-002\">株式会社XYZ</option>\n              <option value=\"cust-003\">株式会社DEF</option>\n            </select>\n          </div>\n        </div>\n\n        <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;\">\n          <!-- 営業案件フィルタ -->\n          <div>\n            <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">営業案件</label>\n            <select data-testid=\"opportunity-filter\" name=\"opportunityId\" class=\"input\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); background: var(--bg-card); border-radius: 4px; font-size: 12px;\">\n              <option value=\"\">全案件</option>\n              <option value=\"opp-001\">案件A：システム導入</option>\n              <option value=\"opp-002\">案件B：保守契約</option>\n              <option value=\"opp-003\">案件C：コンサル</option>\n            </select>\n          </div>\n          <!-- 営業活動タイプ -->\n          <div>\n            <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">営業活動タイプ</label>\n            <select data-testid=\"activity-type-filter\" name=\"activityType\" class=\"input\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); background: var(--bg-card); border-radius: 4px; font-size: 12px;\">\n              <option value=\"\">全タイプ</option>\n              <option value=\"visit\">訪問</option>\n              <option value=\"call\">電話</option>\n              <option value=\"email\">メール</option>\n              <option value=\"proposal\">提案</option>\n            </select>\n          </div>\n        </div>\n\n        <!-- ボタン群 -->\n        <div style=\"display: flex; gap: 8px; justify-content: flex-end;\">\n          <button class=\"action-btn secondary\" data-testid=\"reset-extract-button\" style=\"padding: 6px 12px; font-size: 12px;\">\n            リセット\n          </button>\n          <button class=\"action-btn\" data-testid=\"execute-extract-button\" style=\"padding: 6px 12px; font-size: 12px;\">\n            ログを抽出\n          </button>\n        </div>\n      </div>\n    </div>\n\n    <!-- ステップ 2: 抽出結果プレビュー -->\n    <div id=\"step-2-panel\" class=\"step-panel\" style=\"display: none;\">\n      <div class=\"card\" style=\"padding: 16px; margin-bottom: 16px;\">\n        <h2 style=\"margin: 0 0 12px 0; font-size: 14px; font-weight: 600;\">抽出結果プレビュー</h2>\n        \n        <div style=\"display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px;\">\n          <div style=\"background: var(--bg-main); padding: 12px; border-radius: 4px; border-left: 3px solid var(--primary);\">\n            <div style=\"font-size: 11px; color: var(--text-muted); margin-bottom: 4px;\">抽出ログ件数</div>\n            <div style=\"font-size: 18px; font-weight: 600;\" data-testid=\"extracted-count\">0</div>\n          </div>\n          <div style=\"background: var(--bg-main); padding: 12px; border-radius: 4px; border-left: 3px solid var(--primary);\">\n            <div style=\"font-size: 11px; color: var(--text-muted); margin-bottom: 4px;\">成果フラグ付き</div>\n            <div style=\"font-size: 18px; font-weight: 600;\" data-testid=\"success-count\">0</div>\n          </div>\n          <div style=\"background: var(--bg-main); padding: 12px; border-radius: 4px; border-left: 3px solid var(--primary);\">\n            <div style=\"font-size: 11px; color: var(--text-muted); margin-bottom: 4px;\">成約率</div>\n            <div style=\"font-size: 18px; font-weight: 600;\" data-testid=\"success-rate\">0%</div>\n          </div>\n        </div>\n\n        <div style=\"max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px;\">\n          <table data-testid=\"extract-preview-table\" style=\"width: 100%; border-collapse: collapse; font-size: 12px;\">\n            <thead style=\"background: var(--bg-main); position: sticky; top: 0;\">\n              <tr>\n                <th style=\"padding: 8px; text-align: left; border-bottom: 1px solid var(--border); font-weight: 600; color: var(--text);\">活動日時</th>\n                <th style=\"padding: 8px; text-align: left; border-bottom: 1px solid var(--border); font-weight: 600; color: var(--text);\">営業担当者</th>\n                <th style=\"padding: 8px; text-align: left; border-bottom: 1px solid var(--border); font-weight: 600; color: var(--text);\">活動タイプ</th>\n                <th style=\"padding: 8px; text-align: left; border-bottom: 1px solid var(--border); font-weight: 600; color: var(--text);\">成果</th>\n              </tr>\n            </thead>\n            <tbody id=\"extract-preview-tbody\">\n              <tr style=\"background: var(--bg-card);\">\n                <td colspan=\"4\" style=\"padding: 12px; text-align: center; color: var(--text-muted);\">ログを抽出してください</td>\n              </tr>\n            </tbody>\n          </table>\n        </div>\n\n        <div style=\"display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px;\">\n          <button class=\"action-btn secondary\" data-testid=\"back-to-step1-button\" style=\"padding: 6px 12px; font-size: 12px;\">\n            戻る\n          </button>\n          <button class=\"action-btn\" data-testid=\"proceed-to-step3-button\" style=\"padding: 6px 12px; font-size: 12px;\">\n            レポート生成へ進む\n          </button>\n        </div>\n      </div>\n    </div>\n\n    <!-- ステップ 3: レポート生成設定 -->\n    <div id=\"step-3-panel\" class=\"step-panel\" style=\"display: none;\">\n      <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 16px;\">\n        <!-- 左: 生成条件設定 -->\n        <div class=\"card\" style=\"padding: 16px;\">\n          <h2 style=\"margin: 0 0 12px 0; font-size: 14px; font-weight: 600;\">レポート生成条件</h2>\n\n          <div style=\"margin-bottom: 12px;\">\n            <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">分析対象データ範囲</label>\n            <select data-testid=\"analysis-range-select\" name=\"analysisRange\" class=\"input\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); background: var(--bg-card); border-radius: 4px; font-size: 12px;\">\n              <option value=\"\">選択してください</option>\n              <option value=\"extracted\">抽出ログ全体</option>\n              <option value=\"custom\">カスタム範囲</option>\n            </select>\n          </div>\n\n          <div style=\"margin-bottom: 12px;\">\n            <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">レポートテンプレート</label>\n            <select data-testid=\"report-template-select\" name=\"reportTemplate\" class=\"input\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); background: var(--bg-card); border-radius: 4px; font-size: 12px;\">\n              <option value=\"\">選択してください</option>\n              <option value=\"template-1\">営業活動分析レポート</option>\n              <option value=\"template-2\">成約実績レポート</option>\n              <option value=\"template-3\">行動パターン分析レポート</option>\n              <option value=\"template-4\">AIエージェント推論精度レポート</option>\n            </select>\n          </div>\n\n          <div style=\"margin-bottom: 12px;\">\n            <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">分析指標（複数選択可）</label>\n            <div style=\"border: 1px solid rgba(208, 218, 232, 0.6); border-radius: 4px; padding: 8px; background: var(--bg-card); max-height: 120px; overflow-y: auto;\">\n              <label style=\"display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 12px; cursor: pointer;\">\n                <input type=\"checkbox\" data-testid=\"metric-conversion-rate\" name=\"metrics\" value=\"conversion_rate\" style=\"accent-color: var(--primary);\" />\n                <span>成約率</span>\n              </label>\n              <label style=\"display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 12px; cursor: pointer;\">\n                <input type=\"checkbox\" data-testid=\"metric-activity-frequency\" name=\"metrics\" value=\"activity_frequency\" style=\"accent-color: var(--primary);\" />\n                <span>活動頻度</span>\n              </label>\n              <label style=\"display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 12px; cursor: pointer;\">\n                <input type=\"checkbox\" data-testid=\"metric-process-progress\" name=\"metrics\" value=\"process_progress\" style=\"accent-color: var(--primary);\" />\n                <span>プロセス進捗</span>\n              </label>\n              <label style=\"display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 12px; cursor: pointer;\">\n                <input type=\"checkbox\" data-testid=\"metric-avg-cycle\" name=\"metrics\" value=\"avg_cycle\" style=\"accent-color: var(--primary);\" />\n                <span>平均営業サイクル</span>\n              </label>\n              <label style=\"display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer;\">\n                <input type=\"checkbox\" data-testid=\"metric-behavior-pattern\" name=\"metrics\" value=\"behavior_pattern\" style=\"accent-color: var(--primary);\" />\n                <span>行動パターン分類</span>\n              </label>\n            </div>\n          </div>\n\n          <div style=\"margin-bottom: 12px;\">\n            <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500;\">レポート形式</label>\n            <select data-testid=\"report-format-select\" name=\"reportFormat\" class=\"input\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(208, 218, 232, 0.6); background: var(--bg-card); border-radius: 4px; font-size: 12px;\">\n              <option value=\"\">選択してください</option>\n              <option value=\"pdf\">PDF</option>\n              <option value=\"csv\">CSV</option>\n              <option value=\"excel\">Excel</option>\n            </select>\n          </div>\n\n          <div style=\"display: flex; gap: 8px; justify-content: flex-end;\">\n            <button class=\"action-btn secondary\" data-testid=\"back-to-step2-button\" style=\"padding: 6px 12px; font-size: 12px;\">\n              戻る\n            </button>\n            <button class=\"action-btn\" data-testid=\"generate-report-button\" style=\"padding: 6px 12px; font-size: 12px;\">\n              レポート生成\n            </button>\n          </div>\n        </div>\n\n        <!-- 右: プレビュー -->\n        <div class=\"card\" style=\"padding: 16px;\">\n          <h2 style=\"margin: 0 0 12px 0; font-size: 14px; font-weight: 600;\">生成レポートプレビュー</h2>\n          <div id=\"report-preview\" style=\"background: var(--bg-main); padding: 12px; border-radius: 4px; min-height: 300px; font-size: 12px; color: var(--text-muted); overflow-y: auto;\">\n            <p style=\"margin: 0;\">テンプレートと指標を選択するとプレビューが表示されます</p>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <!-- ステップ 4: 完了 -->\n    <div id=\"step-4-panel\" class=\"step-panel\" style=\"display: none;\">\n      <div class=\"card\" style=\"padding: 16px; text-align: center;\">\n        <div style=\"font-size: 32px; margin-bottom: 12px;\">✓</div>\n        <h2 style=\"margin: 0 0 8px 0; font-size: 16px; font-weight: 600;\">レポート生成完了</h2>\n        <p style=\"margin: 0 0 16px 0; color: var(--text-muted); font-size: 12px;\">レポートが正常に生成されました</p>\n        \n        <div style=\"background: var(--bg-main); padding: 12px; border-radius: 4px; margin-bottom: 16px; text-align: left;\">\n          <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12px;\">\n            <div>\n              <div style=\"color: var(--text-muted); margin-bottom: 2px;\">生成日時</div>\n              <div style=\"font-weight: 600;\" id=\"generated-datetime\">-</div>\n            </div>\n            <div>\n              <div style=\"color: var(--text-muted); margin-bottom: 2px;\">ファイル形式</div>\n              <div style=\"font-weight: 600;\" id=\"generated-format\">-</div>\n            </div>\n            <div>\n              <div style=\"color: var(--text-muted); margin-bottom: 2px;\">レコード数</div>\n              <div style=\"font-weight: 600;\" id=\"generated-records\">-</div>\n            </div>\n            <div>\n              <div style=\"color: var(--text-muted); margin-bottom: 2px;\">処理時間</div>\n              <div style=\"font-weight: 600;\" id=\"generated-time\">-</div>\n            </div>\n          </div>\n        </div>\n\n        <div style=\"display: flex; gap: 8px; justify-content: center;\">\n          <button class=\"action-btn\" data-testid=\"download-report-button\" style=\"padding: 8px 16px; font-size: 12px;\">\n            レポートをダウンロード\n          </button>\n          <button class=\"action-btn secondary\" data-testid=\"new-report-button\" style=\"padding: 8px 16px; font-size: 12px;\">\n            新しいレポートを生成\n          </button>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <!-- 下部: 生成履歴 -->\n  <div style=\"border-top: 1px solid var(--border); background: var(--bg-card); padding: 12px 16px; flex-shrink: 0; max-height: 200px; overflow-y: auto;\">\n    <h3 style=\"margin: 0 0 8px 0; font-size: 12px; font-weight: 600;\">最近のレポート生成履歴</h3>\n    <div id=\"report-history\" style=\"font-size: 11px;\">\n      <div style=\"color: var(--text-muted); padding: 8px 0;\">履歴がありません</div>\n    </div>\n  </div>\n</div>\n\n<!-- エラーメッセージ表示用 -->\n<div id=\"error-message\" class=\"modal-overlay\" style=\"display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0, 0, 0, 0.55); display: flex; align-items: center; justify-content: center;\">\n  <div style=\"background: var(--bg-card); color: var(--text); padding: 24px; border-radius: 8px; max-width: 400px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);\">\n    <h3 style=\"margin: 0 0 8px 0; font-size: 14px; font-weight: 600;\">エラー</h3>\n    <p id=\"error-text\" style=\"margin: 0 0 16px 0; font-size: 12px; color: var(--text-muted);\">エラーが発生しました</p>\n    <button class=\"action-btn\" data-testid=\"error-close-button\" style=\"width: 100%; padding: 8px; font-size: 12px;\">\n      閉じる\n    </button>\n  </div>\n</div>",
+      "initJs": "",
+      "method": "ai"
+    }
+  ],
+  "tableDefinitions": [
+    {
+      "tableName": "営業担当者",
+      "purpose": "営業プロセス監査・分析管理システムにおいて、営業担当者の基本情報を管理し、営業活動の記録・分析・監査の対象者を識別・追跡するためのマスタテーブル",
+      "columns": [
+        {
+          "name": "営業担当者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業担当者を一意に識別するプライマリキー"
+        },
+        {
+          "name": "氏名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "営業担当者の氏名"
+        },
+        {
+          "name": "メールアドレス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "営業担当者の連絡用メールアドレス"
+        },
+        {
+          "name": "電話番号",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "営業担当者の連絡用電話番号"
+        },
+        {
+          "name": "部門ID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業担当者が所属する部門を識別する外部キー"
+        },
+        {
+          "name": "職位",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "営業担当者の職位・役職"
+        },
+        {
+          "name": "ステータス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "営業担当者の状態(在籍/休職/退職等)"
+        },
+        {
+          "name": "入社日",
+          "type": "timestamp",
+          "required": false,
+          "description": "営業担当者の入社日"
+        },
+        {
+          "name": "退社日",
+          "type": "timestamp",
+          "required": false,
+          "description": "営業担当者の退社日"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "営業担当者レコードが作成された日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "営業担当者レコードが最後に更新された日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業担当者レコードを作成したログインユーザーの識別子"
+        },
+        {
+          "name": "更新者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業担当者レコードを最後に更新したログインユーザーの識別子"
+        }
+      ]
+    },
+    {
+      "tableName": "営業案件",
+      "purpose": "営業プロセス全体を監査・分析するため、営業案件の基本情報、進捗状況、金額、担当者、顧客情報を一元管理し、営業活動の可視化と業績追跡を実現する。",
+      "columns": [
+        {
+          "name": "案件ID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業案件を一意に識別するプライマリキー"
+        },
+        {
+          "name": "案件名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "営業案件の名称"
+        },
+        {
+          "name": "案件説明",
+          "type": "text",
+          "required": false,
+          "description": "営業案件の詳細説明"
+        },
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": true,
+          "description": "顧客テーブルへの外部キー"
+        },
+        {
+          "name": "営業担当者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業担当者テーブルへの外部キー"
+        },
+        {
+          "name": "案件ステータス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "案件の進捗状況（例：新規、進行中、提案済み、受注、失注）"
+        },
+        {
+          "name": "予想金額",
+          "type": "integer",
+          "required": true,
+          "description": "案件の予想売上金額（円）"
+        },
+        {
+          "name": "確定金額",
+          "type": "integer",
+          "required": false,
+          "description": "案件の確定売上金額（円）、受注時に記録"
+        },
+        {
+          "name": "受注確度",
+          "type": "integer",
+          "required": false,
+          "description": "受注の見込み確度（0-100%）"
+        },
+        {
+          "name": "予想受注日",
+          "type": "timestamp",
+          "required": false,
+          "description": "案件の予想受注予定日"
+        },
+        {
+          "name": "実受注日",
+          "type": "timestamp",
+          "required": false,
+          "description": "案件の実際の受注日"
+        },
+        {
+          "name": "失注理由",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "案件が失注した場合の理由"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "案件レコードの作成日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "ログインユーザーテーブルへの外部キー、案件を作成したユーザー"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "案件レコードの最終更新日時"
+        },
+        {
+          "name": "更新者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "ログインユーザーテーブルへの外部キー、案件を最後に更新したユーザー"
+        }
+      ]
+    },
+    {
+      "tableName": "営業活動",
+      "purpose": "営業担当者の日々の営業活動（訪問、電話、メール等）を記録し、営業プロセスの進捗管理と監査を実現するトランザクションテーブル",
+      "columns": [
+        {
+          "name": "営業活動ID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業活動の一意識別子"
+        },
+        {
+          "name": "営業担当者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業活動を実施した営業担当者への外部キー"
+        },
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業活動の対象顧客への外部キー"
+        },
+        {
+          "name": "営業案件ID",
+          "type": "uuid",
+          "required": false,
+          "description": "関連する営業案件への外部キー（案件に紐付く活動の場合）"
+        },
+        {
+          "name": "活動種別",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "営業活動の種類（訪問、電話、メール、提案等）"
+        },
+        {
+          "name": "活動日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "営業活動が実施された日時"
+        },
+        {
+          "name": "活動内容",
+          "type": "text",
+          "required": true,
+          "description": "営業活動の詳細内容・備考"
+        },
+        {
+          "name": "成果",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "活動の成果・結果（受注、継続検討、却下等）"
+        },
+        {
+          "name": "次回フォローアップ予定日",
+          "type": "timestamp",
+          "required": false,
+          "description": "次のフォローアップ予定日時"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "営業活動レコードが作成された日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業活動レコードを作成したログインユーザーへの外部キー"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "営業活動レコードが最後に更新された日時"
+        },
+        {
+          "name": "更新者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業活動レコードを最後に更新したログインユーザーへの外部キー"
+        }
+      ]
+    },
+    {
+      "tableName": "営業活動ログ",
+      "purpose": "営業プロセス監査・分析管理システムにおいて、営業担当者の活動履歴を記録し、営業活動の監査・分析・パフォーマンス評価を支援するトランザクションテーブル",
+      "columns": [
+        {
+          "name": "ログID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業活動ログの一意識別子"
+        },
+        {
+          "name": "営業担当者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "活動を実施した営業担当者の外部キー"
+        },
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": false,
+          "description": "活動対象の顧客の外部キー（顧客関連活動の場合）"
+        },
+        {
+          "name": "営業案件ID",
+          "type": "uuid",
+          "required": false,
+          "description": "活動に関連する営業案件の外部キー"
+        },
+        {
+          "name": "活動種別",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "活動の種類（訪問、電話、メール、提案、受注等）"
+        },
+        {
+          "name": "活動内容",
+          "type": "text",
+          "required": false,
+          "description": "活動の詳細説明"
+        },
+        {
+          "name": "活動日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "営業活動が実施された日時"
+        },
+        {
+          "name": "所要時間分",
+          "type": "integer",
+          "required": false,
+          "description": "活動に要した時間（分単位）"
+        },
+        {
+          "name": "成果フラグ",
+          "type": "boolean",
+          "required": false,
+          "description": "活動が成果に結びついたかどうか"
+        },
+        {
+          "name": "次回フォローアップ予定日",
+          "type": "timestamp",
+          "required": false,
+          "description": "次のフォローアップ予定日時"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "ログレコードが作成された日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "ログレコードが最後に更新された日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "ログを作成したユーザーの外部キー"
+        }
+      ]
+    },
+    {
+      "tableName": "成約実績",
+      "purpose": "営業案件の成約結果を記録し、営業プロセスの成果を追跡・分析するためのトランザクションテーブル",
+      "columns": [
+        {
+          "name": "成約実績ID",
+          "type": "uuid",
+          "required": true,
+          "description": "成約実績の一意識別子"
+        },
+        {
+          "name": "営業案件ID",
+          "type": "uuid",
+          "required": true,
+          "description": "関連する営業案件への外部キー"
+        },
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": true,
+          "description": "成約した顧客への外部キー"
+        },
+        {
+          "name": "営業担当者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "成約を達成した営業担当者への外部キー"
+        },
+        {
+          "name": "成約日",
+          "type": "timestamp",
+          "required": true,
+          "description": "実際の成約が確定した日時"
+        },
+        {
+          "name": "成約金額",
+          "type": "integer",
+          "required": true,
+          "description": "成約した契約金額（単位：円）"
+        },
+        {
+          "name": "成約商品名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "成約した商品またはサービスの名称"
+        },
+        {
+          "name": "契約期間開始日",
+          "type": "timestamp",
+          "required": false,
+          "description": "契約の開始日"
+        },
+        {
+          "name": "契約期間終了日",
+          "type": "timestamp",
+          "required": false,
+          "description": "契約の終了日"
+        },
+        {
+          "name": "備考",
+          "type": "text",
+          "required": false,
+          "description": "成約に関する追加情報やコメント"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "成約実績レコードが作成された日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "成約実績を登録したログインユーザーへの外部キー"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "成約実績レコードが最後に更新された日時"
+        },
+        {
+          "name": "更新者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "成約実績を最後に更新したログインユーザーへの外部キー"
+        }
+      ]
+    },
+    {
+      "tableName": "行動パターン分析結果",
+      "purpose": "営業担当者の行動パターンを分析し、営業活動の効率性や成約率との相関を記録・管理するテーブル",
+      "columns": [
+        {
+          "name": "分析結果ID",
+          "type": "uuid",
+          "required": true,
+          "description": "行動パターン分析結果の一意識別子"
+        },
+        {
+          "name": "営業担当者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "分析対象の営業担当者を特定するID"
+        },
+        {
+          "name": "分析期間開始日",
+          "type": "timestamp",
+          "required": true,
+          "description": "行動パターン分析の対象期間開始日時"
+        },
+        {
+          "name": "分析期間終了日",
+          "type": "timestamp",
+          "required": true,
+          "description": "行動パターン分析の対象期間終了日時"
+        },
+        {
+          "name": "活動件数",
+          "type": "integer",
+          "required": true,
+          "description": "分析期間内の営業活動総件数"
+        },
+        {
+          "name": "成約件数",
+          "type": "integer",
+          "required": true,
+          "description": "分析期間内の成約実績件数"
+        },
+        {
+          "name": "成約率",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "活動件数に対する成約率をパーセンテージで記録"
+        },
+        {
+          "name": "平均活動間隔日数",
+          "type": "integer",
+          "required": false,
+          "description": "営業活動の平均実施間隔を日数で記録"
+        },
+        {
+          "name": "主要活動タイプ",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "分析期間内で最も頻繁に実施された営業活動タイプ"
+        },
+        {
+          "name": "パターン分類",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "行動パターンの分類結果（積極型、安定型、改善型など）"
+        },
+        {
+          "name": "分析コメント",
+          "type": "text",
+          "required": false,
+          "description": "行動パターン分析の詳細所見やコメント"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "分析結果レコードの作成日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "分析結果レコードの最終更新日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "分析結果を作成したログインユーザーのID"
+        }
+      ]
+    },
+    {
+      "tableName": "AIエージェント推論ログ",
+      "purpose": "AIエージェントの推論実行履歴を記録し、意思決定プロセス、入力データ、出力結果、パフォーマンスメトリクスを監査・分析するための詳細ログテーブル",
+      "columns": [
+        {
+          "name": "推論ログID",
+          "type": "uuid",
+          "required": true,
+          "description": "推論ログの一意識別子"
+        },
+        {
+          "name": "AIエージェント名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "推論を実行したAIエージェントの名称"
+        },
+        {
+          "name": "推論タイプ",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "推論の種類（営業予測、顧客分析、案件評価等）"
+        },
+        {
+          "name": "営業案件ID",
+          "type": "uuid",
+          "required": false,
+          "description": "関連する営業案件の識別子"
+        },
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": false,
+          "description": "関連する顧客の識別子"
+        },
+        {
+          "name": "営業担当者ID",
+          "type": "uuid",
+          "required": false,
+          "description": "関連する営業担当者の識別子"
+        },
+        {
+          "name": "入力パラメータ",
+          "type": "text",
+          "required": true,
+          "description": "推論に使用された入力データ・パラメータの詳細"
+        },
+        {
+          "name": "推論結果",
+          "type": "text",
+          "required": true,
+          "description": "AIエージェントが出力した推論結果・判定内容"
+        },
+        {
+          "name": "信頼度スコア",
+          "type": "integer",
+          "required": false,
+          "description": "推論結果の信頼度を0-100で表すスコア"
+        },
+        {
+          "name": "推奨アクション",
+          "type": "text",
+          "required": false,
+          "description": "推論に基づいて提案された営業アクション"
+        },
+        {
+          "name": "実行時間ミリ秒",
+          "type": "integer",
+          "required": false,
+          "description": "推論処理の実行時間（ミリ秒）"
+        },
+        {
+          "name": "ステータス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "推論実行のステータス（成功、失敗、部分的成功等）"
+        },
+        {
+          "name": "エラーメッセージ",
+          "type": "text",
+          "required": false,
+          "description": "推論実行時に発生したエラーの詳細"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "推論ログが記録された日時"
+        },
+        {
+          "name": "作成者",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "推論を実行したシステムまたはユーザー"
+        }
+      ]
+    },
+    {
+      "tableName": "AIエージェント推論精度監視",
+      "purpose": "AIエージェントの推論結果の精度を監視・追跡し、推論ログとの紐付けにより精度改善を支援するための監視テーブル",
+      "columns": [
+        {
+          "name": "監視ID",
+          "type": "uuid",
+          "required": true,
+          "description": "AIエージェント推論精度監視レコードの一意識別子"
+        },
+        {
+          "name": "推論ログID",
+          "type": "uuid",
+          "required": true,
+          "description": "AIエージェント推論ログテーブルへの外部キー参照"
+        },
+        {
+          "name": "営業案件ID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業案件テーブルへの外部キー参照"
+        },
+        {
+          "name": "推論タイプ",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "推論の種類（例：成約確度予測、次アクション推奨、顧客セグメント分類）"
+        },
+        {
+          "name": "推論結果",
+          "type": "text",
+          "required": true,
+          "description": "AIエージェントが出力した推論結果の内容"
+        },
+        {
+          "name": "実績値",
+          "type": "text",
+          "required": false,
+          "description": "実際に発生した結果・実績値（検証用）"
+        },
+        {
+          "name": "精度スコア",
+          "type": "integer",
+          "required": false,
+          "description": "推論結果と実績値の一致度を0-100で表したスコア"
+        },
+        {
+          "name": "精度判定",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "精度評価の判定結果（例：正確、許容範囲、不正確）"
+        },
+        {
+          "name": "検証状態",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "検証の進行状況（例：未検証、検証中、検証完了）"
+        },
+        {
+          "name": "検証者ID",
+          "type": "uuid",
+          "required": false,
+          "description": "ログインユーザーテーブルへの外部キー参照（検証を実施したユーザー）"
+        },
+        {
+          "name": "検証日時",
+          "type": "timestamp",
+          "required": false,
+          "description": "推論結果の検証が完了した日時"
+        },
+        {
+          "name": "改善提案",
+          "type": "text",
+          "required": false,
+          "description": "精度向上のための改善提案やコメント"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "監視レコードが作成された日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "監視レコードが最後に更新された日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "ログインユーザーテーブルへの外部キー参照（レコード作成者）"
+        }
+      ]
+    },
+    {
+      "tableName": "アラート設定",
+      "purpose": "営業プロセス監査・分析管理システムにおいて、ユーザーが監視対象となるKPI・異常値・営業活動の閾値を定義し、条件に基づいて自動的にアラートを生成・通知するための設定を一元管理する。",
+      "columns": [
+        {
+          "name": "アラート設定ID",
+          "type": "uuid",
+          "required": true,
+          "description": "アラート設定を一意に識別するプライマリキー"
+        },
+        {
+          "name": "設定名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "アラート設定の名称（例：案件進捗停滞、売上目標未達）"
+        },
+        {
+          "name": "説明",
+          "type": "text",
+          "required": false,
+          "description": "アラート設定の詳細説明"
+        },
+        {
+          "name": "監視対象タイプ",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "監視対象の種類（例：営業案件、営業活動、成約実績、行動パターン）"
+        },
+        {
+          "name": "条件フィールド",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "監視対象となるフィールド名（例：案件ステータス、活動日数、成約率）"
+        },
+        {
+          "name": "条件演算子",
+          "type": "varchar(50)",
+          "required": true,
+          "description": "比較演算子（例：等しい、より大きい、より小さい、含む、含まない）"
+        },
+        {
+          "name": "条件値",
+          "type": "text",
+          "required": true,
+          "description": "条件の比較値（例：停滞、30、0.8）"
+        },
+        {
+          "name": "追加フィルタ条件",
+          "type": "text",
+          "required": false,
+          "description": "複合条件が必要な場合の追加フィルタ条件（JSON形式で保存）"
+        },
+        {
+          "name": "アラート重要度",
+          "type": "varchar(50)",
+          "required": true,
+          "description": "アラートの重要度レベル（例：高、中、低）"
+        },
+        {
+          "name": "通知先ユーザーID",
+          "type": "uuid",
+          "required": true,
+          "description": "アラート通知を受け取るユーザーのID（ログインユーザーテーブルへの外部キー）"
+        },
+        {
+          "name": "通知方法",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "通知方法（例：メール、システム内通知、SMS）"
+        },
+        {
+          "name": "有効フラグ",
+          "type": "boolean",
+          "required": true,
+          "description": "アラート設定が有効かどうか"
+        },
+        {
+          "name": "実行頻度",
+          "type": "varchar(50)",
+          "required": true,
+          "description": "アラート監視の実行頻度（例：リアルタイム、毎日、毎週）"
+        },
+        {
+          "name": "最終トリガー日時",
+          "type": "timestamp",
+          "required": false,
+          "description": "このアラート設定が最後にトリガーされた日時"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "アラート設定が作成された日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "アラート設定を作成したユーザーのID"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "アラート設定が最後に更新された日時"
+        },
+        {
+          "name": "更新者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "アラート設定を最後に更新したユーザーのID"
+        }
+      ]
+    },
+    {
+      "tableName": "アラート履歴",
+      "purpose": "営業プロセス監査・分析管理システムにおいて、アラート設定に基づいて発生したアラートイベントの履歴を記録し、アラート発生の時系列追跡、原因分析、対応状況の管理を実現する。",
+      "columns": [
+        {
+          "name": "アラート履歴ID",
+          "type": "uuid",
+          "required": true,
+          "description": "アラート履歴レコードの一意識別子"
+        },
+        {
+          "name": "アラート設定ID",
+          "type": "uuid",
+          "required": true,
+          "description": "このアラートが基づくアラート設定への外部キー参照"
+        },
+        {
+          "name": "営業担当者ID",
+          "type": "uuid",
+          "required": false,
+          "description": "アラート対象の営業担当者ID（該当する場合）"
+        },
+        {
+          "name": "営業案件ID",
+          "type": "uuid",
+          "required": false,
+          "description": "アラート対象の営業案件ID（該当する場合）"
+        },
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": false,
+          "description": "アラート対象の顧客ID（該当する場合）"
+        },
+        {
+          "name": "アラートレベル",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "アラートの重要度レベル（例：INFO、WARNING、CRITICAL）"
+        },
+        {
+          "name": "アラートタイプ",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "アラートの種類（例：営業活動遅延、成約率低下、異常行動検知）"
+        },
+        {
+          "name": "アラートメッセージ",
+          "type": "text",
+          "required": true,
+          "description": "アラートの詳細メッセージ内容"
+        },
+        {
+          "name": "トリガー条件",
+          "type": "text",
+          "required": false,
+          "description": "アラートをトリガーした具体的な条件値や閾値"
+        },
+        {
+          "name": "発生日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "アラートが発生した日時"
+        },
+        {
+          "name": "ステータス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "アラートの状態（例：未対応、対応中、解決済み、無視）"
+        },
+        {
+          "name": "対応者ID",
+          "type": "uuid",
+          "required": false,
+          "description": "アラートに対応したログインユーザーID"
+        },
+        {
+          "name": "対応日時",
+          "type": "timestamp",
+          "required": false,
+          "description": "アラートに対応した日時"
+        },
+        {
+          "name": "対応コメント",
+          "type": "text",
+          "required": false,
+          "description": "対応時に記録されたコメント"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "レコード作成日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "レコード最終更新日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "レコードを作成したシステムまたはユーザーID"
+        }
+      ]
+    },
+    {
+      "tableName": "営業プロセス定義",
+      "purpose": "営業プロセスの標準フロー、ステージ、遷移ルール、KPI基準を一元管理し、営業活動の監査・分析の基準となるマスタデータを提供する",
+      "columns": [
+        {
+          "name": "プロセス定義ID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業プロセス定義の一意識別子"
+        },
+        {
+          "name": "プロセス名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "営業プロセスの名称（例：新規営業フロー、既存顧客拡大フロー）"
+        },
+        {
+          "name": "プロセス説明",
+          "type": "text",
+          "required": false,
+          "description": "営業プロセスの詳細説明と目的"
+        },
+        {
+          "name": "ステージ数",
+          "type": "integer",
+          "required": true,
+          "description": "このプロセスに含まれるステージの総数"
+        },
+        {
+          "name": "標準期間日数",
+          "type": "integer",
+          "required": false,
+          "description": "プロセス完了までの標準期間（日数）"
+        },
+        {
+          "name": "目標成約率",
+          "type": "integer",
+          "required": false,
+          "description": "このプロセスの目標成約率（パーセンテージ）"
+        },
+        {
+          "name": "必須活動タイプ",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "プロセス中に必須となる営業活動タイプ（複数の場合は別テーブルで管理）"
+        },
+        {
+          "name": "ステータス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "プロセス定義のステータス（有効/無効/廃止予定）"
+        },
+        {
+          "name": "適用開始日",
+          "type": "timestamp",
+          "required": true,
+          "description": "このプロセス定義の適用開始日時"
+        },
+        {
+          "name": "適用終了日",
+          "type": "timestamp",
+          "required": false,
+          "description": "このプロセス定義の適用終了日時（廃止時に設定）"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "プロセス定義の作成日時"
+        },
+        {
+          "name": "作成者",
+          "type": "uuid",
+          "required": true,
+          "description": "プロセス定義を作成したユーザーID"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "プロセス定義の最終更新日時"
+        },
+        {
+          "name": "更新者",
+          "type": "uuid",
+          "required": true,
+          "description": "プロセス定義を最後に更新したユーザーID"
+        }
+      ]
+    },
+    {
+      "tableName": "営業プロセス実行状況",
+      "purpose": "営業案件ごとの営業プロセス定義に基づいた実行進捗を追跡・管理し、各プロセスステップの完了状況、遅延検知、AIエージェント推論との連携を記録するトランザクションテーブル",
+      "columns": [
+        {
+          "name": "営業プロセス実行状況ID",
+          "type": "uuid",
+          "required": true,
+          "description": "営業プロセス実行状況の一意識別子"
+        },
+        {
+          "name": "営業案件ID",
+          "type": "uuid",
+          "required": true,
+          "description": "関連する営業案件の外部キー"
+        },
+        {
+          "name": "営業プロセス定義ID",
+          "type": "uuid",
+          "required": true,
+          "description": "適用される営業プロセス定義の外部キー"
+        },
+        {
+          "name": "現在のステップ番号",
+          "type": "integer",
+          "required": true,
+          "description": "プロセス定義内の現在実行中のステップ番号"
+        },
+        {
+          "name": "ステップ名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "現在のステップの名称"
+        },
+        {
+          "name": "ステップ開始日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "現在のステップが開始された日時"
+        },
+        {
+          "name": "ステップ予定完了日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "プロセス定義に基づくステップの予定完了日時"
+        },
+        {
+          "name": "ステップ実績完了日時",
+          "type": "timestamp",
+          "required": false,
+          "description": "ステップが実際に完了した日時、未完了の場合はNULL"
+        },
+        {
+          "name": "ステップ実行状態",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ステップの状態：未開始、進行中、完了、遅延、スキップ"
+        },
+        {
+          "name": "遅延フラグ",
+          "type": "boolean",
+          "required": true,
+          "description": "予定完了日時を超過しているかを示すフラグ"
+        },
+        {
+          "name": "遅延日数",
+          "type": "integer",
+          "required": false,
+          "description": "予定完了日時からの遅延日数、遅延がない場合はNULL"
+        },
+        {
+          "name": "担当営業ID",
+          "type": "uuid",
+          "required": true,
+          "description": "このステップを実行する営業担当者の外部キー"
+        },
+        {
+          "name": "AIエージェント推論ログID",
+          "type": "uuid",
+          "required": false,
+          "description": "関連するAIエージェント推論ログの外部キー、推論が実行された場合のみ"
+        },
+        {
+          "name": "推奨アクション",
+          "type": "text",
+          "required": false,
+          "description": "AIエージェントから提示された推奨アクション内容"
+        },
+        {
+          "name": "推奨アクション実施状況",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "推奨アクションの実施状況：未実施、実施中、完了、却下"
+        },
+        {
+          "name": "プロセス全体進捗率",
+          "type": "integer",
+          "required": true,
+          "description": "営業案件全体のプロセス進捗率（0-100）"
+        },
+        {
+          "name": "備考",
+          "type": "text",
+          "required": false,
+          "description": "ステップ実行に関する補足情報や特記事項"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "レコード作成日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "レコード最終更新日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "レコード作成者のログインユーザーID"
+        },
+        {
+          "name": "更新者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "レコード最終更新者のログインユーザーID"
+        }
+      ]
+    },
+    {
+      "tableName": "レポート生成履歴",
+      "purpose": "営業プロセス監査・分析管理システムにおいて生成されたレポートの履歴を記録し、レポート生成の実行状況、パラメータ、結果を追跡管理するための履歴テーブル",
+      "columns": [
+        {
+          "name": "レポート生成履歴ID",
+          "type": "uuid",
+          "required": true,
+          "description": "レポート生成履歴の一意識別子"
+        },
+        {
+          "name": "レポート種別",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "生成されたレポートの種別（営業活動分析、成約実績、行動パターン分析、AIエージェント推論精度等）"
+        },
+        {
+          "name": "生成ユーザーID",
+          "type": "uuid",
+          "required": true,
+          "description": "レポート生成を実行したログインユーザーの識別子"
+        },
+        {
+          "name": "対象営業担当者ID",
+          "type": "uuid",
+          "required": false,
+          "description": "レポートの対象となる営業担当者の識別子（全体レポートの場合はNULL）"
+        },
+        {
+          "name": "対象顧客ID",
+          "type": "uuid",
+          "required": false,
+          "description": "レポートの対象となる顧客の識別子（該当する場合）"
+        },
+        {
+          "name": "対象営業案件ID",
+          "type": "uuid",
+          "required": false,
+          "description": "レポートの対象となる営業案件の識別子（該当する場合）"
+        },
+        {
+          "name": "集計期間開始日",
+          "type": "timestamp",
+          "required": false,
+          "description": "レポート集計対象期間の開始日時"
+        },
+        {
+          "name": "集計期間終了日",
+          "type": "timestamp",
+          "required": false,
+          "description": "レポート集計対象期間の終了日時"
+        },
+        {
+          "name": "フィルタ条件",
+          "type": "text",
+          "required": false,
+          "description": "レポート生成時に適用されたフィルタ条件の詳細"
+        },
+        {
+          "name": "生成ステータス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "レポート生成の状態（成功、失敗、処理中等）"
+        },
+        {
+          "name": "生成結果ファイルパス",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "生成されたレポートファイルの保存パスまたはURL"
+        },
+        {
+          "name": "生成結果レコード数",
+          "type": "integer",
+          "required": false,
+          "description": "レポートに含まれるデータレコード数"
+        },
+        {
+          "name": "エラーメッセージ",
+          "type": "text",
+          "required": false,
+          "description": "レポート生成失敗時のエラーメッセージ"
+        },
+        {
+          "name": "処理実行時間秒",
+          "type": "integer",
+          "required": false,
+          "description": "レポート生成処理の実行時間（秒単位）"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "レポート生成履歴レコードの作成日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "レポート生成履歴レコードの最終更新日時"
+        }
+      ]
+    },
+    {
+      "tableName": "ダッシュボード設定",
+      "purpose": "ログインユーザーごとのダッシュボード表示設定を管理し、ウィジェット配置、表示項目、フィルター条件などをユーザーの好みに応じてカスタマイズできる機能を提供する",
+      "columns": [
+        {
+          "name": "ダッシュボード設定ID",
+          "type": "uuid",
+          "required": true,
+          "description": "ダッシュボード設定の一意識別子"
+        },
+        {
+          "name": "ログインユーザーID",
+          "type": "uuid",
+          "required": true,
+          "description": "設定を所有するログインユーザーの外部キー"
+        },
+        {
+          "name": "設定名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ダッシュボード設定の名称（例：営業マネージャー用、個人営業用）"
+        },
+        {
+          "name": "説明",
+          "type": "text",
+          "required": false,
+          "description": "ダッシュボード設定の詳細説明"
+        },
+        {
+          "name": "デフォルト設定フラグ",
+          "type": "boolean",
+          "required": true,
+          "description": "ユーザーがログイン時に最初に表示するデフォルト設定かどうか"
+        },
+        {
+          "name": "レイアウトタイプ",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ダッシュボードのレイアウト形式（例：2カラム、3カラム、カスタム）"
+        },
+        {
+          "name": "表示期間",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "デフォルト表示期間（例：本日、今週、今月、カスタム）"
+        },
+        {
+          "name": "自動更新間隔秒",
+          "type": "integer",
+          "required": false,
+          "description": "ダッシュボードの自動更新間隔（秒単位、0で無効）"
+        },
+        {
+          "name": "有効フラグ",
+          "type": "boolean",
+          "required": true,
+          "description": "この設定が有効かどうか"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "ダッシュボード設定の作成日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "ダッシュボード設定の最終更新日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "ダッシュボード設定を作成したユーザーID"
+        }
+      ]
+    }
+  ],
+  "presetSeedData": {
+    "営業担当者": [
+      {
+        "営業担当者ID": "rec-001",
+        "氏名": "山田太郎",
+        "メールアドレス": "yamada.taro@company.jp",
+        "電話番号": "090-1234-5678",
+        "部門ID": "rec-dept-001",
+        "職位": "営業課長",
+        "ステータス": "在籍",
+        "入社日": "2018-04-01T00:00:00Z",
+        "退社日": null,
+        "作成日時": "2024-01-15T09:30:00Z",
+        "更新日時": "2025-01-10T14:45:00Z",
+        "作成者ID": "rec-user-001",
+        "更新者ID": "rec-user-002"
+      },
+      {
+        "営業担当者ID": "rec-001",
+        "氏名": "鈴木健太",
+        "メールアドレス": "suzuki.kenta@company.co.jp",
+        "電話番号": "090-1234-5678",
+        "部門ID": "rec-dept-001",
+        "職位": "営業職",
+        "ステータス": "在籍",
+        "入社日": "2022-04-01T09:00:00Z",
+        "退社日": null,
+        "作成日時": "2024-01-15T10:30:00Z",
+        "更新日時": "2024-12-20T14:45:00Z",
+        "作成者ID": "rec-user-001",
+        "更新者ID": "rec-user-002"
+      },
+      {
+        "営業担当者ID": "rec-001",
+        "氏名": "山田健一",
+        "メールアドレス": "yamada.kenichi@company.jp",
+        "電話番号": "090-1234-5678",
+        "部門ID": "rec-dept-001",
+        "職位": "部長",
+        "ステータス": "在籍",
+        "入社日": "2015-04-01T09:00:00Z",
+        "退社日": null,
+        "作成日時": "2024-01-15T10:30:00Z",
+        "更新日時": "2025-01-10T14:45:00Z",
+        "作成者ID": "rec-user-admin-001",
+        "更新者ID": "rec-user-admin-002"
+      },
+      {
+        "営業担当者ID": "rec-001",
+        "氏名": "佐藤美咲",
+        "メールアドレス": "misaki.sato@company.jp",
+        "電話番号": "09012345678",
+        "部門ID": "rec-dept-003",
+        "職位": "営業課長",
+        "ステータス": "休職",
+        "入社日": "2018-04-01T00:00:00Z",
+        "退社日": null,
+        "作成日時": "2024-01-15T10:30:00Z",
+        "更新日時": "2024-10-01T14:22:00Z",
+        "作成者ID": "rec-user-admin-001",
+        "更新者ID": "rec-user-hr-002"
+      },
+      {
+        "営業担当者ID": "rec-001",
+        "氏名": "鈴木健太",
+        "メールアドレス": "suzuki.kenta@example.com",
+        "電話番号": "090-1234-5678",
+        "部門ID": "rec-dept-003",
+        "職位": "営業課長",
+        "ステータス": "退職",
+        "入社日": "2019-04-01T09:00:00Z",
+        "退社日": "2024-10-31T17:00:00Z",
+        "作成日時": "2019-04-01T10:30:00Z",
+        "更新日時": "2024-10-31T18:45:00Z",
+        "作成者ID": "rec-user-admin-001",
+        "更新者ID": "rec-user-hr-002"
+      },
+      {
+        "営業担当者ID": "rec-001",
+        "氏名": "佐藤健一",
+        "メールアドレス": "satoh.kenichi@company.co.jp",
+        "電話番号": "09012345678",
+        "部門ID": "rec-dept-003",
+        "職位": "営業アシスタント",
+        "ステータス": "在籍",
+        "入社日": "2025-01-06T09:00:00Z",
+        "退社日": null,
+        "作成日時": "2025-01-06T10:30:00Z",
+        "更新日時": "2025-01-06T10:30:00Z",
+        "作成者ID": "rec-user-admin-001",
+        "更新者ID": "rec-user-admin-001"
+      },
+      {
+        "営業担当者ID": "rec-001",
+        "氏名": "佐藤健一",
+        "メールアドレス": "sato.kenichi@company.jp",
+        "電話番号": "090-1234-5678",
+        "部門ID": "rec-dept-003",
+        "職位": "営業課長",
+        "ステータス": "在籍",
+        "入社日": "2024-04-01T09:00:00Z",
+        "退社日": null,
+        "作成日時": "2024-03-28T14:30:00Z",
+        "更新日時": "2024-04-01T09:00:00Z",
+        "作成者ID": "rec-user-admin-001",
+        "更新者ID": "rec-user-admin-001"
+      },
+      {
+        "営業担当者ID": "rec-001",
+        "氏名": "山田健一",
+        "メールアドレス": "yamada.kenichi@company.jp",
+        "電話番号": "090-1234-5678",
+        "部門ID": "rec-dept-003",
+        "職位": "営業部長",
+        "ステータス": "在籍",
+        "入社日": "2019-04-01T09:00:00Z",
+        "退社日": null,
+        "作成日時": "2019-04-01T10:30:00Z",
+        "更新日時": "2024-07-15T14:20:00Z",
+        "作成者ID": "rec-user-admin-001",
+        "更新者ID": "rec-user-hr-002"
+      },
+      {
+        "営業担当者ID": "rec-00145",
+        "氏名": "佐藤美咲",
+        "メールアドレス": "sato.misaki@company.jp",
+        "電話番号": "090-1234-5678",
+        "部門ID": "rec-00012",
+        "職位": "営業課長",
+        "ステータス": "休職",
+        "入社日": "2018-04-01T09:00:00Z",
+        "退社日": null,
+        "作成日時": "2024-01-15T10:30:00Z",
+        "更新日時": "2024-11-20T14:45:00Z",
+        "作成者ID": "rec-00001",
+        "更新者ID": "rec-00008"
+      },
+      {
+        "営業担当者ID": "rec-001",
+        "氏名": "山田太郎",
+        "メールアドレス": "yamada.taro@company.jp",
+        "電話番号": "090-1234-5678",
+        "部門ID": "rec-dept-003",
+        "職位": "営業部長",
+        "ステータス": "休職",
+        "入社日": "2015-04-01T09:00:00Z",
+        "退社日": "2025-03-31T23:59:59Z",
+        "作成日時": "2015-04-01T10:30:00Z",
+        "更新日時": "2025-01-15T14:20:00Z",
+        "作成者ID": "rec-user-admin-001",
+        "更新者ID": "rec-user-admin-002"
+      }
+    ],
+    "営業案件": [
+      {
+        "案件ID": "rec-001",
+        "案件名": "トヨタ自動車豊田工場 製造実績管理システム導入",
+        "案件説明": "トヨタ自動車豊田工場における生産管理・実績管理の統合システム導入案件。既存の複数システムを統合し、リアルタイムの生産データ可視化と分析機能を実装。導入規模は全5工場、ユーザー数約2,000名。",
+        "顧客ID": "rec-cust-0847",
+        "営業担当者ID": "rec-sales-0123",
+        "案件ステータス": "進行中",
+        "予想金額": 85000000,
+        "確定金額": null,
+        "受注確度": 75,
+        "予想受注日": "2025-03-15T00:00:00Z",
+        "実受注日": null,
+        "失注理由": null,
+        "作成日時": "2024-06-20T09:30:00Z",
+        "作成者ID": "rec-user-0456",
+        "更新日時": "2025-01-22T14:45:00Z",
+        "更新者ID": "rec-user-0123"
+      },
+      {
+        "案件ID": "rec-001",
+        "案件名": "山田物流センター 自動仕分けシステム導入",
+        "案件説明": "既存顧客の山田物流センターより、現在稼働中の入出荷管理システムの拡張として、自動仕分けシステムの導入依頼。対応エリアを東日本に拡大するための追加投資。",
+        "顧客ID": "cust-0847",
+        "営業担当者ID": "user-0312",
+        "案件ステータス": "提案済み",
+        "予想金額": 8500000,
+        "確定金額": null,
+        "受注確度": 85,
+        "予想受注日": "2025-02-28T00:00:00Z",
+        "実受注日": null,
+        "失注理由": null,
+        "作成日時": "2024-12-10T09:30:00Z",
+        "作成者ID": "user-0312",
+        "更新日時": "2025-01-15T14:20:00Z",
+        "更新者ID": "user-0312"
+      },
+      {
+        "案件ID": "rec-20250115-001",
+        "案件名": "△△製造株式会社 生産管理システム導入案件",
+        "案件説明": "△△製造株式会社の既存生産管理システムの老朽化に伴う刷新案件。現在のシステムは15年前の導入で、保守費用が年間800万円に達している。新システムの導入により、年間500万円のコスト削減と生産効率20%向上を見込んでいる。ただし、競合他社（A社、B社）も同時に提案中であり、価格競争が激化している。顧客の予算枠は3,500万円に固定されており、我社の提案金額3,800万円は予算超過状態。",
+        "顧客ID": "rec-cust-0847",
+        "営業担当者ID": "rec-user-0312",
+        "案件ステータス": "提案済み",
+        "予想金額": 3800000,
+        "確定金額": null,
+        "受注確度": 25,
+        "予想受注日": "2025-03-15T00:00:00Z",
+        "実受注日": null,
+        "失注理由": null,
+        "作成日時": "2024-11-20T10:30:00Z",
+        "作成者ID": "rec-user-0312",
+        "更新日時": "2025-01-15T14:45:00Z",
+        "更新者ID": "rec-user-0312"
+      },
+      {
+        "案件ID": "rec-001",
+        "案件名": "販売管理システム導入プロジェクト",
+        "案件説明": "株式会社ユーテックの既存販売管理業務のデジタル化。現在のExcel管理から統合ERP導入により、営業効率化と売上予測精度向上を実現。導入期間は3ヶ月を予定。",
+        "顧客ID": "rec-cust-042",
+        "営業担当者ID": "rec-sales-015",
+        "案件ステータス": "提案済み",
+        "予想金額": 2800000,
+        "確定金額": null,
+        "受注確度": 75,
+        "予想受注日": "2025-02-28T00:00:00Z",
+        "実受注日": null,
+        "失注理由": null,
+        "作成日時": "2024-11-15T09:30:00Z",
+        "作成者ID": "rec-user-008",
+        "更新日時": "2025-01-22T14:15:00Z",
+        "更新者ID": "rec-user-015"
+      },
+      {
+        "案件ID": "rec-001",
+        "案件名": "〇〇株式会社 勤務表管理システム導入",
+        "案件説明": "既存の紙ベースの勤務表管理をクラウドシステムに移行。従業員50名規模の小規模企業向けの導入案件。基本機能のカスタマイズと3ヶ月のサポート付き。",
+        "顧客ID": "rec-cust-042",
+        "営業担当者ID": "rec-sales-015",
+        "案件ステータス": "受注",
+        "予想金額": 980000,
+        "確定金額": 950000,
+        "受注確度": 100,
+        "予想受注日": "2025-01-31T00:00:00Z",
+        "実受注日": "2025-01-28T10:30:00Z",
+        "失注理由": null,
+        "作成日時": "2024-11-15T09:15:00Z",
+        "作成者ID": "rec-user-008",
+        "更新日時": "2025-01-28T11:45:00Z",
+        "更新者ID": "rec-user-008"
+      },
+      {
+        "案件ID": "rec-001",
+        "案件名": "XX物流システム導入プロジェクト",
+        "案件説明": "既存の倉庫管理システムをクラウドベースの最新システムに置き換え、在庫管理と出荷プロセスの自動化を実現する。導入期間は3ヶ月を予定。",
+        "顧客ID": "rec-cust-042",
+        "営業担当者ID": "rec-user-015",
+        "案件ステータス": "失注",
+        "予想金額": 4500000,
+        "確定金額": null,
+        "受注確度": 85,
+        "予想受注日": "2024-11-30T00:00:00Z",
+        "実受注日": null,
+        "失注理由": "顧客の経営方針変更により、システム導入予算を来年度に延期することになったため",
+        "作成日時": "2024-09-15T10:30:00Z",
+        "作成者ID": "rec-user-015",
+        "更新日時": "2024-11-25T14:45:00Z",
+        "更新者ID": "rec-user-015"
+      },
+      {
+        "案件ID": "rec-001",
+        "案件名": "株式会社ビジネスソリューション向け基幹システム導入",
+        "案件説明": "既存レガシーシステムからクラウドベースの統合基幹システムへの移行。在庫管理、会計、営業管理機能を含む。導入期間は6ヶ月を予定。",
+        "顧客ID": "rec-cust-0847",
+        "営業担当者ID": "rec-staff-0329",
+        "案件ステータス": "進行中",
+        "予想金額": 8500000,
+        "確定金額": null,
+        "受注確度": 75,
+        "予想受注日": "2025-03-15T00:00:00Z",
+        "実受注日": null,
+        "失注理由": null,
+        "作成日時": "2024-11-20T10:30:00Z",
+        "作成者ID": "rec-user-0156",
+        "更新日時": "2025-01-16T14:45:00Z",
+        "更新者ID": "rec-user-0329"
+      },
+      {
+        "案件ID": "rec-001",
+        "案件名": "ABC物流システム基幹システム導入プロジェクト",
+        "案件説明": "既存の老朽化した物流管理システムを最新のクラウド基盤システムに移行するプロジェクト。在庫管理、配送管理、請求管理の統合を予定。",
+        "顧客ID": "rec-cust-0847",
+        "営業担当者ID": "rec-user-0523",
+        "案件ステータス": "進行中",
+        "予想金額": 8500000,
+        "確定金額": null,
+        "受注確度": 65,
+        "予想受注日": "2024-09-30T00:00:00Z",
+        "実受注日": null,
+        "失注理由": null,
+        "作成日時": "2024-05-15T10:30:00Z",
+        "作成者ID": "rec-user-0523",
+        "更新日時": "2025-01-22T14:45:00Z",
+        "更新者ID": "rec-user-0523"
+      },
+      {
+        "案件ID": "rec-001",
+        "案件名": "株式会社山田製造所 生産管理システム導入",
+        "案件説明": "既存の生産管理業務の効率化を目的とした統合生産管理システムの導入。現地ヒアリング完了、要件定義書承認済み。2025年1月中の契約締結予定。",
+        "顧客ID": "cust-047",
+        "営業担当者ID": "staff-012",
+        "案件ステータス": "提案済み",
+        "予想金額": 4500000,
+        "確定金額": null,
+        "受注確度": 100,
+        "予想受注日": "2025-01-24T09:00:00",
+        "実受注日": null,
+        "失注理由": null,
+        "作成日時": "2024-11-15T14:30:00",
+        "作成者ID": "user-089",
+        "更新日時": "2025-01-20T16:45:00",
+        "更新者ID": "user-089"
+      },
+      {
+        "案件ID": "rec-001",
+        "案件名": "ABC製造株式会社 生産管理システム導入",
+        "案件説明": "ABC製造株式会社の既存生産管理システムの老朽化に伴う新システムの導入提案。現在のレガシーシステムから最新のクラウドベースのシステムへの移行を検討中。",
+        "顧客ID": "rec-cust-042",
+        "営業担当者ID": "rec-user-015",
+        "案件ステータス": "失注",
+        "予想金額": 4500000,
+        "確定金額": null,
+        "受注確度": 0,
+        "予想受注日": "2024-06-30T00:00:00Z",
+        "実受注日": null,
+        "失注理由": "予算承認が得られず。顧客の経営方針変更により今年度の大型投資を凍結することになった。",
+        "作成日時": "2024-04-15T09:30:00Z",
+        "作成者ID": "rec-user-015",
+        "更新日時": "2024-05-22T14:15:00Z",
+        "更新者ID": "rec-user-015"
+      }
+    ],
+    "営業活動": [
+      {
+        "営業活動ID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-0847",
+        "顧客ID": "rec-cust-2301",
+        "営業案件ID": null,
+        "活動種別": "訪問",
+        "活動日時": "2025-01-15 10:30:00",
+        "活動内容": "株式会社フューチャーシステムズ様への初回訪問。経営企画部長・鈴木健一様にお会いし、当社のクラウドERP導入実績およびサポート体制について企業紹介を実施。同社は現在基幹システムの老朽化により刷新を検討中との情報を得た。製造業向けの導入事例資料を提供し、次回詳細なデモンストレーション実施の了承を得た。",
+        "成果": "継続検討",
+        "次回フォローアップ予定日": "2025-01-29 14:00:00",
+        "作成日時": "2025-01-15 16:45:00",
+        "作成者ID": "rec-user-0847",
+        "更新日時": "2025-01-15 16:45:00",
+        "更新者ID": "rec-user-0847"
+      },
+      {
+        "営業活動ID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-0847",
+        "顧客ID": "rec-cust-2156",
+        "営業案件ID": null,
+        "活動種別": "電話",
+        "活動日時": "2025-01-15 14:30:00",
+        "活動内容": "既存顧客・株式会社サンテック様への定期フォローアップ。前月納品したシステムの運用状況確認。特に問題なく稼働中とのこと。Q1の追加機能要望をヒアリング。在庫管理モジュールの改善希望あり。次月の打ち合わせを提案し了承を得た。",
+        "成果": "継続検討",
+        "次回フォローアップ予定日": "2025-02-19 10:00:00",
+        "作成日時": "2025-01-15 15:05:00",
+        "作成者ID": "rec-user-0847",
+        "更新日時": "2025-01-15 15:05:00",
+        "更新者ID": "rec-user-0847"
+      },
+      {
+        "営業活動ID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-0847",
+        "顧客ID": "rec-cust-2156",
+        "営業案件ID": "rec-proj-0512",
+        "活動種別": "メール",
+        "活動日時": "2025-01-15 09:30:00",
+        "活動内容": "先日お送りした提案資料「クラウド型営業支援システム導入プラン」についてのご確認状況をお伺いするメールを送付いたしました。資料内容のご質問やご不明な点がございましたら、いつでもお気軽にお問い合わせいただきたい旨を記載しています。",
+        "成果": "継続検討",
+        "次回フォローアップ予定日": "2025-01-29 14:00:00",
+        "作成日時": "2025-01-15 09:35:00",
+        "作成者ID": "rec-user-1203",
+        "更新日時": "2025-01-15 09:35:00",
+        "更新者ID": "rec-user-1203"
+      },
+      {
+        "営業活動ID": "rec-20250215-001",
+        "営業担当者ID": "rec-emp-0847",
+        "顧客ID": "rec-cust-2341",
+        "営業案件ID": "rec-deal-5628",
+        "活動種別": "訪問",
+        "活動日時": "2025-02-14 14:00:00",
+        "活動内容": "契約前最終打ち合わせ。システム導入スケジュール、保守契約内容、支払い条件について顧客先（東京都渋谷区）にて確認。契約書への署名日を2月21日に決定。導入開始予定日は3月1日で合意。顧客側：山田部長、鈴木課長が出席。特別要望として初期研修を4月中旬に実施することで合意した。",
+        "成果": "受注予定",
+        "次回フォローアップ予定日": "2025-02-21 10:00:00",
+        "作成日時": "2025-02-14 16:30:00",
+        "作成者ID": "rec-user-0847",
+        "更新日時": "2025-02-14 16:30:00",
+        "更新者ID": "rec-user-0847"
+      },
+      {
+        "営業活動ID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-0847",
+        "顧客ID": "rec-cust-5632",
+        "営業案件ID": "rec-deal-2024-0156",
+        "活動種別": "訪問",
+        "活動日時": "2025-01-15T14:30:00+09:00",
+        "活動内容": "受注案件「システム導入プロジェクト」の納期確認及び仕様詳細打ち合わせを実施。顧客側より追加要件（帳票カスタマイズ3件）の申し出あり。納期への影響を検討し、1月31日までに対応可能性を確認する旨を伝達。次回は仕様書修正版を持参し、詳細設計フェーズの開始予定を協議。",
+        "成果": "継続検討",
+        "次回フォローアップ予定日": "2025-01-22T10:00:00+09:00",
+        "作成日時": "2025-01-15T16:45:00+09:00",
+        "作成者ID": "rec-user-0847",
+        "更新日時": "2025-01-15T16:45:00+09:00",
+        "更新者ID": "rec-user-0847"
+      },
+      {
+        "営業活動ID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-0847",
+        "顧客ID": "rec-cust-2156",
+        "営業案件ID": "rec-deal-5429",
+        "活動種別": "電話",
+        "活動日時": "2025-01-15 14:30:00",
+        "活動内容": "失注案件「システム導入プロジェクト」について却下理由をヒアリング。顧客（田中電機工業 調達部長 山田次郎）より、予算削減方針により今年度の投資計画を見直すことになったとの説明。当初予定していた500万円の予算が300万円に縮小され、提案内容では対応困難との判断。来年度以降の再検討を検討いただける可能性あり。",
+        "成果": "却下",
+        "次回フォローアップ予定日": "2025-07-01 10:00:00",
+        "作成日時": "2025-01-15 15:45:00",
+        "作成者ID": "rec-user-0312",
+        "更新日時": "2025-01-15 15:45:00",
+        "更新者ID": "rec-user-0312"
+      },
+      {
+        "営業活動ID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-0847",
+        "顧客ID": "rec-cust-2341",
+        "営業案件ID": "rec-proj-0156",
+        "活動種別": "電話",
+        "活動日時": "2025-01-15T14:30:00+09:00",
+        "活動内容": "顧客（株式会社ナカムラ製造 購買部長・中村健一）からの既存納入製品に関する品質改善要望の問い合わせ対応。現在の納期短縮ニーズを確認。次期年度の新規プロジェクト（生産ライン増設計画）の予算化が進行中との情報を得た。当社のカスタマイズソリューション提案の機会あり。",
+        "成果": "継続検討",
+        "次回フォローアップ予定日": "2025-02-10T10:00:00+09:00",
+        "作成日時": "2025-01-15T15:45:00+09:00",
+        "作成者ID": "rec-user-0512",
+        "更新日時": "2025-01-15T15:45:00+09:00",
+        "更新者ID": "rec-user-0512"
+      },
+      {
+        "営業活動ID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-0847",
+        "顧客ID": "rec-cust-2341",
+        "営業案件ID": null,
+        "活動種別": "訪問",
+        "活動日時": "2025-01-15T14:30:00+09:00",
+        "活動内容": "東京ビジネスエキスポ2025にて、株式会社デジタルソリューションズのブース出展を訪問。営業部長・鈴木健一氏と名刺交換。同社は製造業向けクラウドERP導入を検討中とのこと。当社のシステム提案資料を手渡し、来週のデモンストレーション実施を約束。",
+        "成果": "継続検討",
+        "次回フォローアップ予定日": "2025-01-22T10:00:00+09:00",
+        "作成日時": "2025-01-15T16:45:00+09:00",
+        "作成者ID": "rec-user-0847",
+        "更新日時": "2025-01-15T16:45:00+09:00",
+        "更新者ID": "rec-user-0847"
+      },
+      {
+        "営業活動ID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-0847",
+        "顧客ID": "rec-cust-2341",
+        "営業案件ID": "rec-case-5629",
+        "活動種別": "訪問",
+        "活動日時": "2025-01-15T14:30:00+09:00",
+        "活動内容": "既存顧客である株式会社ベストサプライへの追加提案訪問。新製品「クラウド在庫管理システムPro」の機能説明と、現在の業務フローへの適用可能性について協議。購買担当者・鈴木課長と経理部長・佐藤部長が参加。システム連携の技術的課題について質問があり、後日技術チームからの詳細資料提供を約束。",
+        "成果": "継続検討",
+        "次回フォローアップ予定日": "2025-02-05T10:00:00+09:00",
+        "作成日時": "2025-01-15T16:45:00+09:00",
+        "作成者ID": "rec-user-1203",
+        "更新日時": "2025-01-15T16:45:00+09:00",
+        "更新者ID": "rec-user-1203"
+      },
+      {
+        "営業活動ID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-0847",
+        "顧客ID": "rec-cust-2156",
+        "営業案件ID": "rec-proj-5423",
+        "活動種別": "訪問",
+        "活動日時": "2025-01-15 14:30:00",
+        "活動内容": "株式会社山田電機工業 経営企画室にて、導入予定のシステム要件について打ち合わせ。前回の提案資料に対するフィードバックをいただき、カスタマイズ対応の可能性について協議。予算承認プロセスが3月末までに完了予定とのこと。技術部門との詳細仕様確認が次のステップとなることを確認。",
+        "成果": "継続検討",
+        "次回フォローアップ予定日": "2025-02-10 10:00:00",
+        "作成日時": "2025-01-15 16:45:00",
+        "作成者ID": "rec-user-0521",
+        "更新日時": "2025-01-15 16:45:00",
+        "更新者ID": "rec-user-0521"
+      }
+    ],
+    "営業活動ログ": [
+      {
+        "ログID": "rec-001",
+        "営業担当者ID": "rec-emp-042",
+        "顧客ID": "rec-cust-0158",
+        "営業案件ID": "rec-opp-2024-0847",
+        "活動種別": "訪問",
+        "活動内容": "既存顧客の鈴木電機工業への定期訪問。前期の納入実績確認と在庫状況をヒアリング。新年度の需要予測について協議し、Q2以降の発注予定を確認。営業担当者の佐藤より提案資料を提出。顧客の購買担当者・山田課長より次期発注は3月中旬予定との回答を得た。",
+        "活動日時": "2025-02-14 14:30:00",
+        "所要時間分": 75,
+        "成果フラグ": true,
+        "次回フォローアップ予定日": "2025-03-10 10:00:00",
+        "作成日時": "2025-02-14 16:45:00",
+        "更新日時": "2025-02-14 16:45:00",
+        "作成者ID": "rec-user-0521"
+      },
+      {
+        "ログID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-0847",
+        "顧客ID": "rec-cust-5392",
+        "営業案件ID": "rec-opp-2841",
+        "活動種別": "電話",
+        "活動内容": "見込み客・山田商事の購買担当者・鈴木課長に対して初回電話接触を実施。当社のクラウド型経費管理システムの概要を説明し、導入による業務効率化と経費削減効果について説明。顧客の現在の経費管理プロセスと課題をヒアリング。システムのデモンストレーション希望の意向を確認。",
+        "活動日時": "2025-01-15 14:30:00",
+        "所要時間分": 28,
+        "成果フラグ": true,
+        "次回フォローアップ予定日": "2025-01-22 10:00:00",
+        "作成日時": "2025-01-15 15:05:00",
+        "更新日時": "2025-01-15 15:05:00",
+        "作成者ID": "rec-emp-0847"
+      },
+      {
+        "ログID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-0847",
+        "顧客ID": "rec-cust-2341",
+        "営業案件ID": "rec-deal-5629",
+        "活動種別": "メール",
+        "活動内容": "提案資料送付後の顧客からの質問に対応。システム導入期間、カスタマイズ範囲、保守費用に関する詳細な説明をメール本文に記載し、補足資料2点を添付して送信。顧客の懸念事項を丁寧に解消し、次段階への進行を促進。",
+        "活動日時": "2025-01-15 14:30:00",
+        "所要時間分": 45,
+        "成果フラグ": true,
+        "次回フォローアップ予定日": "2025-01-22 10:00:00",
+        "作成日時": "2025-01-15 14:35:00",
+        "更新日時": "2025-01-15 14:35:00",
+        "作成者ID": "rec-emp-0847"
+      },
+      {
+        "ログID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-0847",
+        "顧客ID": "rec-cust-2341",
+        "営業案件ID": "rec-deal-5629",
+        "活動種別": "提案",
+        "活動内容": "大型ERP導入案件の提案プレゼンテーションを実施。顧客のシステム部長、財務部長、運用責任者が参加。当社のクラウドベース統合システムの機能、導入スケジュール（6ヶ月間）、概算費用（2,800万円）について説明。顧客からは既存システムとの連携、データ移行方法、サポート体制に関する質問が多く出た。特に運用責任者から運用負荷軽減に対する高い関心を確認。プレゼン終了後、顧客の経営層との追加協議が必要との意向を確認。",
+        "活動日時": "2025-01-15T14:00:00+09:00",
+        "所要時間分": 120,
+        "成果フラグ": true,
+        "次回フォローアップ予定日": "2025-01-22T10:00:00+09:00",
+        "作成日時": "2025-01-15T17:30:00+09:00",
+        "更新日時": "2025-01-15T17:30:00+09:00",
+        "作成者ID": "rec-emp-0847"
+      },
+      {
+        "ログID": "rec-001",
+        "営業担当者ID": "rec-emp-047",
+        "顧客ID": "rec-cust-312",
+        "営業案件ID": "rec-deal-089",
+        "活動種別": "提案",
+        "活動内容": "既存システム統合に伴う追加カスタマイズ費用について、顧客側CFOと最終調整を実施。納期短縮による追加費用15万円の削減に応じることで合意。契約書修正版を本日中に送付予定。",
+        "活動日時": "2025-01-16T14:30:00",
+        "所要時間分": 45,
+        "成果フラグ": true,
+        "次回フォローアップ予定日": "2025-01-20T10:00:00",
+        "作成日時": "2025-01-16T16:45:00",
+        "更新日時": "2025-01-16T16:45:00",
+        "作成者ID": "rec-usr-023"
+      },
+      {
+        "ログID": "rec-001",
+        "営業担当者ID": "rec-002",
+        "顧客ID": "rec-003",
+        "営業案件ID": "rec-004",
+        "活動種別": "訪問",
+        "活動内容": "受注完了した大型システム導入案件について、顧客先にて納期スケジュール、仕様詳細、導入体制について確認ミーティングを実施。納期は2025年3月31日、初期導入対象部門は営業部と企画部の2部門であることを確認。カスタマイズ要件2件について技術部門との詳細打ち合わせ日程を決定。",
+        "活動日時": "2025-01-15 14:00:00",
+        "所要時間分": 120,
+        "成果フラグ": true,
+        "次回フォローアップ予定日": "2025-02-12 10:00:00",
+        "作成日時": "2025-01-15 16:30:00",
+        "更新日時": "2025-01-15 16:30:00",
+        "作成者ID": "rec-002"
+      },
+      {
+        "ログID": "rec-001",
+        "営業担当者ID": "rec-u001",
+        "顧客ID": "rec-c001",
+        "営業案件ID": "rec-p001",
+        "活動種別": "訪問",
+        "活動内容": "納入した機械装置の不具合に関するクレーム対応。顧客先に訪問し、製品の動作確認を実施。原因は操作マニュアルの記載不備であることが判明。その場で正しい操作方法を説明し、今後の保守体制について改善案を提示。顧客の信頼回復に向けて、無償でのメンテナンス3ヶ月間を提案し、合意を得た。",
+        "活動日時": "2025-01-15T10:30:00",
+        "所要時間分": 120,
+        "成果フラグ": true,
+        "次回フォローアップ予定日": "2025-02-15T14:00:00",
+        "作成日時": "2025-01-15T17:45:00",
+        "更新日時": "2025-01-15T17:45:00",
+        "作成者ID": "rec-u001"
+      },
+      {
+        "ログID": "rec-001",
+        "営業担当者ID": "rec-emp-0847",
+        "顧客ID": "rec-cust-2341",
+        "営業案件ID": "rec-opp-5629",
+        "活動種別": "訪問",
+        "活動内容": "東京ビジネスエキスポ2024にて、株式会社テックソリューションズの事業開発部長・鈴木健一氏と名刺交換。同社はクラウドERPシステムの導入を検討中との情報を得た。初期ヒアリングとして、現在の業務課題（在庫管理の効率化、複数拠点間のデータ連携）について30分間の詳細なヒアリングを実施。提案資料の送付を約束し、来週の詳細打合せを予定。",
+        "活動日時": "2024-11-15 14:30:00",
+        "所要時間分": 45,
+        "成果フラグ": true,
+        "次回フォローアップ予定日": "2024-11-22 10:00:00",
+        "作成日時": "2024-11-15 16:45:00",
+        "更新日時": "2024-11-15 16:45:00",
+        "作成者ID": "rec-user-0521"
+      },
+      {
+        "ログID": "rec-20250115-047",
+        "営業担当者ID": "rec-staff-0234",
+        "顧客ID": "rec-cust-1856",
+        "営業案件ID": "rec-deal-5423",
+        "活動種別": "訪問",
+        "活動内容": "前回の提案で失注となった大型システム導入案件について、敗因分析を実施。競合他社の提案内容と価格差について顧客の課題を聞き取り。導入スケジュールの柔軟性と保守費用の削減案を提示し、再提案の可能性を確認。決裁権者の日程調整を依頼。",
+        "活動日時": "2025-01-14T14:30:00+09:00",
+        "所要時間分": 75,
+        "成果フラグ": true,
+        "次回フォローアップ予定日": "2025-02-04T10:00:00+09:00",
+        "作成日時": "2025-01-14T16:45:00+09:00",
+        "更新日時": "2025-01-14T16:45:00+09:00",
+        "作成者ID": "rec-staff-0234"
+      },
+      {
+        "ログID": "rec-001",
+        "営業担当者ID": "rec-002",
+        "顧客ID": "rec-003",
+        "営業案件ID": "rec-004",
+        "活動種別": "訪問",
+        "活動内容": "納入済みのシステム導入後、顧客企業での運用状況確認と満足度ヒアリング。システム稼働状況は良好で、スタッフの操作習熟度も高い。今後の機能拡張について要望をいただき、次期提案の検討を開始することで合意。",
+        "活動日時": "2024-11-15 14:30:00",
+        "所要時間分": 75,
+        "成果フラグ": true,
+        "次回フォローアップ予定日": "2025-01-20 10:00:00",
+        "作成日時": "2024-11-15 16:45:00",
+        "更新日時": "2024-11-15 16:45:00",
+        "作成者ID": "rec-002"
+      }
+    ],
+    "成約実績": [
+      {
+        "成約実績ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "顧客ID": "rec-003",
+        "営業担当者ID": "rec-004",
+        "成約日": "2024-11-15T14:30:00+09:00",
+        "成約金額": 48500000,
+        "成約商品名": "エンタープライズ統合管理システム構築・導入サービス",
+        "契約期間開始日": "2025-01-01T00:00:00+09:00",
+        "契約期間終了日": "2025-12-31T23:59:59+09:00",
+        "備考": "大手自動車部品メーカー向けの基幹システム統合案件。要件定義から導入後サポートまで含む年間契約。保守費用は別途月額制。顧客満足度重視で進捗管理を強化する予定。",
+        "作成日時": "2024-11-15T15:45:00+09:00",
+        "作成者ID": "rec-005",
+        "更新日時": "2024-11-16T09:20:00+09:00",
+        "更新者ID": "rec-006"
+      },
+      {
+        "成約実績ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "顧客ID": "rec-003",
+        "営業担当者ID": "rec-004",
+        "成約日": "2024-11-15T14:30:00Z",
+        "成約金額": 850000,
+        "成約商品名": "クラウド管理ツール追加ライセンス（50ユーザー分）",
+        "契約期間開始日": "2024-12-01T00:00:00Z",
+        "契約期間終了日": "2025-11-30T23:59:59Z",
+        "備考": "既存顧客の株式会社山田製作所からの追加購入。運用効率化に伴い、ユーザー数を50名追加する単発購入。導入サポートは既存契約に含まれる。",
+        "作成日時": "2024-11-15T15:45:00Z",
+        "作成者ID": "rec-005",
+        "更新日時": "2024-11-15T15:45:00Z",
+        "更新者ID": "rec-005"
+      },
+      {
+        "成約実績ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "顧客ID": "rec-003",
+        "営業担当者ID": "rec-004",
+        "成約日": "2024-11-15T14:30:00Z",
+        "成約金額": 2400000,
+        "成約商品名": "システム保守サービス年間契約（拡張オプション付き）",
+        "契約期間開始日": "2025-01-01T00:00:00Z",
+        "契約期間終了日": "2025-12-31T23:59:59Z",
+        "備考": "前年度契約からの継続更新。オンサイト対応時間を月40時間から50時間に拡張。緊急対応の対象システムを3台から5台に増加。顧客満足度が高く、来期の追加機能開発支援も検討中。",
+        "作成日時": "2024-11-15T15:00:00Z",
+        "作成者ID": "rec-004",
+        "更新日時": "2024-11-15T15:00:00Z",
+        "更新者ID": "rec-004"
+      },
+      {
+        "成約実績ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "顧客ID": "rec-003",
+        "営業担当者ID": "rec-004",
+        "成約日": "2024-11-15T14:30:00Z",
+        "成約金額": 4800000,
+        "成約商品名": "工業用潤滑油供給サービス",
+        "契約期間開始日": "2025-01-01T00:00:00Z",
+        "契約期間終了日": "2027-12-31T23:59:59Z",
+        "備考": "月間納入量500L、年間値引き率3%適用。既存取引先からの紹介による新規顧客。品質基準ISO9001対応。緊急時24時間対応体制を構築。",
+        "作成日時": "2024-11-15T15:45:00Z",
+        "作成者ID": "rec-005",
+        "更新日時": "2024-11-15T15:45:00Z",
+        "更新者ID": "rec-005"
+      },
+      {
+        "成約実績ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "顧客ID": "rec-003",
+        "営業担当者ID": "rec-004",
+        "成約日": "2024-12-15T14:30:00Z",
+        "成約金額": 450000,
+        "成約商品名": "クラウド勤怠管理システム 年間ライセンス",
+        "契約期間開始日": "2025-01-01T00:00:00Z",
+        "契約期間終了日": "2025-12-31T23:59:59Z",
+        "備考": "年末キャンペーン期間中に20%割引を適用。初期導入サポート3ヶ月間無料。顧客からの追加機能要望あり、別途提案予定。",
+        "作成日時": "2024-12-15T15:45:00Z",
+        "作成者ID": "rec-005",
+        "更新日時": "2024-12-16T09:20:00Z",
+        "更新者ID": "rec-006"
+      },
+      {
+        "成約実績ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "顧客ID": "rec-003",
+        "営業担当者ID": "rec-004",
+        "成約日": "2024-11-15T14:30:00+09:00",
+        "成約金額": 450000,
+        "成約商品名": "クラウド勤怠管理システム 3ヶ月トライアルパッケージ",
+        "契約期間開始日": "2024-12-01T00:00:00+09:00",
+        "契約期間終了日": "2025-02-28T23:59:59+09:00",
+        "備考": "初受注。顧客の人事部長・鈴木美咲氏の強い推薦により決定。今後の本格導入に向けた実証期間として位置付けられている。",
+        "作成日時": "2024-11-15T15:45:00+09:00",
+        "作成者ID": "rec-005",
+        "更新日時": "2024-11-15T15:45:00+09:00",
+        "更新者ID": "rec-005"
+      },
+      {
+        "成約実績ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "顧客ID": "rec-003",
+        "営業担当者ID": "rec-004",
+        "成約日": "2024-11-15T14:30:00Z",
+        "成約金額": 850000,
+        "成約商品名": "クラウド管理ツール プレミアム機能追加パック",
+        "契約期間開始日": "2024-12-01T00:00:00Z",
+        "契約期間終了日": "2025-11-30T23:59:59Z",
+        "備考": "既存システム導入後の運用課題に対応するため、顧客より追加機能の要望があり、プレミアム機能パックの導入を決定。初期契約時には想定されていなかった分析機能とレポート自動化機能の追加となる。",
+        "作成日時": "2024-11-15T15:45:00Z",
+        "作成者ID": "rec-005",
+        "更新日時": "2024-11-15T15:45:00Z",
+        "更新者ID": "rec-005"
+      },
+      {
+        "成約実績ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "顧客ID": "rec-003",
+        "営業担当者ID": "rec-004",
+        "成約日": "2024-11-15T14:30:00+09:00",
+        "成約金額": 2400000,
+        "成約商品名": "クラウド型顧客管理システム プレミアムプラン",
+        "契約期間開始日": "2024-12-01T00:00:00+09:00",
+        "契約期間終了日": "2025-11-30T23:59:59+09:00",
+        "備考": "前社のシステムからの乗り換え案件。競合他社（A社製CRM）から当社システムへの移行。既存データの移行サポート及び操作研修を実施予定。顧客満足度向上とコスト削減が主な導入効果。",
+        "作成日時": "2024-11-15T15:45:00+09:00",
+        "作成者ID": "rec-005",
+        "更新日時": "2024-11-15T15:45:00+09:00",
+        "更新者ID": "rec-005"
+      },
+      {
+        "成約実績ID": "rec-20250115-001",
+        "営業案件ID": "rec-案件-2024-0847",
+        "顧客ID": "rec-顧客-2025-0156",
+        "営業担当者ID": "rec-営業-0032",
+        "成約日": "2025-01-15T14:30:00+09:00",
+        "成約金額": 2850000,
+        "成約商品名": "クラウド会計ソフト年間ライセンス（エンタープライズプラン）",
+        "契約期間開始日": "2025-02-01T00:00:00+09:00",
+        "契約期間終了日": "2026-01-31T23:59:59+09:00",
+        "備考": "既存顧客の鈴木商事様からの紹介。初回導入時に基本設定サポート3ヶ月間無料付与。決算期対応カスタマイズは別途見積もり。",
+        "作成日時": "2025-01-15T15:45:00+09:00",
+        "作成者ID": "rec-user-0032",
+        "更新日時": "2025-01-15T15:45:00+09:00",
+        "更新者ID": "rec-user-0032"
+      },
+      {
+        "成約実績ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "顧客ID": "rec-003",
+        "営業担当者ID": "rec-004",
+        "成約日": "2024-11-15T14:30:00+09:00",
+        "成約金額": 2400000,
+        "成約商品名": "クラウド勤怠管理システム 年間ライセンス",
+        "契約期間開始日": "2025-01-01T00:00:00+09:00",
+        "契約期間終了日": "2025-12-31T23:59:59+09:00",
+        "備考": "既存顧客との継続契約。前年度より利用ユーザー数を5名から8名に拡大。自動更新特約により手続き簡素化。",
+        "作成日時": "2024-11-15T14:35:00+09:00",
+        "作成者ID": "rec-005",
+        "更新日時": "2024-11-15T14:35:00+09:00",
+        "更新者ID": "rec-005"
+      }
+    ],
+    "行動パターン分析結果": [
+      {
+        "分析結果ID": "rec-001",
+        "営業担当者ID": "rec-emp-047",
+        "分析期間開始日": "2024-10-01T00:00:00Z",
+        "分析期間終了日": "2024-12-31T23:59:59Z",
+        "活動件数": 87,
+        "成約件数": 26,
+        "成約率": "29.9%",
+        "平均活動間隔日数": 3,
+        "主要活動タイプ": "顧客訪問",
+        "パターン分類": "安定型",
+        "分析コメント": "佐藤美咲営業担当者は、四半期を通じて一貫した高い成約率を維持している。平均3日ごとの定期的な顧客訪問と、メール・電話による継続的なフォローアップにより、安定した成果を創出。顧客訪問が全活動の62%を占め、既存顧客との関係構築に注力している姿勢が見られる。成約までの平均リードタイムは15日と短く、提案資料の質と顧客ニーズ把握の精度が高いと推定される。今後も現在のペースを維持することで、さらなる成約件数の増加が期待できる。",
+        "作成日時": "2025-01-15T10:30:00Z",
+        "更新日時": "2025-01-15T10:30:00Z",
+        "作成者ID": "rec-mgr-012"
+      },
+      {
+        "分析結果ID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-0847",
+        "分析期間開始日": "2024-10-01T00:00:00Z",
+        "分析期間終了日": "2024-12-31T23:59:59Z",
+        "活動件数": 87,
+        "成約件数": 5,
+        "成約率": "5.7%",
+        "平均活動間隔日数": 1,
+        "主要活動タイプ": "メール送付",
+        "パターン分類": "改善型",
+        "分析コメント": "佐藤健一営業担当者の直近3ヶ月の行動分析結果です。活動件数は87件と十分な活動量を確保していますが、成約率が5.7%と部門平均12.3%を大きく下回っています。活動の大部分がメール送付（68%）に偏っており、対面営業や電話提案が不足している傾向が見られます。平均活動間隔が1日と短く、浅い接触が多い可能性があります。提案資料の質向上、顧客ニーズのヒアリング強化、提案内容の個別カスタマイズが改善の重要ポイントです。来月より改善計画の実行を推奨します。",
+        "作成日時": "2025-01-15T09:30:00Z",
+        "更新日時": "2025-01-15T09:30:00Z",
+        "作成者ID": "rec-user-0512"
+      },
+      {
+        "分析結果ID": "rec-20250215-001",
+        "営業担当者ID": "emp-20220401-087",
+        "分析期間開始日": "2024-11-01T00:00:00Z",
+        "分析期間終了日": "2025-01-31T23:59:59Z",
+        "活動件数": 127,
+        "成約件数": 8,
+        "成約率": "6.3%",
+        "平均活動間隔日数": 2,
+        "主要活動タイプ": "電話営業",
+        "パターン分類": "改善型",
+        "分析コメント": "山田太郎担当者は分析期間内に127件の営業活動を実施しており、活動量は部門平均の1.8倍と非常に積極的です。しかし成約件数が8件に留まり、成約率6.3%は部門平均11.2%を大きく下回っています。活動の大半が電話営業（68%）で占められており、初期接触段階での顧客ニーズ把握が不十分な可能性があります。平均活動間隔が2日と短く、フォローアップの質より量に依存した営業スタイルが見受けられます。提案資料の準備不足やターゲット顧客の選定基準が曖昧であることが成約率低下の主要因と推定されます。",
+        "作成日時": "2025-02-15T10:30:00Z",
+        "更新日時": "2025-02-15T10:30:00Z",
+        "作成者ID": "usr-20230615-042"
+      },
+      {
+        "分析結果ID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-2024-0847",
+        "分析期間開始日": "2024-10-01T00:00:00Z",
+        "分析期間終了日": "2025-01-15T23:59:59Z",
+        "活動件数": 87,
+        "成約件数": 12,
+        "成約率": "13.8%",
+        "平均活動間隔日数": 2,
+        "主要活動タイプ": "初回訪問",
+        "パターン分類": "改善型",
+        "分析コメント": "新入営業担当者（配置後3ヶ月）の初期段階における活動パターン分析。営業活動の実施頻度は良好で、平均2日間隔での継続的な活動が確認できます。初回訪問が全体の42%を占めており、顧客開拓に注力している姿勢が伺えます。一方、成約率13.8%は同期入社者平均の18.2%を下回っており、提案資料の質向上やヒアリング技法の改善が課題です。主要活動タイプの偏り（初回訪問に集中）から、フォローアップ訪問や提案活動の比率を高める指導が推奨されます。今後2ヶ月で成約率20%達成を目標に、OJT強化を検討してください。",
+        "作成日時": "2025-01-15T10:30:00Z",
+        "更新日時": "2025-01-15T10:30:00Z",
+        "作成者ID": "rec-user-2024-0312"
+      },
+      {
+        "分析結果ID": "rec-20250115-001",
+        "営業担当者ID": "rec-emp-2847",
+        "分析期間開始日": "2024-10-01T00:00:00Z",
+        "分析期間終了日": "2024-12-31T23:59:59Z",
+        "活動件数": 87,
+        "成約件数": 12,
+        "成約率": "13.8%",
+        "平均活動間隔日数": 1,
+        "主要活動タイプ": "顧客訪問",
+        "パターン分類": "積極型",
+        "分析コメント": "第4四半期において集中的な営業活動を展開した結果、前四半期比で活動件数が35%増加しました。特に10月から11月にかけて顧客訪問を重点的に実施し、既存顧客との関係強化と新規案件開拓に注力しています。成約率13.8%は業界平均を上回っており、質の高い営業活動が実践されていることが伺えます。12月の活動件数が減少しているのは年末調整期間の影響と考えられます。今後も現在のペースを維持しながら、さらなる成約率向上を目指すことが推奨されます。",
+        "作成日時": "2025-01-15T09:30:00Z",
+        "更新日時": "2025-01-15T09:30:00Z",
+        "作成者ID": "rec-user-5621"
+      },
+      {
+        "分析結果ID": "rec-001-2024-11-15-001",
+        "営業担当者ID": "rec-emp-2024-0847",
+        "分析期間開始日": "2024-09-01T00:00:00Z",
+        "分析期間終了日": "2024-11-30T23:59:59Z",
+        "活動件数": 127,
+        "成約件数": 34,
+        "成約率": "26.8%",
+        "平均活動間隔日数": 1,
+        "主要活動タイプ": "顧客訪問",
+        "パターン分類": "積極型",
+        "分析コメント": "佐藤健一営業担当者は分析期間中、平均1日間隔での高頻度な顧客訪問活動を実施しており、営業活動全体の78%が直接訪問で構成されている。成約率26.8%は部門平均21.2%を上回り、特に既存顧客との関係構築を重視した継続的なアプローチが奏功している。月間平均42件の活動件数は部門内でも上位水準であり、積極的な市場開拓姿勢が評価される。今後は訪問先の質的分析と提案内容の最適化により、さらなる成約率向上の余地がある。",
+        "作成日時": "2024-12-01T10:30:00Z",
+        "更新日時": "2024-12-01T10:30:00Z",
+        "作成者ID": "rec-usr-2024-0512"
+      },
+      {
+        "分析結果ID": "rec-20250115-001",
+        "営業担当者ID": "emp-2847",
+        "分析期間開始日": "2024-11-01T00:00:00Z",
+        "分析期間終了日": "2025-01-15T23:59:59Z",
+        "活動件数": 34,
+        "成約件数": 5,
+        "成約率": "14.7%",
+        "平均活動間隔日数": 2,
+        "主要活動タイプ": "顧客訪問",
+        "パターン分類": "改善型",
+        "分析コメント": "3ヶ月の休職から11月上旬に復帰した山田花子さんの活動パターンです。復帰直後は慎重な対応が見られましたが、11月中旬以降は顧客訪問を中心に活動ペースが加速しています。成約率14.7%は復帰前の平均22%と比較すると低下していますが、これは信頼関係の再構築期間と考えられます。12月以降の活動件数増加傾向から、順調な職場復帰が進行中と判断されます。来月の成約率向上が期待できる状況です。",
+        "作成日時": "2025-01-16T09:30:00Z",
+        "更新日時": "2025-01-16T09:30:00Z",
+        "作成者ID": "usr-5621"
+      },
+      {
+        "分析結果ID": "rec-20250215-001",
+        "営業担当者ID": "emp-00847",
+        "分析期間開始日": "2024-10-01T00:00:00Z",
+        "分析期間終了日": "2025-01-31T23:59:59Z",
+        "活動件数": 127,
+        "成約件数": 38,
+        "成約率": "29.9%",
+        "平均活動間隔日数": 2,
+        "主要活動タイプ": "顧客訪問",
+        "パターン分類": "積極型",
+        "分析コメント": "佐藤美咲営業担当者は部門内最高の成約率29.9%を達成。顧客訪問を主軸とした対面営業に注力し、平均2日間隔での高頻度活動を実施。提案資料の事前準備と顧客ニーズ把握に時間をかけることで、初回接触から成約までの期間を平均8.3日に短縮。特に既存顧客への追加提案で高い成約率（42%）を記録。チーム内でのベストプラクティスモデルとして位置付け可能。",
+        "作成日時": "2025-02-15T10:30:00Z",
+        "更新日時": "2025-02-15T10:30:00Z",
+        "作成者ID": "usr-00521"
+      },
+      {
+        "分析結果ID": "rec-20250115-001",
+        "営業担当者ID": "emp-20240501-087",
+        "分析期間開始日": "2024-10-01T00:00:00Z",
+        "分析期間終了日": "2024-12-31T23:59:59Z",
+        "活動件数": 34,
+        "成約件数": 5,
+        "成約率": "14.7%",
+        "平均活動間隔日数": 8,
+        "主要活動タイプ": "メール送信",
+        "パターン分類": "改善型",
+        "分析コメント": "山田花子営業担当者の行動パターン分析結果です。分析期間内の活動件数は34件で、成約件数は5件、成約率は14.7%となっています。平均活動間隔日数は8日ですが、実際の活動日程を詳細に確認すると、月初に集中して活動し月中盤から月末にかけて活動が停滞する傾向が見られます。最も頻繁な活動タイプはメール送信（全体の52%）であり、対面営業や電話営業の実施が少ないことが課題です。成約率が業界平均（22%程度）を下回っており、活動の質的改善が必要と判断されます。特に営業活動の平準化と対面営業の増加を推奨します。",
+        "作成日時": "2025-01-15T10:30:00Z",
+        "更新日時": "2025-01-15T10:30:00Z",
+        "作成者ID": "usr-20240101-012"
+      },
+      {
+        "分析結果ID": "rec-20250115-001",
+        "営業担当者ID": "emp-20240501-087",
+        "分析期間開始日": "2024-10-01T00:00:00Z",
+        "分析期間終了日": "2024-12-31T23:59:59Z",
+        "活動件数": 156,
+        "成約件数": 28,
+        "成約率": "17.9%",
+        "平均活動間隔日数": 1,
+        "主要活動タイプ": "オンラインセミナー開催・講演",
+        "パターン分類": "専門型",
+        "分析コメント": "営業担当者・鈴木美咲は、オンラインセミナー開催・講演活動に特化した専門型パターンを示しています。分析期間内の活動の72%がセミナー関連であり、毎日平均1件以上の活動を実施する高い積極性が確認されました。成約率17.9%は部門平均12.3%を上回っており、セミナー参加者からの信頼構築と段階的なアプローチが効果的に機能していることが伺えます。特に大型案件（契約金額500万円以上）への成約が8件と顕著で、専門知識を活かしたセミナー講演による顧客教育が営業成果に直結している傾向が明らかです。今後は、セミナー参加者のフォローアップ体制の強化と、セミナー以外の活動タイプ（提案資料作成、個別面談）との組み合わせにより、さらなる成約率向上が期待できます。",
+        "作成日時": "2025-01-15T09:30:00Z",
+        "更新日時": "2025-01-15T09:30:00Z",
+        "作成者ID": "usr-20240315-042"
+      }
+    ],
+    "AIエージェント推論ログ": [
+      {
+        "推論ログID": "rec-20250115-ai-001",
+        "AIエージェント名": "営業予測エンジン v2.3",
+        "推論タイプ": "成約確度予測",
+        "営業案件ID": "rec-案件-2024-0847",
+        "顧客ID": "rec-顧客-1250",
+        "営業担当者ID": "rec-営業-0342",
+        "入力パラメータ": "案件金額:4,500万円、商談回数:8回、提案資料提出:2024-12-20、顧客企業規模:従業員数1,200名、業界:製造業、前年同時期成約率:68%、競合企業数:2社、購買委員会開催済み:true、予算承認段階:80%完了",
+        "推論結果": "成約確度82%、営業段階判定:商談終盤(ステージ5/6)、成約予定日:2025-02-28、リスク要因:競合社Bの提案内容が同等レベル、推奨フォローアップ頻度:週2回",
+        "信頼度スコア": 87,
+        "推奨アクション": "1.顧客のCFO及び購買責任者との最終面談を1月20日までに実施、2.提案資料の差別化ポイント(導入後ROI試算)を強調した補足資料を提出、3.導入後サポート体制の詳細説明会を提案、4.契約条件(支払い条件・納期)の事前調整を営業部長と実施",
+        "実行時間ミリ秒": 1247,
+        "ステータス": "成功",
+        "エラーメッセージ": null,
+        "作成日時": "2025-01-15T14:32:18+09:00",
+        "作成者": "システム自動実行"
+      },
+      {
+        "推論ログID": "rec-20250115-0847",
+        "AIエージェント名": "顧客購買パターン分析エージェント",
+        "推論タイプ": "顧客分析",
+        "営業案件ID": "rec-case-2025-0342",
+        "顧客ID": "rec-cust-8756",
+        "営業担当者ID": "rec-staff-1203",
+        "入力パラメータ": "顧客ID:rec-cust-8756, 分析期間:2023年1月～2025年1月(24ヶ月), 購買履歴件数:18件, 平均購買金額:¥285,000, 購買間隔:平均40日, 主要購買カテゴリ:クラウドストレージソリューション(45%), セキュリティソフト(35%), システム保守契約(20%)",
+        "推論結果": "既存顧客(株式会社山田製造)は過去24ヶ月間で安定した購買パターンを示しており、特にクラウドストレージソリューションへの投資が増加傾向(前年比+28%)。現在の従業員規模拡大(昨年比+15%)に伴い、データ管理ニーズが高まっている。次期購買確度が高い関連製品はAIデータ分析ツール、バックアップソリューション、アクセス管理システムと判定。",
+        "信頼度スコア": 87,
+        "推奨アクション": "1月末までに営業担当者・佐藤花子より顧客担当者(情報システム部長・鈴木健一氏)に対し、AI分析ツールのデモンストレーション提案を実施。2月中旬に導入検討ミーティングを設定。提案金額目安:¥450,000～¥680,000。",
+        "実行時間ミリ秒": 2847,
+        "ステータス": "成功",
+        "エラーメッセージ": null,
+        "作成日時": "2025-01-15T08:47:32+09:00",
+        "作成者": "AIエージェント_自動実行"
+      },
+      {
+        "推論ログID": "rec-20250115-001",
+        "AIエージェント名": "リード適合度スコアリングエージェント",
+        "推論タイプ": "リード適合度評価",
+        "営業案件ID": "rec-案件-2025-0847",
+        "顧客ID": "rec-顧客-2024-5632",
+        "営業担当者ID": "rec-営業-2024-0312",
+        "入力パラメータ": "{\"企業名\": \"株式会社テックイノベーション\", \"業種\": \"ソフトウェア開発\", \"従業員数\": 120, \"年間売上\": \"8億5000万円\", \"問い合わせ内容\": \"クラウドERPシステム導入検討\", \"初期接触日\": \"2025-01-10\", \"予算規模\": \"3000万円以上\", \"決定時期\": \"Q2\", \"過去購買歴\": なし, \"業界スコア\": 0.85, \"企業規模スコア\": 0.78, \"予算スコア\": 0.82}",
+        "推論結果": "当該リード候補は総合適合度スコア82点と判定。ターゲット業種・企業規模・予算規模が全て基準を満たしており、高優先度のホットリード。決定権者への接触可能性が高く、導入タイムラインもQ2と明確。競合他社からの引き合いリスクが中程度存在。",
+        "信頼度スコア": 87,
+        "推奨アクション": "1.営業担当者・佐藤健一に即座にルーティング、2.初回商談を1月中に設定、3.提案資料は中堅企業向けERP導入成功事例を中心に作成、4.予算承認プロセスの確認を初回ヒアリング時に実施、5.競合状況の把握と差別化ポイントの整理",
+        "実行時間ミリ秒": 1247,
+        "ステータス": "成功",
+        "エラーメッセージ": null,
+        "作成日時": "2025-01-15T09:23:44+09:00",
+        "作成者": "AIエージェント_自動実行"
+      },
+      {
+        "推論ログID": "rec-20250214-001",
+        "AIエージェント名": "失注分析エージェント v2.1",
+        "推論タイプ": "失注原因分析",
+        "営業案件ID": "rec-案件-20250115-087",
+        "顧客ID": "rec-顧客-00045782",
+        "営業担当者ID": "rec-営業-00012345",
+        "入力パラメータ": "{\"案件金額\": 2800000, \"営業期間日数\": 45, \"提案回数\": 3, \"競合社数\": 2, \"最終接触日\": \"2025-02-10\", \"失注理由入力\": \"予算削減\", \"顧客業種\": \"製造業\", \"案件ステージ推移\": \"初期接触→ニーズ確認→提案→失注\", \"営業担当者経験年数\": 3}",
+        "推論結果": "失注の主要因は顧客側の予算削減（確度72%）ですが、副次的な要因として提案資料の競合比較分析の不足（確度58%）と初期段階での経営層への関与遅延（確度64%）が検出されました。営業期間45日は業界平均（52日）より短く、十分な信頼構築期間が確保されていない可能性が高いです。",
+        "信頼度スコア": 76,
+        "推奨アクション": "1. 顧客の経営層（CFO/経営企画部）への直接アプローチを次回提案時に組み込む\n2. 競合製品との詳細な機能・コスト比較表を事前に準備し、提案資料に組み込む\n3. 段階的導入プラン（フェーズ1：コア機能のみ）を提案し、初期投資を削減する代替案を用意する\n4. 営業担当者に対し、大型案件（200万円以上）の営業プロセス研修を実施する",
+        "実行時間ミリ秒": 2847,
+        "ステータス": "成功",
+        "エラーメッセージ": null,
+        "作成日時": "2025-02-14T09:23:45.000Z",
+        "作成者": "自動推論システム"
+      },
+      {
+        "推論ログID": "rec-20250115-ai-churn-001",
+        "AIエージェント名": "顧客チャーン予測エージェント v2.1",
+        "推論タイプ": "顧客チャーン予兆検出",
+        "営業案件ID": "rec-案件-2024-0847",
+        "顧客ID": "rec-顧客-2024-5632",
+        "営業担当者ID": "rec-営業-2024-0234",
+        "入力パラメータ": "顧客契約期間: 24ヶ月, 直近3ヶ月利用額: ¥145,000, 前年同期比: -28%, サポート問い合わせ頻度: 月2.3回, 平均対応満足度: 3.2/5.0, 競合製品検索履歴: 有, 更新予定日まで: 45日, 契約更新率: 低, 解約予告なし",
+        "推論結果": "チャーン高リスク(リスクスコア: 78/100)。顧客は過去3ヶ月で利用額が28%減少し、サポート満足度が低下。競合製品への関心が検出されており、契約更新時期が近づいている。解約の可能性が高い。",
+        "信頼度スコア": 82,
+        "推奨アクション": "1) 営業担当者による緊急フォローアップ(今週中), 2) カスタマーサクセスチームによる利用状況ヒアリング, 3) 契約更新前キャンペーン: 割引提案(15-20%)またはアップグレード提案, 4) 専任コンサルタントによる無料コンサルティング提供, 5) 経営層による関係構築面談の検討",
+        "実行時間ミリ秒": 1247,
+        "ステータス": "成功",
+        "エラーメッセージ": null,
+        "作成日時": "2025-01-15T14:32:18+09:00",
+        "作成者": "AIエージェント_自動実行スケジューラー"
+      },
+      {
+        "推論ログID": "rec-20250115-0847",
+        "AIエージェント名": "営業成功事例マッチングエージェント",
+        "推論タイプ": "過去事例類似度分析・提案最適化",
+        "営業案件ID": "rec-案件-202501-1523",
+        "顧客ID": "rec-顧客-8741",
+        "営業担当者ID": "rec-営業-0456",
+        "入力パラメータ": "顧客業種:製造業、企業規模:従業員数250名、予算帯:500万円〜800万円、導入目的:業務効率化・コスト削減、決定者層:経営企画部、検討期間:3ヶ月、過去成功事例フィルタ:同業種・同規模・営業担当者:佐藤健一",
+        "推論結果": "過去24ヶ月の営業成功事例から類似度85%の案件を3件抽出。うち2件は同じ製造業向けで、提案内容の構成・アプローチ方法に高い再現性を確認。顧客の決定者層構成も類似しており、提案資料の承認フロー短縮が期待できる。",
+        "信頼度スコア": 87,
+        "推奨アクション": "①過去成功事例の提案資料テンプレート（案件ID:rec-案件-202309-0891）をベースに現案件向けにカスタマイズ②初回提案時に経営企画部向けROI試算シート3パターンを準備③佐藤営業担当者の成功事例（同業種・2023年11月成約）の導入効果データを活用した提案",
+        "実行時間ミリ秒": 2847,
+        "ステータス": "成功",
+        "エラーメッセージ": null,
+        "作成日時": "2025-01-15T08:47:23+09:00",
+        "作成者": "AIエージェント_営業支援システム"
+      },
+      {
+        "推論ログID": "rec-20250115-ai-001",
+        "AIエージェント名": "バンドル提案エンジン v2.1",
+        "推論タイプ": "顧客ニーズ予測・商品バンドル最適化",
+        "営業案件ID": "rec-案件-20250110-045",
+        "顧客ID": "rec-顧客-2024-1823",
+        "営業担当者ID": "rec-営業-2024-0567",
+        "入力パラメータ": "{\"顧客名\": \"株式会社サンテック\", \"業種\": \"製造業\", \"従業員数\": 250, \"過去購買履歴\": [\"クラウドストレージ\", \"セキュリティ対策ツール\"], \"予算上限\": 3500000, \"導入予定時期\": \"2025年4月\", \"現在の課題\": \"業務効率化・コスト削減\", \"競合情報\": \"A社提案中\"}",
+        "推論結果": "顧客のニーズ分析より、基幹システム統合+クラウドストレージ+セキュリティ対策ツール+データ分析プラットフォームの4点バンドルを推奨。顧客の現在のIT投資パターンと業種特性から、統合型ソリューション志向が強い。予算内での最適な組み合わせは提案商品Aセット（基幹システム統合2,000,000円）+ 商品Bセット（クラウドストレージ拡張500,000円）+ 商品Cセット（セキュリティ強化パッケージ700,000円）+ 商品Dセット（分析ダッシュボード300,000円）の合計3,500,000円。この構成により顧客の業務効率化目標達成率は約87%と予測される。",
+        "信頼度スコア": 82,
+        "推奨アクション": "1. 1月20日までに提案資料作成（4点バンドルの統合効果を強調）2. 1月22日に顧客担当者（購買部長・田中花子、IT部長・鈴木健一）との提案会議開催3. ROI試算表と導入スケジュール案を事前送付4. 競合A社との差別化ポイント（統合度・サポート体制）を明確化5. 3月末までに契約締結を目標に段階的フォローアップ実施",
+        "実行時間ミリ秒": 2847,
+        "ステータス": "成功",
+        "エラーメッセージ": null,
+        "作成日時": "2025-01-15 14:32:18",
+        "作成者": "バンドル提案エンジン_自動実行"
+      },
+      {
+        "推論ログID": "rec-20250115-001",
+        "AIエージェント名": "売上予測エンジン v2.1",
+        "推論タイプ": "営業予測",
+        "営業案件ID": "rec-案件-2025-0847",
+        "顧客ID": "rec-顧客-0156",
+        "営業担当者ID": "rec-営業-0089",
+        "入力パラメータ": "{\"過去12ヶ月売上\": [850, 920, 1050, 1200, 1350, 1280, 1100, 950, 1400, 1650, 1800, 1950], \"季節指数\": {\"Q1\": 0.85, \"Q2\": 0.95, \"Q3\": 0.78, \"Q4\": 1.42}, \"市場成長率\": 0.12, \"競合動向\": \"中程度の競争激化\", \"顧客業種\": \"製造業\", \"前年同月比\": 1.15}",
+        "推論結果": "2025年第1四半期の売上予測は1,650万円。季節要因により1月〜3月は若干の減速が予想されるが、市場全体の成長トレンドと当顧客の前年同月比+15%の好調推移により、前年同期比+8%の成長が見込まれます。4月以降は市場トレンドの加速に伴い、上半期累計で前年比+12%達成の可能性が高い。",
+        "信頼度スコア": 78,
+        "推奨アクション": "1) 営業目標をQ1:1,650万円、上半期:3,400万円に動的調整。2) 3月中旬に顧客との目標共有ミーティングを実施。3) 市場競争激化に対応し、付加価値提案資料を営業担当者に提供。4) 2月の販促キャンペーン強化を検討。",
+        "実行時間ミリ秒": 1247,
+        "ステータス": "成功",
+        "エラーメッセージ": null,
+        "作成日時": "2025-01-15T14:32:05Z",
+        "作成者": "システム_自動実行"
+      },
+      {
+        "推論ログID": "rec-20250115-ai-001",
+        "AIエージェント名": "案件進捗異常検知エージェント",
+        "推論タイプ": "案件進捗異常検知",
+        "営業案件ID": "rec-案件-2024-0847",
+        "顧客ID": "rec-顧客-1203",
+        "営業担当者ID": "rec-営業-0456",
+        "入力パラメータ": "案件名:大手製造業向けERP導入プロジェクト, 案件金額:850万円, 開始日:2024-10-15, 予定完了日:2025-03-31, 現在進捗率:32%, 前月進捗率:45%, 最終接触日:2025-01-08, 顧客からの応答時間:平均8.2日, 過去3ヶ月の提案資料提出回数:2回, 競合他社の参入有無:あり",
+        "推論結果": "案件進捗が予定より大幅に遅延しており、顧客の応答時間が延伸傾向を示しています。進捗率が前月45%から32%に低下（13ポイント減少）し、異常値として検知されました。顧客の意思決定プロセスが停滞している可能性が高く、競合他社の参入により優先度が低下した兆候が見られます。",
+        "信頼度スコア": 78,
+        "推奨アクション": "1)営業担当者（田中太郎）による顧客キーパーソン（購買部長）への直接訪問を48時間以内に実施し、意思決定の遅延要因をヒアリングする。2)競合情報の収集と差別化ポイントの整理。3)経営層への報告資料を作成し、予算承認プロセスの加速を提案する。4)案件ステータスを「要注視」に昇格させ、営業マネージャーによる週次フォローアップを開始。",
+        "実行時間ミリ秒": 847,
+        "ステータス": "成功",
+        "エラーメッセージ": null,
+        "作成日時": "2025-01-15T14:32:18",
+        "作成者": "AIエージェント_案件監視システム"
+      },
+      {
+        "推論ログID": "rec-20250215-ai-001",
+        "AIエージェント名": "営業戦略最適化エージェント",
+        "推論タイプ": "顧客セグメント別営業アプローチ選択",
+        "営業案件ID": "rec-案件-2025-0847",
+        "顧客ID": "rec-顧客-0012456",
+        "営業担当者ID": "rec-担当者-0089",
+        "入力パラメータ": "顧客セグメント:エンタープライズ層、業界:製造業、契約金額:850万円、過去購買履歴:3件、平均購買周期:18ヶ月、最終接触:35日前、競合出現:あり、決裁者数:4名、導入リスク評価:中程度",
+        "推論結果": "エンタープライズ層・製造業顧客に対しては、複数決裁者への同時アプローチと技術的ROI説明を重視したコンサルティング型営業が最適。競合状況が存在するため、差別化ポイント（導入実績、カスタマイズ対応力）の早期提示が重要。",
+        "信頼度スコア": 87,
+        "推奨アクション": "1)決裁層向けビジネスケーススタディ資料の作成・送付、2)技術部門との合同ヒアリング実施（2月中旬）、3)競合他社との比較分析表の提供、4)導入後の運用支援体制の説明資料準備、5)3月末までのクイックウィン提案の検討",
+        "実行時間ミリ秒": 1240,
+        "ステータス": "成功",
+        "エラーメッセージ": null,
+        "作成日時": "2025-02-15T14:32:18Z",
+        "作成者": "営業支援システム_自動実行"
+      }
+    ],
+    "AIエージェント推論精度監視": [
+      {
+        "監視ID": "rec-001-ai-20250215-001",
+        "推論ログID": "rec-log-20250110-045",
+        "営業案件ID": "rec-case-2024-0847",
+        "推論タイプ": "成約確度予測",
+        "推論結果": "成約確度: 92%。顧客の購買シグナル（複数回の製品デモ参加、見積書要求、決裁者との面談実施）が確認されており、契約締結は2月中旬と予測。リスク要因は低い。",
+        "実績値": "2025年2月14日に顧客から失注通知。理由：競合他社製品への切り替え決定。予算配分の変更により導入延期から中止に変更。",
+        "精度スコア": 8,
+        "精度判定": "不正確",
+        "検証状態": "検証完了",
+        "検証者ID": "rec-user-20250215-suzuki",
+        "検証日時": "2025-02-15 14:30:00",
+        "改善提案": "競合動向の監視機能を強化する必要がある。顧客の予算承認状況をより詳細に把握するプロセスを導入し、予算変更リスクの検知精度を向上させるべき。また、決裁者以外のステークホルダーの反対意見の検知ロジックも追加が必要。",
+        "作成日時": "2025-01-10 09:15:00",
+        "更新日時": "2025-02-15 14:35:00",
+        "作成者ID": "rec-user-20250110-tanaka"
+      },
+      {
+        "監視ID": "rec-20250115-001",
+        "推論ログID": "rec-20250115-log-042",
+        "営業案件ID": "rec-2024-案件-5847",
+        "推論タイプ": "次アクション推奨",
+        "推論結果": "提案資料送付を実施してください。顧客の関心度が高く、資料提供により成約確度が向上する見込みです。",
+        "実績値": "顧客は既に1月8日に提案資料を受け取っており、現在内容確認中の段階である。重複送付を避ける必要があった。",
+        "精度スコア": "35",
+        "精度判定": "不正確",
+        "検証状態": "検証完了",
+        "検証者ID": "rec-user-佐藤花子",
+        "検証日時": "2025-01-15T14:30:00",
+        "改善提案": "営業案件の進捗状況をリアルタイムで参照する仕組みを強化し、既に実施済みのアクションを推論から除外するロジックが必要。顧客連絡履歴テーブルとの連携精度を向上させることで、同様の誤推奨を防止できます。",
+        "作成日時": "2025-01-10T09:15:00",
+        "更新日時": "2025-01-15T14:30:00",
+        "作成者ID": "rec-user-鈴木健太"
+      },
+      {
+        "監視ID": "rec-mon-20250215-001",
+        "推論ログID": "rec-log-20250210-045",
+        "営業案件ID": "rec-deal-20250108-023",
+        "推論タイプ": "顧客セグメント分類",
+        "推論結果": "顧客ランク: VIP（年間購買額500万円以上、購買頻度月2回以上、NPS 70以上と判定）",
+        "実績値": "顧客ランク: 一般（実際の年間購買額280万円、購買頻度月1回、NPS 55）",
+        "精度スコア": 25,
+        "精度判定": "不正確",
+        "検証状態": "検証完了",
+        "検証者ID": "rec-user-20240401-012",
+        "検証日時": "2025-02-15T14:30:00+09:00",
+        "改善提案": "購買額の集計期間が誤って前年度データを含んでいた可能性がある。NPS計算ロジックの閾値を見直し、複数タッチポイントのデータ統合精度を向上させる必要がある。今後は月次の実績値との照合を強化すること。",
+        "作成日時": "2025-02-10T09:15:00+09:00",
+        "更新日時": "2025-02-15T14:35:00+09:00",
+        "作成者ID": "rec-user-20240315-008"
+      },
+      {
+        "監視ID": "rec-001",
+        "推論ログID": "rec-002",
+        "営業案件ID": "rec-003",
+        "推論タイプ": "成約確度予測",
+        "推論結果": "顧客の過去購買履歴、問い合わせ頻度、提案資料へのアクセス時間から判断して、本案件の成約確度は80%と予測します。3ヶ月以内の契約締結の可能性が高いです。",
+        "実績値": "2024年11月15日に顧客と契約締結。予測通り3ヶ月以内での成約となりました。契約金額は250万円。",
+        "精度スコア": 80,
+        "精度判定": "正確",
+        "検証状態": "検証完了",
+        "検証者ID": "rec-004",
+        "検証日時": "2024-11-20T14:30:00+09:00",
+        "改善提案": "成約確度予測の精度が高く、営業活動の優先順位付けに有効でした。今後も同様のロジックを他案件に適用し、継続的に精度を監視してください。",
+        "作成日時": "2024-08-18T09:15:00+09:00",
+        "更新日時": "2024-11-20T14:30:00+09:00",
+        "作成者ID": "rec-005"
+      },
+      {
+        "監視ID": "rec-mon-20250115-001",
+        "推論ログID": "rec-log-20250110-042",
+        "営業案件ID": "rec-deal-20250108-156",
+        "推論タイプ": "次アクション推奨",
+        "推論結果": "営業担当者による訪問を推奨します。顧客の過去購買パターンと問い合わせ頻度から、対面による提案が最適と判断されます。推奨訪問日時：2025年1月中旬",
+        "実績値": "営業担当者が訪問を提案したが、顧客から『メールでの提案資料送付を希望する』との返答があり、訪問は実施されず、メール対応となった",
+        "精度スコア": 35,
+        "精度判定": "不正確",
+        "検証状態": "検証完了",
+        "検証者ID": "rec-user-20241201-089",
+        "検証日時": "2025-01-15T14:30:00+09:00",
+        "改善提案": "顧客の最新コンタクト履歴やコミュニケーション希望チャネルの情報を学習データに追加する必要があります。過去3ヶ月のメール応答率が高い顧客に対しては、訪問より非対面チャネルを優先すべき。また、営業案件の初期段階では顧客の接触希望方法を明示的に確認する工程を追加してください。",
+        "作成日時": "2025-01-10T09:15:00+09:00",
+        "更新日時": "2025-01-15T14:30:00+09:00",
+        "作成者ID": "rec-user-20241101-042"
+      },
+      {
+        "監視ID": "rec-001-am7k",
+        "推論ログID": "rec-log-2024-0847",
+        "営業案件ID": "rec-deal-2024-5632",
+        "推論タイプ": "成約確度予測",
+        "推論結果": "成約確度: 50% - 顧客の予算確保が不確定であり、決定権者との接触が限定的。3ヶ月以内の成約可能性は中程度",
+        "実績値": "2024年10月15日に成約。契約金額: 2,800万円。顧客側の経営判断により予算が承認され、予定より早期に契約締結",
+        "精度スコア": 50,
+        "精度判定": "許容範囲",
+        "検証状態": "検証完了",
+        "検証者ID": "rec-user-佐藤花子",
+        "検証日時": "2024-10-22T14:30:00+09:00",
+        "改善提案": "顧客の経営層との接触頻度を増やすことで、予算決定プロセスの可視化が可能になる。次回同様案件では、決定権者インタビューデータを推論モデルに追加することを推奨",
+        "作成日時": "2024-07-18T09:15:00+09:00",
+        "更新日時": "2024-10-22T14:35:00+09:00",
+        "作成者ID": "rec-user-鈴木健一"
+      },
+      {
+        "監視ID": "rec-001-ai-mon-20250115-seg",
+        "推論ログID": "rec-002-log-20250110-seg",
+        "営業案件ID": "rec-003-deal-20241225-acme",
+        "推論タイプ": "顧客セグメント分類",
+        "推論結果": "既存顧客（ロイヤルティ高）- 年間購買額500万円以上、購買頻度月2回以上",
+        "実績値": "新規顧客（初期段階）- 初回購買のみ、購買額50万円、購買頻度1回",
+        "精度スコア": 15,
+        "精度判定": "不正確",
+        "検証状態": "検証完了",
+        "検証者ID": "rec-004-user-yamada-taro",
+        "検証日時": "2025-01-15T14:30:00+09:00",
+        "改善提案": "推論ロジックが2023年10月時点の顧客マスタデータを参照していました。最新の顧客データベースと同期するよう推論パイプラインを修正が必要です。特に顧客更新日時の条件を直近90日以内に限定することで、陳腐化したセグメント分類を防ぐことができます。",
+        "作成日時": "2025-01-10T09:15:00+09:00",
+        "更新日時": "2025-01-15T14:35:00+09:00",
+        "作成者ID": "rec-005-user-suzuki-hanako"
+      },
+      {
+        "監視ID": "rec-001-2024-1127-ai-accuracy",
+        "推論ログID": "rec-log-2024-1015-pred-001",
+        "営業案件ID": "rec-deal-2024-0847-suzuki",
+        "推論タイプ": "成約確度予測",
+        "推論結果": "成約確度: 28%。顧客の予算確保状況が不明確で、決定権者との接触実績が少ないため、短期成約の可能性は低い。3ヶ月以上の長期検討案件と判定。",
+        "実績値": "2024年11月15日に成約。契約金額: 850万円。営業担当者が顧客企業の経営層に直接アプローチし、予算措置と導入スケジュールを調整した結果、予想より大幅に早期に成約に至った。",
+        "精度スコア": 32,
+        "精度判定": "不正確",
+        "検証状態": "検証完了",
+        "検証者ID": "rec-user-2024-yamamoto-keisuke",
+        "検証日時": "2024-11-20 14:30:00",
+        "改善提案": "予測モデルが営業の積極的フォローと経営層アプローチの効果を過小評価している。顧客の決定権者層への接触頻度、営業担当者のグレード、過去の類似案件での成約時間短縮事例などの変数を追加学習させることで、精度向上が期待できる。また、営業活動の強度を示すパラメータの組み込みも検討すべき。",
+        "作成日時": "2024-10-15 09:45:00",
+        "更新日時": "2024-11-20 14:30:00",
+        "作成者ID": "rec-user-2024-tanaka-hanako"
+      },
+      {
+        "監視ID": "rec-20250115-001",
+        "推論ログID": "rec-20250110-log-042",
+        "営業案件ID": "rec-2024-deal-5847",
+        "推論タイプ": "次アクション推奨",
+        "推論結果": "顧客の購買意欲が高まっている。メール送信後72時間以内に電話フォローアップを推奨。提案資料の技術仕様書を事前送付することで成約確度が向上する可能性が高い。",
+        "実績値": "推奨通り72時間以内に電話フォローアップを実施。技術仕様書を事前送付。結果として5営業日後に顧客から追加要件ヒアリング依頼があり、その後の商談で成約に至った。",
+        "精度スコア": 92,
+        "精度判定": "正確",
+        "検証状態": "検証完了",
+        "検証者ID": "rec-user-1203",
+        "検証日時": "2025-01-15T14:30:00+09:00",
+        "改善提案": "今回の推奨は高精度で実現できた。特に顧客の購買意欲判定ロジックが効果的。今後、業界別・企業規模別にこのパターンを細分化することで、さらなる精度向上が期待できる。営業チームからのフィードバックも良好。",
+        "作成日時": "2025-01-10T09:15:00+09:00",
+        "更新日時": "2025-01-15T14:35:00+09:00",
+        "作成者ID": "rec-user-0847"
+      },
+      {
+        "監視ID": "rec-20250215-001",
+        "推論ログID": "rec-20250210-log-045",
+        "営業案件ID": "rec-20250101-case-328",
+        "推論タイプ": "成約確度予測",
+        "推論結果": "成約確度85%、3ヶ月以内成約見込み高い",
+        "実績値": "6ヶ月経過後も未成約、顧客からの連絡途絶",
+        "精度スコア": 28,
+        "精度判定": "不正確",
+        "検証状態": "検証完了",
+        "検証者ID": "rec-user-2024-156",
+        "検証日時": "2025-02-14T16:45:00+09:00",
+        "改善提案": "複数推論タイプで精度低下傾向を確認。成約確度予測では顧客接触頻度の重み付けが過大、次アクション推奨では営業担当者スキル差の考慮不足、顧客セグメント分類では業界別特性データの古さが原因と推定。2025年Q1中のモデル再学習が必須。特に中堅企業向けデータセットの拡充が必要。",
+        "作成日時": "2025-02-10T09:20:00+09:00",
+        "更新日時": "2025-02-14T16:50:30+09:00",
+        "作成者ID": "rec-user-2024-089"
+      }
+    ],
+    "アラート設定": [
+      {
+        "アラート設定ID": "rec-001",
+        "設定名": "案件進捗停滞アラート",
+        "説明": "営業案件が30日以上ステータス変更されていない場合に高優先度アラートを発行する設定。停滞案件の早期発見と対応促進を目的とする。",
+        "監視対象タイプ": "営業案件",
+        "条件フィールド": "最終ステータス変更日",
+        "条件演算子": "より小さい",
+        "条件値": "-30",
+        "追加フィルタ条件": "{\"案件ステータス\": {\"含まない\": [\"成約\", \"失注\", \"保留中\"]}, \"案件金額\": {\"より大きい\": 500000}}",
+        "アラート重要度": "高",
+        "通知先ユーザーID": "user-2847",
+        "通知方法": "メール",
+        "有効フラグ": true,
+        "実行頻度": "毎日",
+        "最終トリガー日時": "2025-01-15T09:30:00+09:00",
+        "作成日時": "2024-11-20T14:22:00+09:00",
+        "作成者ID": "user-1923",
+        "更新日時": "2025-01-10T16:45:00+09:00",
+        "更新者ID": "user-1923"
+      },
+      {
+        "アラート設定ID": "rec-001",
+        "設定名": "日次活動件数低下警告",
+        "説明": "営業担当者の日次活動件数が目標値の50%以下に低下した場合にアラートを発火する設定。営業活動の停滞を早期に検知し、適切な指導・支援を実施するため。",
+        "監視対象タイプ": "営業活動",
+        "条件フィールド": "日次活動件数",
+        "条件演算子": "より小さい",
+        "条件値": "5",
+        "追加フィルタ条件": "{\"目標活動件数\": 10, \"対象部門\": \"営業部\", \"除外対象\": [\"休暇中\", \"出張中\"]}",
+        "アラート重要度": "中",
+        "通知先ユーザーID": "rec-user-042",
+        "通知方法": "メール",
+        "有効フラグ": true,
+        "実行頻度": "毎日",
+        "最終トリガー日時": "2025-01-15T17:30:00+09:00",
+        "作成日時": "2024-11-20T09:15:00+09:00",
+        "作成者ID": "rec-user-001",
+        "更新日時": "2025-01-10T14:45:00+09:00",
+        "更新者ID": "rec-user-001"
+      },
+      {
+        "アラート設定ID": "rec-001",
+        "設定名": "月間売上目標達成率70%未満アラート",
+        "説明": "月間売上目標に対する達成率が70%未満となった場合、営業管理職に即座に通知するアラート設定。売上目標の進捗管理と早期対応を支援します。",
+        "監視対象タイプ": "成約実績",
+        "条件フィールド": "売上目標達成率",
+        "条件演算子": "より小さい",
+        "条件値": "0.7",
+        "追加フィルタ条件": "{\"期間\": \"月間\", \"対象部門\": \"営業部\", \"除外条件\": \"休業日を含む月\"}",
+        "アラート重要度": "高",
+        "通知先ユーザーID": "rec-u-0042",
+        "通知方法": "メール",
+        "有効フラグ": true,
+        "実行頻度": "毎日",
+        "最終トリガー日時": "2025-01-15 14:32:00",
+        "作成日時": "2024-10-20 09:15:00",
+        "作成者ID": "rec-u-0001",
+        "更新日時": "2025-01-10 11:20:00",
+        "更新者ID": "rec-u-0001"
+      },
+      {
+        "アラート設定ID": "rec-001",
+        "設定名": "長期停滞案件の進捗催促",
+        "説明": "特定顧客との商談が3ヶ月以上進展していない場合に営業担当者に通知し、フォローアップを促す",
+        "監視対象タイプ": "営業案件",
+        "条件フィールド": "最終更新日",
+        "条件演算子": "より小さい",
+        "条件値": "90",
+        "追加フィルタ条件": "{\"案件ステータス\": {\"含まない\": [\"受注\", \"失注\"]}, \"顧客区分\": \"特定顧客\"}",
+        "アラート重要度": "高",
+        "通知先ユーザーID": "usr-2847",
+        "通知方法": "メール",
+        "有効フラグ": true,
+        "実行頻度": "毎日",
+        "最終トリガー日時": "2025-01-15T09:30:00+09:00",
+        "作成日時": "2024-10-22T14:15:00+09:00",
+        "作成者ID": "usr-1523",
+        "更新日時": "2025-01-10T11:45:00+09:00",
+        "更新者ID": "usr-1523"
+      },
+      {
+        "アラート設定ID": "rec-001",
+        "設定名": "新規案件初期接触から提案までの期間超過",
+        "説明": "新規案件の初期接触日から提案日までの経過日数が14日を超えた場合に、営業担当者に確認通知を送信する。提案活動の遅延を早期に検知し、案件進捗の加速化を促す。",
+        "監視対象タイプ": "営業案件",
+        "条件フィールド": "提案待機日数",
+        "条件演算子": "より大きい",
+        "条件値": "14",
+        "追加フィルタ条件": "{\"案件ステータス\": \"初期接触済み\", \"案件区分\": \"新規案件\", \"提案予定日\": {\"未入力\": true}}",
+        "アラート重要度": "中",
+        "通知先ユーザーID": "rec-u-0847",
+        "通知方法": "メール",
+        "有効フラグ": true,
+        "実行頻度": "毎日",
+        "最終トリガー日時": "2025-01-15T09:30:00+09:00",
+        "作成日時": "2024-11-20T14:15:00+09:00",
+        "作成者ID": "rec-u-0521",
+        "更新日時": "2025-01-10T10:45:00+09:00",
+        "更新者ID": "rec-u-0521"
+      },
+      {
+        "アラート設定ID": "rec-001",
+        "設定名": "成約率前月比低下異常検知",
+        "説明": "営業チームの成約率が前月比で20%以上低下した場合に検知し、営業管理者に通知するアラート設定。営業活動の効率性低下を早期に発見し、対応策の検討を促進する。",
+        "監視対象タイプ": "成約実績",
+        "条件フィールド": "成約率前月比変化率",
+        "条件演算子": "より小さい",
+        "条件値": "-0.20",
+        "追加フィルタ条件": "{\"対象部門\": \"営業部\", \"最小成約数\": 5, \"対象期間\": \"当月\"}",
+        "アラート重要度": "高",
+        "通知先ユーザーID": "rec-u-0047",
+        "通知方法": "メール",
+        "有効フラグ": true,
+        "実行頻度": "毎日",
+        "最終トリガー日時": "2025-01-15 09:30:00",
+        "作成日時": "2024-11-20 14:22:00",
+        "作成者ID": "rec-u-0001",
+        "更新日時": "2025-01-10 16:45:00",
+        "更新者ID": "rec-u-0001"
+      },
+      {
+        "アラート設定ID": "rec-001",
+        "設定名": "提案資料提出後の顧客返信催促アラート",
+        "説明": "提案資料を提出してから14日以上返信がない案件に対して、営業担当者に催促通知を送信するアラート。顧客の検討期間を考慮しつつ、タイムリーなフォローアップを促進する。",
+        "監視対象タイプ": "営業案件",
+        "条件フィールド": "最終提案資料提出日",
+        "条件演算子": "より小さい",
+        "条件値": "14",
+        "追加フィルタ条件": "{\"案件ステータス\": {\"含まない\": [\"成約\", \"失注\"]}, \"最終顧客接触日\": {\"条件\": \"最終提案資料提出日以前\"}}",
+        "アラート重要度": "中",
+        "通知先ユーザーID": "rec-u-0247",
+        "通知方法": "メール",
+        "有効フラグ": true,
+        "実行頻度": "毎日",
+        "最終トリガー日時": "2025-01-15 09:30:00",
+        "作成日時": "2024-11-20 14:15:00",
+        "作成者ID": "rec-u-0103",
+        "更新日時": "2025-01-10 11:45:00",
+        "更新者ID": "rec-u-0103"
+      },
+      {
+        "アラート設定ID": "rec-001",
+        "設定名": "週間営業活動記録漏れ検出",
+        "説明": "営業担当者の営業活動記録が週間で5件以上漏れた場合に管理者へ通知するアラート設定",
+        "監視対象タイプ": "営業活動",
+        "条件フィールド": "記録漏れ件数",
+        "条件演算子": "より大きい",
+        "条件値": "4",
+        "追加フィルタ条件": "{\"集計期間\": \"週間\", \"対象者タイプ\": \"営業担当者\", \"除外条件\": \"休業日・有給休暇\"}",
+        "アラート重要度": "高",
+        "通知先ユーザーID": "rec-u-0042",
+        "通知方法": "メール",
+        "有効フラグ": true,
+        "実行頻度": "毎週",
+        "最終トリガー日時": "2025-01-17 09:30:00",
+        "作成日時": "2024-11-20 14:15:00",
+        "作成者ID": "rec-u-0001",
+        "更新日時": "2025-01-10 11:45:00",
+        "更新者ID": "rec-u-0001"
+      },
+      {
+        "アラート設定ID": "rec-001",
+        "設定名": "業界セグメント受注率低下アラート",
+        "説明": "特定業界セグメント（製造業）における受注率が業界平均30%以下に低下した場合、営業分析チームへ通知し、原因分析と改善策の検討を依頼するアラート",
+        "監視対象タイプ": "成約実績",
+        "条件フィールド": "業界別受注率",
+        "条件演算子": "より小さい",
+        "条件値": "0.30",
+        "追加フィルタ条件": "{\"業界セグメント\": \"製造業\", \"集計期間\": \"月次\", \"最小案件数\": 10}",
+        "アラート重要度": "高",
+        "通知先ユーザーID": "user-2024-0847",
+        "通知方法": "メール",
+        "有効フラグ": true,
+        "実行頻度": "毎日",
+        "最終トリガー日時": "2025-01-15T09:30:00+09:00",
+        "作成日時": "2024-11-20T14:15:00+09:00",
+        "作成者ID": "user-2024-0521",
+        "更新日時": "2025-01-10T16:45:00+09:00",
+        "更新者ID": "user-2024-0521"
+      },
+      {
+        "アラート設定ID": "rec-001",
+        "設定名": "営業パイプライン滞留案件アラート",
+        "説明": "営業パイプラインの各ステージにおいて、滞留案件数が閾値を超えた場合に営業管理者へ通知するアラート設定。案件の進捗停滞を早期に検知し、対応を促進する。",
+        "監視対象タイプ": "営業案件",
+        "条件フィールド": "ステージ別滞留案件数",
+        "条件演算子": "より大きい",
+        "条件値": "15",
+        "追加フィルタ条件": "{\"ステージ\": [\"提案段階\", \"交渉段階\", \"決裁待ち\"], \"滞留期間日数\": {\"以上\": 30}, \"案件金額\": {\"以上\": 1000000}}",
+        "アラート重要度": "高",
+        "通知先ユーザーID": "rec-u-0047",
+        "通知方法": "メール",
+        "有効フラグ": true,
+        "実行頻度": "毎日",
+        "最終トリガー日時": "2025-01-15T09:30:00+09:00",
+        "作成日時": "2024-11-20T14:15:00+09:00",
+        "作成者ID": "rec-u-0001",
+        "更新日時": "2025-01-10T11:45:00+09:00",
+        "更新者ID": "rec-u-0047"
+      }
+    ],
+    "アラート履歴": [
+      {
+        "アラート履歴ID": "rec-20250115-001",
+        "アラート設定ID": "rec-alert-config-0042",
+        "営業担当者ID": "rec-sales-yamada-0015",
+        "営業案件ID": null,
+        "顧客ID": null,
+        "アラートレベル": "WARNING",
+        "アラートタイプ": "営業活動遅延",
+        "アラートメッセージ": "山田太郎営業担当者の週間営業活動件数が目標を大きく下回っています。先週の活動件数は8件で、目標の20件に対して60%の達成率となっています。",
+        "トリガー条件": "週間営業活動件数 < 目標件数の70% (目標:20件、実績:8件、達成率:40%)",
+        "発生日時": "2025-01-15 09:30:00",
+        "ステータス": "対応中",
+        "対応者ID": "rec-user-manager-suzuki-0008",
+        "対応日時": "2025-01-15 14:45:00",
+        "対応コメント": "山田担当者に確認したところ、大型案件の提案資料作成に注力していたとのこと。今週からの活動件数増加を約束してもらい、営業マネージャーによる週2回のフォローアップを開始します。",
+        "作成日時": "2025-01-15 09:30:00",
+        "更新日時": "2025-01-15 14:45:00",
+        "作成者ID": "rec-system-alert-engine-001"
+      },
+      {
+        "アラート履歴ID": "rec-a47f2c8b",
+        "アラート設定ID": "rec-s92d1e4a",
+        "営業担当者ID": "rec-u63k9f2e",
+        "営業案件ID": "rec-p15a8c7d",
+        "顧客ID": "rec-c84m3j9b",
+        "アラートレベル": "CRITICAL",
+        "アラートタイプ": "営業活動遅延",
+        "アラートメッセージ": "高額案件「ABC商事システム導入プロジェクト」の商談期間が標準リードタイムを120日超過しています。即座の対応が必要です。",
+        "トリガー条件": "案件金額5,000万円以上かつ商談期間が標準180日を超過（現在300日経過）",
+        "発生日時": "2024-12-15 09:30:00",
+        "ステータス": "対応中",
+        "対応者ID": "rec-u41n7s5c",
+        "対応日時": "2024-12-15 14:45:00",
+        "対応コメント": "営業担当者の田中太郎に確認。顧客の予算承認が遅延中。来週の経営層会議を予定。並行して競合対策を検討中。",
+        "作成日時": "2024-12-15 09:30:00",
+        "更新日時": "2024-12-15 14:45:00",
+        "作成者ID": "rec-sys0001"
+      },
+      {
+        "アラート履歴ID": "rec-001",
+        "アラート設定ID": "rec-042",
+        "営業担当者ID": "rec-1847",
+        "営業案件ID": "rec-5923",
+        "顧客ID": "rec-3156",
+        "アラートレベル": "WARNING",
+        "アラートタイプ": "営業活動遅延",
+        "アラートメッセージ": "顧客：株式会社山田工業に対する接触頻度が急激に低下しています。過去30日間の接触回数が平均値の60%以下となっています。",
+        "トリガー条件": "過去30日間の接触回数：2回（平均値：5回）、接触頻度低下率：60%、前月比：-75%",
+        "発生日時": "2024-11-15 09:30:00",
+        "ステータス": "対応中",
+        "対応者ID": "rec-2341",
+        "対応日時": "2024-11-15 14:20:00",
+        "対応コメント": "営業担当者・鈴木健一に確認。顧客先の人事異動により担当者が変更となったため、新担当者との関係構築に時間を要している。本週中に訪問予定。",
+        "作成日時": "2024-11-15 09:30:00",
+        "更新日時": "2024-11-15 14:20:00",
+        "作成者ID": "rec-9001"
+      },
+      {
+        "アラート履歴ID": "rec-a8f2c1d9",
+        "アラート設定ID": "rec-s4k7m2p1",
+        "営業担当者ID": "rec-u3j9n5q2",
+        "営業案件ID": "rec-d6l8h4x7",
+        "顧客ID": "rec-c2w9v1r5",
+        "アラートレベル": "WARNING",
+        "アラートタイプ": "営業活動遅延",
+        "アラートメッセージ": "案件『ABC株式会社システム導入プロジェクト』のステージ進捗が2週間以上停止しています。現在のステージ：提案資料作成から進展がありません。",
+        "トリガー条件": "ステージ更新日時が14日以上前かつステージが『提案資料作成』のまま",
+        "発生日時": "2025-01-15T09:30:00+09:00",
+        "ステータス": "対応中",
+        "対応者ID": "rec-u7k2m4n8",
+        "対応日時": "2025-01-15T10:45:00+09:00",
+        "対応コメント": "営業担当の田中太郎に確認。顧客の承認待ちで進捗が止まっていることを確認。本日中に顧客に催促連絡を入れる予定。",
+        "作成日時": "2025-01-15T09:30:00+09:00",
+        "更新日時": "2025-01-15T10:45:00+09:00",
+        "作成者ID": "rec-sys-auto-001"
+      },
+      {
+        "アラート履歴ID": "rec-20250115-001",
+        "アラート設定ID": "rec-alert-config-0042",
+        "営業担当者ID": "rec-sales-0156",
+        "営業案件ID": null,
+        "顧客ID": null,
+        "アラートレベル": "WARNING",
+        "アラートタイプ": "成約率低下",
+        "アラートメッセージ": "新人営業担当者・佐藤美咲の2024年12月成約率が3.2%となり、業界平均6.5%を大きく下回っています。初月の指導強化が必要です。",
+        "トリガー条件": "月間成約率 < 業界平均値（6.5%）かつ営業担当者の在籍期間 < 3ヶ月",
+        "発生日時": "2025-01-15 09:30:00",
+        "ステータス": "対応中",
+        "対応者ID": "rec-user-0089",
+        "対応日時": "2025-01-15 14:22:00",
+        "対応コメント": "営業部長・鈴木健一が佐藤美咲に対して個別指導を開始。提案資料の改善と顧客ヒアリング手法について重点的に指導。2月中旬に進捗確認予定。",
+        "作成日時": "2025-01-15 09:30:00",
+        "更新日時": "2025-01-15 14:22:00",
+        "作成者ID": "rec-system-auto"
+      },
+      {
+        "アラート履歴ID": "rec-001-20250115-alert",
+        "アラート設定ID": "rec-002-revenue-decline",
+        "営業担当者ID": "rec-003-sales-tanaka",
+        "営業案件ID": null,
+        "顧客ID": "rec-004-customer-suzuki",
+        "アラートレベル": "CRITICAL",
+        "アラートタイプ": "既存顧客受注減少",
+        "アラートメッセージ": "既存顧客「鈴木製造所」からの受注が前月比30%以上減少しました。2024年12月の受注額は480万円でしたが、2025年1月は336万円に低下しています。早急な対応が必要です。",
+        "トリガー条件": "月間受注額前月比：-30.0%（閾値：-30%以上）、2024年12月実績480万円 > 2025年1月実績336万円",
+        "発生日時": "2025-01-15 09:45:00",
+        "ステータス": "対応中",
+        "対応者ID": "rec-005-manager-yamada",
+        "対応日時": "2025-01-15 11:20:00",
+        "対応コメント": "顧客先に確認連絡を実施。競合他社への切り替え検討中との情報を得た。営業担当の田中に対して顧客訪問による関係強化と提案内容の見直しを指示。来週中に改善策を報告予定。",
+        "作成日時": "2025-01-15 09:45:00",
+        "更新日時": "2025-01-15 11:20:00",
+        "作成者ID": "rec-006-system-alert"
+      },
+      {
+        "アラート履歴ID": "rec-a001-7f2e-4c9b-b1d3-9e8a5c2f6d41",
+        "アラート設定ID": "rec-s002-3a1b-4e7d-8f2c-1b9e3d5a7c42",
+        "営業担当者ID": "rec-u003-5c2d-4a8e-9b1f-2c8e4f6a9d53",
+        "営業案件ID": "rec-p004-1d3e-4f9a-8c2b-3d7f5e8a1b64",
+        "顧客ID": "rec-c005-2e4f-5a0b-9d3c-4e8g6f9b2c75",
+        "アラートレベル": "WARNING",
+        "アラートタイプ": "営業活動遅延",
+        "アラートメッセージ": "提案資料の作成から顧客提示までの期間が標準期間を大幅に超過しています。案件『A社向けシステム導入提案』は資料作成開始から45日経過しており、通常の30日を15日上回っています。",
+        "トリガー条件": "提案資料作成期間 > 30日（閾値超過：45日）",
+        "発生日時": "2024-12-18 09:15:00",
+        "ステータス": "対応中",
+        "対応者ID": "rec-u006-4b1c-5d8e-7a2f-3e9f5a1b8c64",
+        "対応日時": "2024-12-18 14:30:00",
+        "対応コメント": "営業担当者の鈴木健太に確認したところ、顧客側の要件変更が3回あり、その都度資料の修正が必要だったとのこと。本日中に最終版を顧客に提示する予定。今後は要件確定段階での確認を強化する。",
+        "作成日時": "2024-12-18 09:15:00",
+        "更新日時": "2024-12-18 14:30:00",
+        "作成者ID": "rec-sys-001-0a1b-2c3d-4e5f-6a7b8c9d0e1f"
+      },
+      {
+        "アラート履歴ID": "rec-a8f2c5d9",
+        "アラート設定ID": "rec-s3k7m1n2",
+        "営業担当者ID": "rec-e4p9r2t1",
+        "営業案件ID": null,
+        "顧客ID": null,
+        "アラートレベル": "WARNING",
+        "アラートタイプ": "同時並行案件数上限到達",
+        "アラートメッセージ": "営業担当者 鈴木健一 が同時並行案件数の上限に達しました。現在対応中の案件数は8件で、設定上限の8件に達しています。新規案件の割り当てを検討してください。",
+        "トリガー条件": "対応中案件数 >= 8件（設定上限：8件）",
+        "発生日時": "2025-01-15 10:30:00",
+        "ステータス": "対応中",
+        "対応者ID": "rec-u6m3x8v4",
+        "対応日時": "2025-01-15 11:15:00",
+        "対応コメント": "鈴木健一に確認。現在進行中の案件のうち、山田物産との契約案件が本週中に完了予定のため、来週からの新規割り当てで調整予定。",
+        "作成日時": "2025-01-15 10:30:00",
+        "更新日時": "2025-01-15 11:15:00",
+        "作成者ID": "rec-sys-auto01"
+      },
+      {
+        "アラート履歴ID": "rec-001",
+        "アラート設定ID": "rec-042",
+        "営業担当者ID": "rec-156",
+        "営業案件ID": "rec-789",
+        "顧客ID": "rec-234",
+        "アラートレベル": "CRITICAL",
+        "アラートタイプ": "SLA違反",
+        "アラートメッセージ": "顧客「株式会社ソリューション」からの問い合わせに対する初期対応が契約SLA（4時間以内）を超過しています。現在の経過時間は5時間32分です。",
+        "トリガー条件": "問い合わせ受付から初期対応までの経過時間が契約SLA 4時間を超過（実績：5時間32分）",
+        "発生日時": "2025-01-15 14:32:00",
+        "ステータス": "対応中",
+        "対応者ID": "rec-501",
+        "対応日時": "2025-01-15 14:45:00",
+        "対応コメント": "営業担当者・山田花子に緊急連絡。顧客への謝罪メール送付と優先対応を指示。技術サポートチームに案件をエスカレーション。",
+        "作成日時": "2025-01-15 14:32:00",
+        "更新日時": "2025-01-15 14:45:00",
+        "作成者ID": "rec-900"
+      },
+      {
+        "アラート履歴ID": "rec-20250115-001",
+        "アラート設定ID": "rec-alert-config-0042",
+        "営業担当者ID": null,
+        "営業案件ID": null,
+        "顧客ID": null,
+        "アラートレベル": "WARNING",
+        "アラートタイプ": "成約率低下",
+        "アラートメッセージ": "過去3ヶ月間の失注率が継続的に上昇しています。2024年11月：32%、12月：38%、2025年1月：45%と悪化傾向が顕著です。営業プロセスの見直しが必要です。",
+        "トリガー条件": "月次失注率が前月比5%以上の上昇が3ヶ月連続で発生、かつ現月失注率が40%を超過",
+        "発生日時": "2025-01-15 09:30:00",
+        "ステータス": "対応中",
+        "対応者ID": "rec-user-0128",
+        "対応日時": "2025-01-15 14:45:00",
+        "対応コメント": "営業部長の鈴木健一と協議し、1月中に営業案件の失注原因分析を実施することで合意。顧客ニーズ把握プロセスの改善と競合対策の強化を検討予定。",
+        "作成日時": "2025-01-15 09:30:00",
+        "更新日時": "2025-01-15 14:45:00",
+        "作成者ID": "rec-system-auto"
+      }
+    ],
+    "営業プロセス定義": [
+      {
+        "プロセス定義ID": "rec-001",
+        "プロセス名": "新規営業フロー",
+        "プロセス説明": "見込み客の獲得から初回商談、提案、クロージングを経て成約に至るまでの標準営業プロセス。リード品質の確認、ニーズ把握、提案資料作成、価格交渉を含む。",
+        "ステージ数": 5,
+        "標準期間日数": 45,
+        "目標成約率": 25,
+        "必須活動タイプ": "初回接触,ニーズ調査,提案資料作成,初回商談,クロージング",
+        "ステータス": "有効",
+        "適用開始日": "2024-04-01T00:00:00Z",
+        "適用終了日": null,
+        "作成日時": "2024-03-15T09:30:00Z",
+        "作成者": "rec-u-0001",
+        "更新日時": "2024-11-20T14:15:00Z",
+        "更新者": "rec-u-0002"
+      },
+      {
+        "プロセス定義ID": "rec-001",
+        "プロセス名": "既存顧客拡大フロー",
+        "プロセス説明": "既存顧客に対して追加提案を行い、契約金額の拡大または新規サービスの導入を目指すプロセス。顧客ニーズの把握から提案、交渉、契約締結までの一連の流れを標準化し、既存顧客との関係強化と売上拡大を実現する。",
+        "ステージ数": 5,
+        "標準期間日数": 45,
+        "目標成約率": 68,
+        "必須活動タイプ": "顧客訪問、ニーズ調査、提案資料作成、見積提示、契約交渉",
+        "ステータス": "有効",
+        "適用開始日": "2024-04-01T00:00:00Z",
+        "適用終了日": null,
+        "作成日時": "2024-03-15T10:30:00Z",
+        "作成者": "usr-0847",
+        "更新日時": "2024-12-20T14:15:00Z",
+        "更新者": "usr-0847"
+      },
+      {
+        "プロセス定義ID": "rec-001",
+        "プロセス名": "大型案件営業フロー",
+        "プロセス説明": "複数ステークホルダーを含む長期案件における提案から決裁までの営業プロセス。顧客の経営層、現場部門、IT部門など複数の意思決定者を巻き込み、段階的に信頼構築と価値提案を行うフロー。",
+        "ステージ数": 7,
+        "標準期間日数": 180,
+        "目標成約率": 35,
+        "必須活動タイプ": "初期ヒアリング、ニーズ分析、提案資料作成、プレゼンテーション、デモンストレーション、経営層面談、決裁支援",
+        "ステータス": "有効",
+        "適用開始日": "2024-04-01T09:00:00+09:00",
+        "適用終了日": null,
+        "作成日時": "2024-03-15T14:30:00+09:00",
+        "作成者": "usr-0847",
+        "更新日時": "2024-11-20T10:15:00+09:00",
+        "更新者": "usr-0847"
+      },
+      {
+        "プロセス定義ID": "rec-001",
+        "プロセス名": "リテンション営業フロー",
+        "プロセス説明": "解約危機顧客の早期発見から引き止め活動、契約継続までの一連のプロセス。顧客満足度低下の兆候を検知し、営業担当者による個別対応と経営層による重点顧客フォローを実施することで、既存顧客の流出防止と関係継続を目指す。",
+        "ステージ数": 5,
+        "標準期間日数": 30,
+        "目標成約率": 72,
+        "必須活動タイプ": "顧客接触・ヒアリング",
+        "ステータス": "有効",
+        "適用開始日": "2024-04-01T09:00:00+09:00",
+        "適用終了日": null,
+        "作成日時": "2024-03-15T14:30:00+09:00",
+        "作成者": "usr-0847",
+        "更新日時": "2024-11-20T11:15:00+09:00",
+        "更新者": "usr-0521"
+      },
+      {
+        "プロセス定義ID": "rec-001",
+        "プロセス名": "紹介営業フロー",
+        "プロセス説明": "既存顧客からの紹介案件に対する営業プロセス。紹介者との関係構築、被紹介企業の初期接触、ニーズ把握、提案、クロージングまでの一連のプロセス。紹介案件は信頼度が高いため、標準的な新規営業フローより短期間での成約を目指す。",
+        "ステージ数": 5,
+        "標準期間日数": 30,
+        "目標成約率": 65,
+        "必須活動タイプ": "紹介者への感謝連絡、初期接触、ニーズヒアリング、提案資料作成、成約後の紹介者フォロー",
+        "ステータス": "有効",
+        "適用開始日": "2024-04-01T09:00:00+09:00",
+        "適用終了日": null,
+        "作成日時": "2024-03-15T14:30:00+09:00",
+        "作成者": "rec-user-0042",
+        "更新日時": "2024-12-10T10:15:00+09:00",
+        "更新者": "rec-user-0042"
+      },
+      {
+        "プロセス定義ID": "rec-001",
+        "プロセス名": "入札営業フロー",
+        "プロセス説明": "公開入札案件の情報収集から応札、評価、落札、契約締結までの一連のプロセス。官公庁および大規模民間企業の入札案件に対応する営業活動の標準フロー。",
+        "ステージ数": 6,
+        "標準期間日数": 45,
+        "目標成約率": 28,
+        "必須活動タイプ": "入札情報収集、提案資料作成、見積提出、技術説明、契約交渉",
+        "ステータス": "有効",
+        "適用開始日": "2024-04-01T00:00:00Z",
+        "適用終了日": null,
+        "作成日時": "2024-03-15T10:30:00Z",
+        "作成者": "rec-u-0042",
+        "更新日時": "2024-12-10T14:15:00Z",
+        "更新者": "rec-u-0058"
+      },
+      {
+        "プロセス定義ID": "rec-001",
+        "プロセス名": "更新営業フロー",
+        "プロセス説明": "既存契約の更新時期における再提案・更新手続きのプロセス。契約満期3ヶ月前から顧客との接触を開始し、現在の利用状況ヒアリング、新サービス提案、契約内容の見直しを経て更新契約締結までを管理するフロー。既存顧客との信頼関係を活用した効率的な更新営業を実現する。",
+        "ステージ数": 5,
+        "標準期間日数": 90,
+        "目標成約率": 78,
+        "必須活動タイプ": "顧客接触",
+        "ステータス": "有効",
+        "適用開始日": "2024-04-01T00:00:00Z",
+        "適用終了日": null,
+        "作成日時": "2024-03-15T10:30:00Z",
+        "作成者": "rec-u-0001",
+        "更新日時": "2024-12-20T14:45:00Z",
+        "更新者": "rec-u-0002"
+      },
+      {
+        "プロセス定義ID": "rec-001",
+        "プロセス名": "クロスセル営業フロー",
+        "プロセス説明": "既存顧客に対して、現在利用しているサービスとは異なる補完的なサービスを提案し、追加購入を促進するプロセス。顧客ニーズの把握から提案、商談、契約締結までを体系的に管理する。",
+        "ステージ数": 5,
+        "標準期間日数": 30,
+        "目標成約率": 35,
+        "必須活動タイプ": "顧客ニーズ分析、提案資料作成、商談実施、見積提示、契約手続き",
+        "ステータス": "有効",
+        "適用開始日": "2024-04-01T00:00:00Z",
+        "適用終了日": null,
+        "作成日時": "2024-03-15T10:30:00Z",
+        "作成者": "usr-0847",
+        "更新日時": "2024-11-20T14:15:00Z",
+        "更新者": "usr-0847"
+      },
+      {
+        "プロセス定義ID": "rec-001",
+        "プロセス名": "パートナー営業フロー",
+        "プロセス説明": "販売パートナー企業との新規提携から契約締結までの営業プロセス。初期接触から提携条件の協議、契約書作成、最終承認を経て契約締結に至るまでの一連のステップを定義。パートナー企業のニーズ把握、提携メリットの提示、法務確認を含む。",
+        "ステージ数": 6,
+        "標準期間日数": 45,
+        "目標成約率": 72,
+        "必須活動タイプ": "初期接触,ニーズ調査,提案資料作成,条件交渉,契約書確認,経営層承認",
+        "ステータス": "有効",
+        "適用開始日": "2024-04-01T09:00:00+09:00",
+        "適用終了日": null,
+        "作成日時": "2024-03-15T14:30:00+09:00",
+        "作成者": "rec-u-0847",
+        "更新日時": "2024-12-10T11:15:00+09:00",
+        "更新者": "rec-u-0521"
+      },
+      {
+        "プロセス定義ID": "rec-001",
+        "プロセス名": "緊急対応営業フロー",
+        "プロセス説明": "顧客からの緊急要望に対して、通常の営業プロセスを短縮し、迅速な対応と臨時契約締結を実現するための専用フロー。既存顧客からの急な追加注文や緊急案件対応を想定し、意思決定の加速化と柔軟な条件交渉を可能とする。",
+        "ステージ数": 4,
+        "標準期間日数": 3,
+        "目標成約率": 85,
+        "必須活動タイプ": "緊急対応打ち合わせ",
+        "ステータス": "有効",
+        "適用開始日": "2024-04-01T09:00:00Z",
+        "適用終了日": null,
+        "作成日時": "2024-03-15T14:30:00Z",
+        "作成者": "rec-user-0042",
+        "更新日時": "2024-12-10T11:45:00Z",
+        "更新者": "rec-user-0089"
+      }
+    ],
+    "営業プロセス実行状況": [
+      {
+        "営業プロセス実行状況ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "営業プロセス定義ID": "rec-003",
+        "現在のステップ番号": 2,
+        "ステップ名": "提案資料作成",
+        "ステップ開始日時": "2024-12-02T09:00:00",
+        "ステップ予定完了日時": "2024-12-13T17:00:00",
+        "ステップ実績完了日時": null,
+        "ステップ実行状態": "進行中",
+        "遅延フラグ": true,
+        "遅延日数": 3,
+        "担当営業ID": "rec-004",
+        "AIエージェント推論ログID": "rec-005",
+        "推奨アクション": "提案資料作成の遅延が3日に達しています。現在の進捗状況を確認し、必要に応じてリソースの追加配置またはスコープの見直しを検討してください。顧客への納期変更連絡も視野に入れてください。",
+        "推奨アクション実施状況": "実施中",
+        "プロセス全体進捗率": 35,
+        "備考": "大型案件のため資料ボリュームが当初予想を上回った。営業企画部のレビュー待ちで進捗が停滞。2024年12月19日の顧客プレゼン予定に間に合わせるため、本日中に資料初版を完成させる必要がある。",
+        "作成日時": "2024-12-02T09:15:00",
+        "更新日時": "2024-12-16T14:30:00",
+        "作成者ID": "rec-006",
+        "更新者ID": "rec-007"
+      },
+      {
+        "営業プロセス実行状況ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "営業プロセス定義ID": "rec-003",
+        "現在のステップ番号": 3,
+        "ステップ名": "契約締結",
+        "ステップ開始日時": "2025-01-15T09:30:00+09:00",
+        "ステップ予定完了日時": "2025-01-29T17:00:00+09:00",
+        "ステップ実績完了日時": null,
+        "ステップ実行状態": "進行中",
+        "遅延フラグ": false,
+        "遅延日数": null,
+        "担当営業ID": "rec-004",
+        "AIエージェント推論ログID": "rec-005",
+        "推奨アクション": "顧客の法務部門との契約条項確認を加速させるため、契約書ドラフトの修正版を本日中に提出し、来週月曜日の契約締結会議を予定することを推奨します。",
+        "推奨アクション実施状況": "実施中",
+        "プロセス全体進捗率": 60,
+        "備考": "見積承認完了日：2025年1月14日。顧客担当者は山田花子様。契約金額：2,850万円。契約期間：3年。法務部門の確認待ちの段階です。",
+        "作成日時": "2025-01-15T09:30:00+09:00",
+        "更新日時": "2025-01-15T14:20:00+09:00",
+        "作成者ID": "rec-006",
+        "更新者ID": "rec-007"
+      },
+      {
+        "営業プロセス実行状況ID": "rec-20250115-001",
+        "営業案件ID": "rec-案件-2024-0847",
+        "営業プロセス定義ID": "rec-プロセス-新規開拓-v2",
+        "現在のステップ番号": 1,
+        "ステップ名": "初期ヒアリング",
+        "ステップ開始日時": "2025-01-08 10:30:00",
+        "ステップ予定完了日時": "2025-01-12 17:00:00",
+        "ステップ実績完了日時": null,
+        "ステップ実行状態": "遅延",
+        "遅延フラグ": true,
+        "遅延日数": 3,
+        "担当営業ID": "rec-営業-鈴木健一",
+        "AIエージェント推論ログID": "rec-AI推論-20250115-0523",
+        "推奨アクション": "顧客との初期ヒアリング日程が未確定のため、本日中に顧客へ連絡を取り、今週中の面談予定を確保することを推奨します。同時に事前準備資料（業界分析レポート、提案概要）を作成し、ヒアリング効率を高めることで遅延の巻き返しが可能です。",
+        "推奨アクション実施状況": "実施中",
+        "プロセス全体進捗率": 8,
+        "備考": "顧客（株式会社ナカムラ製造所）の担当者が不在がちで日程調整が難航している状況。営業マネージャー佐藤由美に相談済み。",
+        "作成日時": "2025-01-08 10:35:00",
+        "更新日時": "2025-01-15 14:22:00",
+        "作成者ID": "rec-ユーザー-鈴木健一",
+        "更新者ID": "rec-ユーザー-システム自動更新"
+      },
+      {
+        "営業プロセス実行状況ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "営業プロセス定義ID": "rec-003",
+        "現在のステップ番号": 5,
+        "ステップ名": "契約締結",
+        "ステップ開始日時": "2025-01-15 09:30:00",
+        "ステップ予定完了日時": "2025-01-22 17:00:00",
+        "ステップ実績完了日時": "2025-01-20 14:45:00",
+        "ステップ実行状態": "完了",
+        "遅延フラグ": false,
+        "遅延日数": null,
+        "担当営業ID": "rec-004",
+        "AIエージェント推論ログID": "rec-005",
+        "推奨アクション": "プロセス全体が完了したため、次案件への移行を推奨します。既存顧客との関係強化のため、フォローアップ営業活動を並行実施してください。",
+        "推奨アクション実施状況": "完了",
+        "プロセス全体進捗率": 100,
+        "備考": "既存顧客・株式会社山田商事からの追加受注案件が予定より2日早く完了。次案件（拡張サービス提案）へスキップ予定。顧客満足度は高く、継続取引の可能性が高い。",
+        "作成日時": "2025-01-15 09:30:00",
+        "更新日時": "2025-01-20 15:00:00",
+        "作成者ID": "rec-006",
+        "更新者ID": "rec-007"
+      },
+      {
+        "営業プロセス実行状況ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "営業プロセス定義ID": "rec-003",
+        "現在のステップ番号": 3,
+        "ステップ名": "提案プレゼンテーション実施",
+        "ステップ開始日時": "2024-11-15 09:00:00",
+        "ステップ予定完了日時": "2024-11-22 18:00:00",
+        "ステップ実績完了日時": "2024-11-22 16:30:00",
+        "ステップ実行状態": "完了",
+        "遅延フラグ": false,
+        "遅延日数": null,
+        "担当営業ID": "rec-004",
+        "AIエージェント推論ログID": "rec-005",
+        "推奨アクション": "提案内容の差別化ポイント（納期短縮と総保有コスト削減）が競合他社比で優位性があることが確認されました。次ステップでは顧客の経営層向けに ROI シミュレーション資料を追加提出し、意思決定加速を図ることを推奨します。",
+        "推奨アクション実施状況": "実施中",
+        "プロセス全体進捗率": 60,
+        "備考": "顧客（株式会社テクノロジー開発）の経営会議で提案プレゼンを実施。参加者は購買部長・システム部長・CFOの3名。提案内容に対する反応は良好で、競合他社との比較検討に進むことが決定。次回打合わせは2024年11月29日に設定。",
+        "作成日時": "2024-11-15 09:15:00",
+        "更新日時": "2024-11-22 17:00:00",
+        "作成者ID": "rec-006",
+        "更新者ID": "rec-006"
+      },
+      {
+        "営業プロセス実行状況ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "営業プロセス定義ID": "rec-003",
+        "現在のステップ番号": 2,
+        "ステップ名": "要件定義",
+        "ステップ開始日時": "2024-11-15T09:00:00+09:00",
+        "ステップ予定完了日時": "2024-12-13T17:00:00+09:00",
+        "ステップ実績完了日時": null,
+        "ステップ実行状態": "遅延",
+        "遅延フラグ": true,
+        "遅延日数": 18,
+        "担当営業ID": "rec-004",
+        "AIエージェント推論ログID": "rec-005",
+        "推奨アクション": "顧客との要件定義会議が停滞しています。本日中に顧客の責任者に電話フォローアップを実施し、次回ミーティングの日程を確定してください。また、現在までの要件定義資料を顧客に事前送付することで、意思決定を加速させることを推奨します。",
+        "推奨アクション実施状況": "未実施",
+        "プロセス全体進捗率": 35,
+        "備考": "顧客側の承認プロセスが想定より長期化。決裁者の出張により打ち合わせが3回延期となった。年明け1月中旬までの完了を目指しているが、要件の追加変更リスクあり。",
+        "作成日時": "2024-11-15T09:30:00+09:00",
+        "更新日時": "2025-01-02T14:45:00+09:00",
+        "作成者ID": "rec-006",
+        "更新者ID": "rec-007"
+      },
+      {
+        "営業プロセス実行状況ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "営業プロセス定義ID": "rec-003",
+        "現在のステップ番号": 3,
+        "ステップ名": "簡易見積作成",
+        "ステップ開始日時": "2025-01-15 09:30:00",
+        "ステップ予定完了日時": "2025-01-15 17:00:00",
+        "ステップ実績完了日時": "2025-01-15 14:45:00",
+        "ステップ実行状態": "完了",
+        "遅延フラグ": false,
+        "遅延日数": null,
+        "担当営業ID": "rec-004",
+        "AIエージェント推論ログID": "rec-005",
+        "推奨アクション": "見積金額が予算内であることを確認し、顧客への提示資料を即日送付することで受注確度を高める",
+        "推奨アクション実施状況": "完了",
+        "プロセス全体進捗率": 80,
+        "備考": "顧客からの急な見積依頼に対応。標準仕様での簡易見積により予定より3時間早く完了。見積金額は税抜き350万円。顧客の意思決定スケジュールが短いため、次ステップの契約準備を並行実施予定。",
+        "作成日時": "2025-01-15 09:30:00",
+        "更新日時": "2025-01-15 14:50:00",
+        "作成者ID": "rec-006",
+        "更新者ID": "rec-006"
+      },
+      {
+        "営業プロセス実行状況ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "営業プロセス定義ID": "rec-003",
+        "現在のステップ番号": 3,
+        "ステップ名": "顧客打ち合わせ・要件確認",
+        "ステップ開始日時": "2024-11-15 10:30:00",
+        "ステップ予定完了日時": "2024-11-22 17:00:00",
+        "ステップ実績完了日時": null,
+        "ステップ実行状態": "遅延",
+        "遅延フラグ": true,
+        "遅延日数": 5,
+        "担当営業ID": "rec-004",
+        "AIエージェント推論ログID": "rec-005",
+        "推奨アクション": "顧客の懸念事項は予算承認プロセスの長期化。提案内容を段階的な導入プランに修正し、初期投資を30%削減した代替案を提示。併せて経営層への直接プレゼンテーションを提案し、意思決定の加速化を図ること。",
+        "推奨アクション実施状況": "実施中",
+        "プロセス全体進捗率": 35,
+        "備考": "顧客側の予算承認待ちで打ち合わせが延期となった。11月27日に経営層を交えた再打ち合わせを予定。失注リスク評価：中程度。AIの提案による段階的導入プランの検討を開始。",
+        "作成日時": "2024-11-15 10:30:00",
+        "更新日時": "2024-11-28 14:15:00",
+        "作成者ID": "rec-006",
+        "更新者ID": "rec-007"
+      },
+      {
+        "営業プロセス実行状況ID": "rec-001",
+        "営業案件ID": "rec-002",
+        "営業プロセス定義ID": "rec-003",
+        "現在のステップ番号": 5,
+        "ステップ名": "契約締結",
+        "ステップ開始日時": "2025-01-15T09:00:00",
+        "ステップ予定完了日時": "2025-01-22T17:00:00",
+        "ステップ実績完了日時": "2025-01-22T14:30:00",
+        "ステップ実行状態": "完了",
+        "遅延フラグ": false,
+        "遅延日数": null,
+        "担当営業ID": "rec-004",
+        "AIエージェント推論ログID": "rec-005",
+        "推奨アクション": "契約書の最終確認を実施し、顧客署名取得後に契約管理システムへ登録してください。",
+        "推奨アクション実施状況": "完了",
+        "プロセス全体進捗率": 100,
+        "備考": "顧客との契約書調整が円滑に進み、予定より3日早く完了。契約金額は見積額通り980万円で決定。次フェーズの納品準備を開始予定。",
+        "作成日時": "2025-01-15T09:15:00",
+        "更新日時": "2025-01-22T14:45:00",
+        "作成者ID": "rec-006",
+        "更新者ID": "rec-006"
+      },
+      {
+        "営業プロセス実行状況ID": "rec-20250115-001",
+        "営業案件ID": "rec-20250101-proj-087",
+        "営業プロセス定義ID": "rec-20240601-proc-def-012",
+        "現在のステップ番号": 3,
+        "ステップ名": "顧客決裁取得",
+        "ステップ開始日時": "2025-01-08T09:30:00+09:00",
+        "ステップ予定完了日時": "2025-01-12T17:00:00+09:00",
+        "ステップ実績完了日時": null,
+        "ステップ実行状態": "遅延",
+        "遅延フラグ": true,
+        "遅延日数": 3,
+        "担当営業ID": "rec-emp-0456",
+        "AIエージェント推論ログID": "rec-20250115-ai-log-023",
+        "推奨アクション": "顧客の決裁担当者が不在のため、代理決裁者との面談を設定し、決裁プロセスの並行実行を検討。同時に営業管理部に対して決裁期限延長の承認申請を実施してください。",
+        "推奨アクション実施状況": "実施中",
+        "プロセス全体進捗率": 42,
+        "備考": "ステップ2（提案資料提出）は1月6日に完了。ステップ4（契約書作成）と並行してステップ3を進行中。顧客の決裁権者が出張中であり、1月17日までの決裁が困難と判明。代理決裁者との調整により1月14日の決裁を目指す。",
+        "作成日時": "2025-01-08T09:30:00+09:00",
+        "更新日時": "2025-01-15T14:22:00+09:00",
+        "作成者ID": "rec-user-0456",
+        "更新者ID": "rec-user-0891"
+      }
+    ],
+    "レポート生成履歴": [
+      {
+        "レポート生成履歴ID": "rec-20250115-0847",
+        "レポート種別": "営業活動分析",
+        "生成ユーザーID": "rec-user-0012",
+        "対象営業担当者ID": null,
+        "対象顧客ID": null,
+        "対象営業案件ID": null,
+        "集計期間開始日": "2024-12-01T00:00:00Z",
+        "集計期間終了日": "2024-12-31T23:59:59Z",
+        "フィルタ条件": "{\"対象部門\":\"営業部\",\"レポート範囲\":\"全営業担当者\",\"集計単位\":\"月次\",\"除外条件\":\"休職者を除外\"}",
+        "生成ステータス": "成功",
+        "生成結果ファイルパス": "/reports/2025/01/sales_activity_202412_all_20250115.xlsx",
+        "生成結果レコード数": 1847,
+        "エラーメッセージ": null,
+        "処理実行時間秒": 23,
+        "作成日時": "2025-01-15T08:47:32Z",
+        "更新日時": "2025-01-15T08:47:55Z"
+      },
+      {
+        "レポート生成履歴ID": "rec-001",
+        "レポート種別": "成約実績",
+        "生成ユーザーID": "rec-002",
+        "対象営業担当者ID": "rec-002",
+        "対象顧客ID": null,
+        "対象営業案件ID": null,
+        "集計期間開始日": "2024-10-01T00:00:00+09:00",
+        "集計期間終了日": "2024-12-31T23:59:59+09:00",
+        "フィルタ条件": "{\"成約ステータス\": \"成約済み\", \"営業段階\": \"クローズ\"}",
+        "生成ステータス": "成功",
+        "生成結果ファイルパス": "/reports/sales/2024Q4/rec-002_契約実績_20241231.pdf",
+        "生成結果レコード数": 23,
+        "エラーメッセージ": null,
+        "処理実行時間秒": 12,
+        "作成日時": "2025-01-06T14:32:45+09:00",
+        "更新日時": "2025-01-06T14:32:57+09:00"
+      },
+      {
+        "レポート生成履歴ID": "rec-001",
+        "レポート種別": "監査レポート",
+        "生成ユーザーID": "rec-usr-0042",
+        "対象営業担当者ID": null,
+        "対象顧客ID": "rec-cust-0128",
+        "対象営業案件ID": "rec-proj-0856",
+        "集計期間開始日": "2024-04-01T00:00:00Z",
+        "集計期間終了日": "2025-01-31T23:59:59Z",
+        "フィルタ条件": "案件ID=rec-proj-0856 AND 顧客ID=rec-cust-0128 AND 活動種別 IN (訪問,提案,契約交渉,見積提示) AND ステータス IN (完了,進行中)",
+        "生成ステータス": "成功",
+        "生成結果ファイルパス": "/reports/audit/2025/audit_proj_0856_20250215_143022.xlsx",
+        "生成結果レコード数": 247,
+        "エラーメッセージ": null,
+        "処理実行時間秒": 18,
+        "作成日時": "2025-02-15T14:30:22Z",
+        "更新日時": "2025-02-15T14:30:22Z"
+      },
+      {
+        "レポート生成履歴ID": "rec-20250115-0847",
+        "レポート種別": "行動パターン分析",
+        "生成ユーザーID": "rec-user-0324",
+        "対象営業担当者ID": "rec-emp-0156",
+        "対象顧客ID": null,
+        "対象営業案件ID": null,
+        "集計期間開始日": "2024-10-01T00:00:00+09:00",
+        "集計期間終了日": "2024-12-31T23:59:59+09:00",
+        "フィルタ条件": "営業活動区分=訪問・電話・メール、除外=休暇・研修期間",
+        "生成ステータス": "成功",
+        "生成結果ファイルパス": "/reports/2025/01/行動パターン分析_鈴木健一_20250115.xlsx",
+        "生成結果レコード数": 287,
+        "エラーメッセージ": null,
+        "処理実行時間秒": 18,
+        "作成日時": "2025-01-15T09:47:32+09:00",
+        "更新日時": "2025-01-15T09:47:50+09:00"
+      },
+      {
+        "レポート生成履歴ID": "rec-001",
+        "レポート種別": "AIエージェント推論精度",
+        "生成ユーザーID": "rec-002",
+        "対象営業担当者ID": null,
+        "対象顧客ID": null,
+        "対象営業案件ID": null,
+        "集計期間開始日": "2024-10-01T00:00:00",
+        "集計期間終了日": "2024-12-31T23:59:59",
+        "フィルタ条件": "推論ステータス: 完了, 信頼度スコア: 0.7以上, 推論カテゴリ: 顧客分類・次アクション提案・成約確度予測",
+        "生成ステータス": "成功",
+        "生成結果ファイルパス": "/reports/ai_inference_accuracy/2024Q4_inference_report_20250115.xlsx",
+        "生成結果レコード数": 2847,
+        "エラーメッセージ": null,
+        "処理実行時間秒": 45,
+        "作成日時": "2025-01-15T14:32:18",
+        "更新日時": "2025-01-15T14:32:18"
+      },
+      {
+        "レポート生成履歴ID": "rec-20250115-001",
+        "レポート種別": "営業パイプライン進捗分析",
+        "生成ユーザーID": "user-exec-001",
+        "対象営業担当者ID": null,
+        "対象顧客ID": null,
+        "対象営業案件ID": null,
+        "集計期間開始日": "2024-10-01T00:00:00+09:00",
+        "集計期間終了日": "2025-01-15T23:59:59+09:00",
+        "フィルタ条件": "{\"営業段階\":[\"提案中\",\"検討中\",\"交渉中\",\"成約待ち\"],\"業界\":\"全業界\",\"地域\":\"全国\",\"案件金額下限\":\"1000000\"}",
+        "生成ステータス": "成功",
+        "生成結果ファイルパス": "/reports/2025/01/15/pipeline_report_20250115_exec.xlsx",
+        "生成結果レコード数": 847,
+        "エラーメッセージ": null,
+        "処理実行時間秒": 42,
+        "作成日時": "2025-01-15T09:30:00+09:00",
+        "更新日時": "2025-01-15T09:30:42+09:00"
+      },
+      {
+        "レポート生成履歴ID": "rec-20250115-0847",
+        "レポート種別": "行動パターン分析",
+        "生成ユーザーID": "rec-user-0342",
+        "対象営業担当者ID": "rec-sales-0156",
+        "対象顧客ID": "rec-cust-2891",
+        "対象営業案件ID": "rec-deal-5724",
+        "集計期間開始日": "2024-10-01T00:00:00+09:00",
+        "集計期間終了日": "2025-01-15T23:59:59+09:00",
+        "フィルタ条件": "{\"営業段階\": [\"提案\", \"交渉\", \"成約待ち\"], \"接触チャネル\": [\"電話\", \"メール\", \"対面\"], \"成約可能性\": \"高\"}",
+        "生成ステータス": "成功",
+        "生成結果ファイルパス": "/reports/2025/01/report_20250115_0847_sales0156_cust2891.xlsx",
+        "生成結果レコード数": 47,
+        "エラーメッセージ": null,
+        "処理実行時間秒": 8,
+        "作成日時": "2025-01-15T08:47:32+09:00",
+        "更新日時": "2025-01-15T08:47:40+09:00"
+      },
+      {
+        "レポート生成履歴ID": "rec-20250215-001",
+        "レポート種別": "システム動作ログ分析",
+        "生成ユーザーID": "rec-user-admin-001",
+        "対象営業担当者ID": null,
+        "対象顧客ID": null,
+        "対象営業案件ID": null,
+        "集計期間開始日": "2025-01-01T00:00:00+09:00",
+        "集計期間終了日": "2025-02-14T23:59:59+09:00",
+        "フィルタ条件": "{\"レポート種別\":[\"営業活動分析\",\"成約実績\",\"行動パターン分析\",\"AIエージェント推論精度\"],\"生成ステータス\":[\"成功\",\"失敗\",\"処理中\"],\"処理実行時間秒_範囲\":{\"最小\":0,\"最大\":3600}}",
+        "生成ステータス": "成功",
+        "生成結果ファイルパス": "/reports/system_logs/2025/02/system_operation_log_analysis_20250215_admin.xlsx",
+        "生成結果レコード数": 2847,
+        "エラーメッセージ": null,
+        "処理実行時間秒": 87,
+        "作成日時": "2025-02-15T14:32:15+09:00",
+        "更新日時": "2025-02-15T14:33:42+09:00"
+      },
+      {
+        "レポート生成履歴ID": "rec-20250115-001",
+        "レポート種別": "市場分析（競合分析含む）",
+        "生成ユーザーID": "rec-user-0847",
+        "対象営業担当者ID": null,
+        "対象顧客ID": null,
+        "対象営業案件ID": null,
+        "集計期間開始日": "2024-10-01T00:00:00Z",
+        "集計期間終了日": "2024-12-31T23:59:59Z",
+        "フィルタ条件": "業界:IT・ソフトウェア,地域:全国,競合企業:A社・B社・C社,市場規模:1000万円以上",
+        "生成ステータス": "成功",
+        "生成結果ファイルパス": "/reports/2025/Q4_market_analysis_20250115.xlsx",
+        "生成結果レコード数": 847,
+        "エラーメッセージ": null,
+        "処理実行時間秒": 142,
+        "作成日時": "2025-01-15T09:30:22Z",
+        "更新日時": "2025-01-15T09:32:44Z"
+      },
+      {
+        "レポート生成履歴ID": "rec-20250215-001",
+        "レポート種別": "失注理由分析",
+        "生成ユーザーID": "rec-user-0847",
+        "対象営業担当者ID": "rec-sales-0312",
+        "対象顧客ID": null,
+        "対象営業案件ID": null,
+        "集計期間開始日": "2024-10-01T00:00:00+09:00",
+        "集計期間終了日": "2025-02-14T23:59:59+09:00",
+        "フィルタ条件": "{\"ステータス\": \"失注\", \"失注理由カテゴリ\": [\"価格競争力\", \"顧客都合\", \"提案内容不適合\"], \"営業担当者ID\": \"rec-sales-0312\"}",
+        "生成ステータス": "成功",
+        "生成結果ファイルパス": "/reports/2025/02/rep_20250215_001_loss_analysis.xlsx",
+        "生成結果レコード数": 23,
+        "エラーメッセージ": null,
+        "処理実行時間秒": 18,
+        "作成日時": "2025-02-15T14:32:45+09:00",
+        "更新日時": "2025-02-15T14:33:03+09:00"
+      }
+    ],
+    "ダッシュボード設定": [
+      {
+        "ダッシュボード設定ID": "rec-001",
+        "ログインユーザーID": "rec-002",
+        "設定名": "営業マネージャー用日次監視ダッシュボード",
+        "説明": "全営業チームの日次売上進捗、目標達成率、案件パイプラインを一元監視するためのデフォルトダッシュボード。営業部長および営業マネージャーが朝礼時に使用",
+        "デフォルト設定フラグ": true,
+        "レイアウトタイプ": "3カラム",
+        "表示期間": "本日",
+        "自動更新間隔秒": 300,
+        "有効フラグ": true,
+        "作成日時": "2024-10-15T08:30:00+09:00",
+        "更新日時": "2025-01-20T14:45:00+09:00",
+        "作成者ID": "rec-003"
+      },
+      {
+        "ダッシュボード設定ID": "rec-001",
+        "ログインユーザーID": "rec-u-2847",
+        "設定名": "営業担当者用カスタムダッシュボード",
+        "説明": "個別営業担当者が担当案件の進捗状況と見込み客の管理を効率的に行うためのカスタムダッシュボード。パイプライン、案件ステータス、見込み客リスト、売上予測を一画面で確認できます。",
+        "デフォルト設定フラグ": true,
+        "レイアウトタイプ": "カスタム",
+        "表示期間": "今月",
+        "自動更新間隔秒": 300,
+        "有効フラグ": true,
+        "作成日時": "2024-10-15T09:30:00+09:00",
+        "更新日時": "2025-01-22T14:15:00+09:00",
+        "作成者ID": "rec-u-2847"
+      },
+      {
+        "ダッシュボード設定ID": "rec-001",
+        "ログインユーザーID": "rec-usr-0847",
+        "設定名": "月次目標達成状況_経営会議用",
+        "説明": "営業部長向けの経営会議用ダッシュボード。月次売上目標の達成状況、部門別成績ランキング、顧客別売上推移を一覧表示。意思決定に必要なKPI全般を網羅。",
+        "デフォルト設定フラグ": true,
+        "レイアウトタイプ": "3カラム",
+        "表示期間": "今月",
+        "自動更新間隔秒": 300,
+        "有効フラグ": true,
+        "作成日時": "2024-10-15T09:30:00+09:00",
+        "更新日時": "2025-01-08T14:22:15+09:00",
+        "作成者ID": "rec-usr-0847"
+      },
+      {
+        "ダッシュボード設定ID": "rec-001",
+        "ログインユーザーID": "rec-usr-0042",
+        "設定名": "新入営業社員向け研修用テンプレート",
+        "説明": "新入営業社員の研修期間中に使用するダッシュボード。日次の売上目標、顧客訪問予定、商品知識クイズ、先輩営業のベストプラクティス事例を一覧表示。基本的な営業スキル習得を支援するために設計されています。",
+        "デフォルト設定フラグ": true,
+        "レイアウトタイプ": "3カラム",
+        "表示期間": "本日",
+        "自動更新間隔秒": 300,
+        "有効フラグ": true,
+        "作成日時": "2024-04-01T09:30:00+09:00",
+        "更新日時": "2025-01-15T14:22:00+09:00",
+        "作成者ID": "rec-usr-0001"
+      },
+      {
+        "ダッシュボード設定ID": "rec-001",
+        "ログインユーザーID": "rec-002",
+        "設定名": "営業事務用_請求入金管理",
+        "説明": "営業事務チームが日次で確認する請求・入金管理と顧客データベース更新状況の統合ダッシュボード。売上計上、請求書発行状況、入金確認、顧客情報の最新度を一画面で把握可能。",
+        "デフォルト設定フラグ": true,
+        "レイアウトタイプ": "3カラム",
+        "表示期間": "今月",
+        "自動更新間隔秒": 300,
+        "有効フラグ": true,
+        "作成日時": "2024-10-15T09:30:00+09:00",
+        "更新日時": "2025-01-08T14:22:00+09:00",
+        "作成者ID": "rec-003"
+      },
+      {
+        "ダッシュボード設定ID": "rec-001",
+        "ログインユーザーID": "rec-002",
+        "設定名": "関東地域営業チームリーダー用",
+        "説明": "関東地域の売上実績、顧客満足度スコア、営業活動指標を一元管理するダッシュボード。日次の売上進捗と顧客フィードバックをリアルタイムで追跡し、チームパフォーマンスの可視化を実現します。",
+        "デフォルト設定フラグ": true,
+        "レイアウトタイプ": "3カラム",
+        "表示期間": "今月",
+        "自動更新間隔秒": 300,
+        "有効フラグ": true,
+        "作成日時": "2024-10-15T09:30:00+09:00",
+        "更新日時": "2025-01-22T14:15:00+09:00",
+        "作成者ID": "rec-003"
+      },
+      {
+        "ダッシュボード設定ID": "rec-001",
+        "ログインユーザーID": "rec-usr-042",
+        "設定名": "営業企画部向け市場トレンド分析",
+        "説明": "市場トレンド、競合分析データ、売上予測を統合表示するダッシュボード。営業企画部が週次戦略会議で使用する基本設定。",
+        "デフォルト設定フラグ": true,
+        "レイアウトタイプ": "3カラム",
+        "表示期間": "今月",
+        "自動更新間隔秒": 1800,
+        "有効フラグ": true,
+        "作成日時": "2024-10-15T09:30:00+09:00",
+        "更新日時": "2025-01-20T14:15:00+09:00",
+        "作成者ID": "rec-usr-015"
+      },
+      {
+        "ダッシュボード設定ID": "rec-001",
+        "ログインユーザーID": "rec-002",
+        "設定名": "提案資料進捗・案件ステータス確認用",
+        "説明": "営業支援スタッフが日次で提案資料作成の進捗状況と営業案件のステータスを一覧確認するためのダッシュボード。進捗遅延の案件を優先的に把握し、営業チームへの支援判断を迅速に行える設計。",
+        "デフォルト設定フラグ": true,
+        "レイアウトタイプ": "3カラム",
+        "表示期間": "本週",
+        "自動更新間隔秒": 300,
+        "有効フラグ": true,
+        "作成日時": "2024-10-15T08:30:00+09:00",
+        "更新日時": "2025-01-20T14:45:00+09:00",
+        "作成者ID": "rec-003"
+      },
+      {
+        "ダッシュボード設定ID": "rec-001",
+        "ログインユーザーID": "rec-usr-0847",
+        "設定名": "取締役向け経営ダッシュボード",
+        "説明": "全社売上実績、営業利益率、顧客満足度、従業員エンゲージメント等の重要KPIをリアルタイムで監視するための経営層向けダッシュボード設定です。",
+        "デフォルト設定フラグ": true,
+        "レイアウトタイプ": "3カラム",
+        "表示期間": "今月",
+        "自動更新間隔秒": 300,
+        "有効フラグ": true,
+        "作成日時": "2024-10-15T09:30:00+09:00",
+        "更新日時": "2025-01-20T14:45:00+09:00",
+        "作成者ID": "rec-usr-0847"
+      }
+    ]
+  },
+  "shellHtml": "<!doctype html>\n<html lang=\"ja\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>匠SFA - 営業プロセス監査・分析管理システム</title>\n  <style>\n:root {\n  --primary: #4a90e2;\n  --primary-hover: #357abd;\n  --bg-main: #f0f4f9;\n  --bg-card: #ffffff;\n  --bg-sidebar: #e8ecf3;\n  --border: #d0dae8;\n  --text: #1a1a1a;\n  --text-muted: #666666;\n  --top-bar-bg: #ffffff;\n  --top-bar-border: #d0dae8;\n  --success: #27ae60;\n  --warning: #f39c12;\n  --danger: #e74c3c;\n  --info: #3498db;\n}\n\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\nhtml, body {\n  height: 100%;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif;\n  font-size: 13px;\n  line-height: 1.4;\n  color: var(--text);\n  background: var(--bg-main);\n}\n\n.shell-container {\n  display: flex;\n  flex-direction: column;\n  height: 100vh;\n}\n\n.top-bar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 0 20px;\n  height: 56px;\n  background: var(--top-bar-bg);\n  border-bottom: 1px solid var(--top-bar-border);\n  flex-shrink: 0;\n}\n\n.brand-section {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\n\n.brand-logo {\n  font-weight: 700;\n  font-size: 16px;\n  color: var(--primary);\n}\n\n.brand-name {\n  font-size: 11px;\n  color: var(--text-muted);\n  letter-spacing: 0.5px;\n}\n\n.user-section {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n\n.user-avatar {\n  width: 32px;\n  height: 32px;\n  border-radius: 50%;\n  background: var(--primary);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: white;\n  font-weight: 600;\n  font-size: 12px;\n}\n\n.user-name {\n  font-size: 12px;\n  color: var(--text);\n}\n\n.logout-link {\n  font-size: 12px;\n  color: var(--primary);\n  text-decoration: none;\n  padding: 4px 8px;\n  border-radius: 3px;\n  transition: background 0.2s;\n}\n\n.logout-link:hover {\n  background: rgba(74, 144, 226, 0.1);\n}\n\n.main-wrapper {\n  display: flex;\n  flex: 1;\n  overflow: hidden;\n}\n\n.sidebar {\n  width: 240px;\n  background: var(--bg-sidebar);\n  border-right: 1px solid var(--border);\n  overflow-y: auto;\n  flex-shrink: 0;\n}\n\n.sidebar-section {\n  padding: 16px 0;\n  border-bottom: 1px solid var(--border);\n}\n\n.sidebar-section:first-child {\n  padding-top: 8px;\n}\n\n.sidebar-section-title {\n  font-size: 10px;\n  font-weight: 700;\n  text-transform: uppercase;\n  color: var(--text-muted);\n  padding: 0 16px 8px;\n  letter-spacing: 0.5px;\n}\n\n.nav-item {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 8px 16px;\n  margin: 0 8px;\n  border-radius: 4px;\n  color: var(--text);\n  text-decoration: none;\n  font-size: 12px;\n  cursor: pointer;\n  transition: all 0.2s;\n  border-left: 3px solid transparent;\n}\n\n.nav-item:hover {\n  background: rgba(74, 144, 226, 0.08);\n}\n\n.nav-item.aivic-active {\n  background: rgba(74, 144, 226, 0.15);\n  color: var(--primary);\n  border-left-color: var(--primary);\n  font-weight: 500;\n}\n\n.nav-icon {\n  width: 16px;\n  height: 16px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 14px;\n}\n\n.content-area {\n  flex: 1;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n\n[data-aivic-panel] {\n  width: 100%;\n  height: 100%;\n}\n\n.dashboard-container {\n  padding: 24px;\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n\n.page-header {\n  display: flex;\n  align-items: baseline;\n  gap: 12px;\n  margin-bottom: 8px;\n}\n\n.page-title {\n  font-size: 20px;\n  font-weight: 700;\n  color: var(--text);\n}\n\n.page-subtitle {\n  font-size: 12px;\n  color: var(--text-muted);\n}\n\n.kpi-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: 12px;\n}\n\n.kpi-card {\n  background: var(--bg-card);\n  border: 1px solid var(--border);\n  border-radius: 6px;\n  padding: 16px;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.kpi-label {\n  font-size: 11px;\n  font-weight: 600;\n  text-transform: uppercase;\n  color: var(--text-muted);\n  letter-spacing: 0.3px;\n}\n\n.kpi-value {\n  font-size: 24px;\n  font-weight: 700;\n  color: var(--primary);\n}\n\n.kpi-change {\n  font-size: 11px;\n  color: var(--text-muted);\n}\n\n.kpi-change.positive {\n  color: var(--success);\n}\n\n.kpi-change.negative {\n  color: var(--danger);\n}\n\n.section-title {\n  font-size: 14px;\n  font-weight: 600;\n  color: var(--text);\n  margin-top: 12px;\n  margin-bottom: 12px;\n}\n\n.chart-container {\n  background: var(--bg-card);\n  border: 1px solid var(--border);\n  border-radius: 6px;\n  padding: 16px;\n  min-height: 280px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: var(--text-muted);\n  font-size: 12px;\n}\n\n.data-table {\n  width: 100%;\n  border-collapse: collapse;\n  background: var(--bg-card);\n  border: 1px solid var(--border);\n  border-radius: 6px;\n  overflow: hidden;\n}\n\n.data-table thead {\n  background: #f8fafb;\n  border-bottom: 1px solid var(--border);\n}\n\n.data-table th {\n  padding: 10px 12px;\n  text-align: left;\n  font-size: 11px;\n  font-weight: 600;\n  text-transform: uppercase;\n  color: var(--text-muted);\n  letter-spacing: 0.3px;\n}\n\n.data-table td {\n  padding: 10px 12px;\n  border-bottom: 1px solid var(--border);\n  font-size: 12px;\n}\n\n.data-table tbody tr:hover {\n  background: #fafbfc;\n}\n\n.data-table tbody tr:last-child td {\n  border-bottom: none;\n}\n\n.status-badge {\n  display: inline-block;\n  padding: 3px 8px;\n  border-radius: 3px;\n  font-size: 11px;\n  font-weight: 500;\n}\n\n.status-badge.active {\n  background: rgba(39, 174, 96, 0.15);\n  color: var(--success);\n}\n\n.status-badge.pending {\n  background: rgba(243, 156, 18, 0.15);\n  color: var(--warning);\n}\n\n.status-badge.alert {\n  background: rgba(231, 76, 60, 0.15);\n  color: var(--danger);\n}\n\n.search-bar {\n  display: flex;\n  gap: 8px;\n  margin-bottom: 16px;\n}\n\n.search-input {\n  flex: 1;\n  padding: 8px 12px;\n  border: 1px solid var(--border);\n  border-radius: 4px;\n  font-size: 12px;\n  background: var(--bg-card);\n  color: var(--text);\n}\n\n.search-input::placeholder {\n  color: var(--text-muted);\n}\n\n.btn {\n  padding: 8px 14px;\n  border: 1px solid var(--border);\n  border-radius: 4px;\n  font-size: 12px;\n  font-weight: 500;\n  cursor: pointer;\n  transition: all 0.2s;\n  background: var(--bg-card);\n  color: var(--text);\n  text-decoration: none;\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n}\n\n.btn:hover {\n  border-color: var(--primary);\n  color: var(--primary);\n}\n\n.btn-primary {\n  background: var(--primary);\n  color: white;\n  border-color: var(--primary);\n}\n\n.btn-primary:hover {\n  background: var(--primary-hover);\n  border-color: var(--primary-hover);\n}\n\n.filter-group {\n  display: flex;\n  gap: 8px;\n  margin-bottom: 16px;\n  flex-wrap: wrap;\n}\n\n.filter-chip {\n  padding: 6px 10px;\n  border: 1px solid var(--border);\n  border-radius: 4px;\n  font-size: 11px;\n  background: var(--bg-card);\n  cursor: pointer;\n  transition: all 0.2s;\n}\n\n.filter-chip:hover {\n  border-color: var(--primary);\n}\n\n.filter-chip.active {\n  background: var(--primary);\n  color: white;\n  border-color: var(--primary);\n}\n\n.modal-overlay {\n  display: none;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.3);\n  z-index: 1000;\n  align-items: center;\n  justify-content: center;\n}\n\n.modal-overlay.active {\n  display: flex;\n}\n\n.modal {\n  background: var(--bg-card);\n  border-radius: 6px;\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);\n  max-width: 500px;\n  width: 90%;\n  max-height: 80vh;\n  overflow-y: auto;\n}\n\n.modal-header {\n  padding: 16px;\n  border-bottom: 1px solid var(--border);\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.modal-title {\n  font-size: 14px;\n  font-weight: 600;\n}\n\n.modal-close {\n  background: none;\n  border: none;\n  font-size: 18px;\n  cursor: pointer;\n  color: var(--text-muted);\n}\n\n.modal-body {\n  padding: 16px;\n}\n\n.modal-footer {\n  padding: 16px;\n  border-top: 1px solid var(--border);\n  display: flex;\n  gap: 8px;\n  justify-content: flex-end;\n}\n\n.form-group {\n  margin-bottom: 14px;\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n}\n\n.form-label {\n  font-size: 11px;\n  font-weight: 600;\n  color: var(--text);\n}\n\n.form-input, .form-select, .form-textarea {\n  padding: 8px 10px;\n  border: 1px solid var(--border);\n  border-radius: 4px;\n  font-size: 12px;\n  background: var(--bg-card);\n  color: var(--text);\n  font-family: inherit;\n}\n\n.form-textarea {\n  resize: vertical;\n  min-height: 80px;\n}\n\n.form-input:focus, .form-select:focus, .form-textarea:focus {\n  outline: none;\n  border-color: var(--primary);\n  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);\n}\n\n.stepper {\n  display: flex;\n  gap: 8px;\n  margin-bottom: 24px;\n  align-items: center;\n}\n\n.step {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex: 1;\n}\n\n.step-number {\n  width: 28px;\n  height: 28px;\n  border-radius: 50%;\n  background: var(--bg-card);\n  border: 2px solid var(--border);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 11px;\n  font-weight: 600;\n  color: var(--text-muted);\n}\n\n.step.active .step-number {\n  background: var(--primary);\n  border-color: var(--primary);\n  color: white;\n}\n\n.step.completed .step-number {\n  background: var(--success);\n  border-color: var(--success);\n  color: white;\n}\n\n.step-label {\n  font-size: 11px;\n  font-weight: 500;\n  color: var(--text-muted);\n}\n\n.step.active .step-label {\n  color: var(--primary);\n  font-weight: 600;\n}\n\n.step-line {\n  flex: 1;\n  height: 2px;\n  background: var(--border);\n  margin: 0 -4px;\n}\n\n.step:last-child .step-line {\n  display: none;\n}\n\n.alert {\n  padding: 12px;\n  border-radius: 4px;\n  font-size: 12px;\n  margin-bottom: 12px;\n  border-left: 3px solid;\n}\n\n.alert-info {\n  background: rgba(52, 152, 219, 0.1);\n  border-left-color: var(--info);\n  color: #2c3e50;\n}\n\n.alert-warning {\n  background: rgba(243, 156, 18, 0.1);\n  border-left-color: var(--warning);\n  color: #7d4f1f;\n}\n\n.alert-danger {\n  background: rgba(231, 76, 60, 0.1);\n  border-left-color: var(--danger);\n  color: #7d3c2f;\n}\n\n.alert-success {\n  background: rgba(39, 174, 96, 0.1);\n  border-left-color: var(--success);\n  color: #1e5631;\n}\n\n.tabs {\n  display: flex;\n  gap: 0;\n  border-bottom: 1px solid var(--border);\n  margin-bottom: 16px;\n}\n\n.tab {\n  padding: 10px 16px;\n  border: none;\n  background: none;\n  font-size: 12px;\n  font-weight: 500;\n  color: var(--text-muted);\n  cursor: pointer;\n  border-bottom: 2px solid transparent;\n  transition: all 0.2s;\n}\n\n.tab:hover {\n  color: var(--text);\n}\n\n.tab.active {\n  color: var(--primary);\n  border-bottom-color: var(--primary);\n}\n\n.list-item {\n  padding: 12px;\n  border-bottom: 1px solid var(--border);\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  cursor: pointer;\n  transition: background 0.2s;\n}\n\n.list-item:hover {\n  background: #fafbfc;\n}\n\n.list-item-main {\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n  flex: 1;\n}\n\n.list-item-title {\n  font-size: 12px;\n  font-weight: 500;\n  color: var(--text);\n}\n\n.list-item-meta {\n  font-size: 11px;\n  color: var(--text-muted);\n}\n\n.list-item-action {\n  display: flex;\n  gap: 8px;\n}\n\n.empty-state {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 40px 20px;\n  text-align: center;\n  color: var(--text-muted);\n}\n\n.empty-state-icon {\n  font-size: 32px;\n  margin-bottom: 12px;\n  opacity: 0.5;\n}\n\n.empty-state-text {\n  font-size: 12px;\n  margin-bottom: 12px;\n}\n\n.scrollable-table-wrapper {\n  overflow-x: auto;\n  border: 1px solid var(--border);\n  border-radius: 6px;\n}\n\n@media (max-width: 768px) {\n  .sidebar {\n    width: 200px;\n  }\n  .kpi-grid {\n    grid-template-columns: 1fr;\n  }\n  .dashboard-container {\n    padding: 16px;\n    gap: 16px;\n  }\n}\n  </style>\n  <!--AIVIC_GLOBALS-->\n</head>\n<body>\n  <div class=\"shell-container\">\n    <header class=\"top-bar\">\n      <div class=\"brand-section\">\n        <div class=\"brand-logo\">匠SFA</div>\n        <div class=\"brand-name\">営業プロセス監査・分析</div>\n      </div>\n      <div class=\"user-section\">\n        <div class=\"user-avatar\">U</div>\n        <div class=\"user-name\">ユーザー</div>\n        <a href=\"./login.html\" class=\"logout-link\">ログアウト</a>\n      </div>\n    </header>\n\n    <div class=\"main-wrapper\">\n      <aside class=\"sidebar\">\n        <div class=\"sidebar-section\">\n          <div class=\"sidebar-section-title\">監視・分析</div>\n          <a class=\"nav-item aivic-active\" data-aivic-nav=\"scr-1785570818400\" onclick=\"window.showScreen('scr-1785570818400')\">\n            <span class=\"nav-icon\">📊</span>\n            <span>監査ダッシュボード</span>\n          </a>\n          <a class=\"nav-item\" data-aivic-nav=\"scr-1785570831723\" onclick=\"window.showScreen('scr-1785570831723')\">\n            <span class=\"nav-icon\">🔍</span>\n            <span>成功パターン検索</span>\n          </a>\n          <a class=\"nav-item\" data-aivic-nav=\"scr-1785570844176\" onclick=\"window.showScreen('scr-1785570844176')\">\n            <span class=\"nav-icon\">📋</span>\n            <span>レポート生成</span>\n          </a>\n        </div>\n      </aside>\n\n      <main class=\"content-area\">\n        <div data-aivic-panel=\"scr-1785570818400\"></div>\n        <div data-aivic-panel=\"scr-1785570831723\"></div>\n        <div data-aivic-panel=\"scr-1785570844176\"></div>\n      </main>\n    </div>\n  </div>\n\n  <!--AIVIC_RUNTIME-->\n</body>\n</html>"
+}

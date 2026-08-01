@@ -1,0 +1,1831 @@
+{
+  "systemId": "itg-5",
+  "systemName": "顧客購買支援ポータル",
+  "cssTheme": "```css\n:root {\n  --primary: #0066cc;\n  --primary-hover: #0052a3;\n  --bg-main: #f0f4f9;\n  --bg-card: #ffffff;\n  --bg-sidebar: #e8ecf1;\n  --border: #d0d8e0;\n  --text: #1a1a1a;\n  --text-muted: #666666;\n  --top-bar-bg: #ffffff;\n  --top-bar-border: #d0d8e0;\n}\n```",
+  "screens": [
+    {
+      "id": "scr-1785572473485",
+      "name": "提案管理ワークスペース",
+      "purpose": "顧客の制約条件に対して提案内容を自動照合・評価し、評価結果の表示・修正・分析・レポート生成を一元管理するワークスペース",
+      "items": [
+        "提案情報入力フォーム",
+        "顧客選択ドロップダウン",
+        "提案内容テキストエリア",
+        "自動照合・評価実行ボタン",
+        "照合ルール選択パネル",
+        "照合評価結果表示エリア",
+        "評価スコア表示",
+        "制約条件違反項目リスト",
+        "修正提案情報入力フォーム",
+        "修正内容保存ボタン",
+        "最終分析結果表示パネル",
+        "評価レポート生成ボタン"
+      ]
+    }
+  ],
+  "screenPanels": [
+    {
+      "screenId": "scr-1785572473485",
+      "panelHtml": "<div style=\"display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px;\">\n  <div class=\"card\" style=\"padding: 12px;\">\n    <div style=\"font-size: 12px; color: var(--text-muted); margin-bottom: 4px;\">提案総数（当月）</div>\n    <div style=\"font-size: 24px; font-weight: 600; color: var(--primary);\" data-testid=\"kpi-proposal-count\">0</div>\n  </div>\n  <div class=\"card\" style=\"padding: 12px;\">\n    <div style=\"font-size: 12px; color: var(--text-muted); margin-bottom: 4px;\">平均適合性スコア</div>\n    <div style=\"font-size: 24px; font-weight: 600; color: var(--primary);\" data-testid=\"kpi-avg-score\">0%</div>\n  </div>\n  <div class=\"card\" style=\"padding: 12px;\">\n    <div style=\"font-size: 12px; color: var(--text-muted); margin-bottom: 4px;\">修正後合格率</div>\n    <div style=\"font-size: 24px; font-weight: 600; color: var(--primary);\" data-testid=\"kpi-pass-rate\">0%</div>\n  </div>\n</div>\n\n<div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;\">\n  <!-- 左側：提案入力フォーム -->\n  <div style=\"display: flex; flex-direction: column; gap: 12px;\">\n    <div class=\"card\" style=\"padding: 14px;\">\n      <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px;\">提案情報入力</div>\n      \n      <div style=\"margin-bottom: 10px;\">\n        <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;\">顧客選択</label>\n        <select data-testid=\"customer-select\" name=\"customerId\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(0,0,0,0.15); border-radius: 4px; background: var(--bg-card); color: var(--text); font-size: 12px;\">\n          <option value=\"\">顧客を選択してください</option>\n          <option value=\"cust-001\">ABC株式会社</option>\n          <option value=\"cust-002\">XYZ商事</option>\n          <option value=\"cust-003\">テック開発</option>\n        </select>\n      </div>\n\n      <div style=\"margin-bottom: 10px;\">\n        <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;\">提案タイトル</label>\n        <input data-testid=\"proposal-title\" type=\"text\" name=\"proposalTitle\" placeholder=\"例：システム導入提案\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(0,0,0,0.15); border-radius: 4px; background: var(--bg-card); color: var(--text); font-size: 12px; box-sizing: border-box;\" />\n      </div>\n\n      <div style=\"margin-bottom: 10px;\">\n        <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;\">提案金額（円）</label>\n        <input data-testid=\"proposal-amount\" type=\"number\" name=\"proposalAmount\" placeholder=\"0\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(0,0,0,0.15); border-radius: 4px; background: var(--bg-card); color: var(--text); font-size: 12px; box-sizing: border-box;\" />\n      </div>\n\n      <div style=\"margin-bottom: 10px;\">\n        <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;\">提案内容</label>\n        <textarea data-testid=\"proposal-content\" name=\"proposalContent\" placeholder=\"提案の詳細内容を入力してください\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(0,0,0,0.15); border-radius: 4px; background: var(--bg-card); color: var(--text); font-size: 12px; box-sizing: border-box; resize: vertical; min-height: 80px;\"></textarea>\n      </div>\n\n      <button data-testid=\"evaluate-button\" class=\"action-btn\" style=\"width: 100%; padding: 8px; font-size: 12px; margin-top: 8px;\">照合・評価を実行</button>\n    </div>\n\n    <!-- 照合ルール選択パネル -->\n    <div class=\"card\" style=\"padding: 14px;\">\n      <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px;\">照合ルール選択</div>\n      <div style=\"display: flex; flex-direction: column; gap: 6px;\">\n        <label style=\"display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer;\">\n          <input type=\"checkbox\" data-testid=\"rule-budget\" name=\"rule\" value=\"budget\" style=\"accent-color: var(--primary);\" checked />\n          <span>予算上限チェック</span>\n        </label>\n        <label style=\"display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer;\">\n          <input type=\"checkbox\" data-testid=\"rule-category\" name=\"rule\" value=\"category\" style=\"accent-color: var(--primary);\" checked />\n          <span>カテゴリ制限チェック</span>\n        </label>\n        <label style=\"display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer;\">\n          <input type=\"checkbox\" data-testid=\"rule-frequency\" name=\"rule\" value=\"frequency\" style=\"accent-color: var(--primary);\" checked />\n          <span>購買頻度制限チェック</span>\n        </label>\n      </div>\n    </div>\n  </div>\n\n  <!-- 右側：評価結果 + 修正フォーム -->\n  <div style=\"display: flex; flex-direction: column; gap: 12px;\">\n    <!-- 照合評価結果 -->\n    <div class=\"card\" style=\"padding: 14px;\">\n      <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px;\">照合評価結果</div>\n      \n      <div id=\"evaluation-result\" style=\"display: none;\">\n        <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;\">\n          <div style=\"background: var(--bg-main); padding: 8px; border-radius: 4px;\">\n            <div style=\"font-size: 11px; color: var(--text-muted);\">評価ステータス</div>\n            <div id=\"eval-status\" style=\"font-size: 13px; font-weight: 600; color: var(--primary); margin-top: 2px;\">-</div>\n          </div>\n          <div style=\"background: var(--bg-main); padding: 8px; border-radius: 4px;\">\n            <div style=\"font-size: 11px; color: var(--text-muted);\">適合性スコア</div>\n            <div id=\"eval-score\" style=\"font-size: 13px; font-weight: 600; color: var(--primary); margin-top: 2px;\">0%</div>\n          </div>\n        </div>\n\n        <div style=\"margin-bottom: 10px;\">\n          <div style=\"font-size: 11px; color: var(--text-muted); margin-bottom: 4px;\">照合結果詳細</div>\n          <div id=\"eval-detail\" style=\"font-size: 12px; color: var(--text); background: var(--bg-main); padding: 8px; border-radius: 4px; max-height: 100px; overflow-y: auto;\">-</div>\n        </div>\n\n        <div style=\"margin-bottom: 10px;\">\n          <div style=\"font-size: 11px; color: var(--text-muted); margin-bottom: 4px;\">不適合項目</div>\n          <div id=\"eval-violations\" style=\"font-size: 12px; color: #d32f2f; background: rgba(211,47,47,0.08); padding: 8px; border-radius: 4px; max-height: 100px; overflow-y: auto;\">なし</div>\n        </div>\n      </div>\n\n      <div id=\"evaluation-empty\" style=\"text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px;\">\n        提案を入力して「照合・評価を実行」をクリックしてください\n      </div>\n    </div>\n\n    <!-- 修正提案入力 -->\n    <div class=\"card\" style=\"padding: 14px;\">\n      <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px;\">修正提案情報</div>\n      \n      <div style=\"margin-bottom: 10px;\">\n        <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;\">修正後提案金額（円）</label>\n        <input data-testid=\"revised-amount\" type=\"number\" name=\"revisedAmount\" placeholder=\"0\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(0,0,0,0.15); border-radius: 4px; background: var(--bg-card); color: var(--text); font-size: 12px; box-sizing: border-box;\" />\n      </div>\n\n      <div style=\"margin-bottom: 10px;\">\n        <label style=\"display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;\">修正内容</label>\n        <textarea data-testid=\"revision-notes\" name=\"revisionNotes\" placeholder=\"修正内容を記入してください\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(0,0,0,0.15); border-radius: 4px; background: var(--bg-card); color: var(--text); font-size: 12px; box-sizing: border-box; resize: vertical; min-height: 60px;\"></textarea>\n      </div>\n\n      <button data-testid=\"save-revision-button\" class=\"action-btn\" style=\"width: 100%; padding: 8px; font-size: 12px;\">修正内容を保存</button>\n    </div>\n  </div>\n</div>\n\n<!-- 最終分析結果 + レポート生成 -->\n<div style=\"display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;\">\n  <div class=\"card\" style=\"padding: 14px;\">\n    <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px;\">最終分析結果</div>\n    <div id=\"analysis-result\" style=\"font-size: 12px; color: var(--text); line-height: 1.6; background: var(--bg-main); padding: 10px; border-radius: 4px; min-height: 120px;\">\n      <div style=\"color: var(--text-muted);\">分析結果はここに表示されます</div>\n    </div>\n  </div>\n\n  <div class=\"card\" style=\"padding: 14px;\">\n    <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px;\">レポート生成</div>\n    <div style=\"display: flex; flex-direction: column; gap: 8px;\">\n      <button data-testid=\"generate-report-button\" class=\"action-btn\" style=\"width: 100%; padding: 8px; font-size: 12px;\">PDF レポート生成</button>\n      <button data-testid=\"export-csv-button\" class=\"action-btn secondary\" style=\"width: 100%; padding: 8px; font-size: 12px; background: transparent; border: 1px solid var(--border); color: var(--text);\">CSV エクスポート</button>\n    </div>\n  </div>\n</div>\n\n<!-- 評価履歴タイムライン -->\n<div class=\"card\" style=\"padding: 14px;\">\n  <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px;\">評価履歴</div>\n  <div id=\"evaluation-history\" style=\"max-height: 300px; overflow-y: auto;\">\n    <div style=\"text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px;\">\n      評価履歴はここに表示されます\n    </div>\n  </div>\n</div>",
+      "initJs": "function(container, apiUrl, tables) {\n  const proposalTable = tables[0];\n  const customerTable = tables[1];\n  const constraintTable = tables[2];\n  const evaluationTable = tables[3];\n  const ruleTable = tables[4];\n\n  let currentProposal = null;\n  let evaluationHistory = [];\n\n  // ===== 初期化 =====\n  async function init() {\n    await loadCustomers();\n    await loadEvaluationHistory();\n    updateKPIs();\n  }\n\n  // ===== 顧客一覧をロード =====\n  async function loadCustomers() {\n    const customers = await window.aivicApi.list(1); // customerTable\n    if (!customers) return;\n\n    const select = container.querySelector('[data-testid=\"customer-select\"]');\n    customers.forEach(cust => {\n      const opt = document.createElement('option');\n      opt.value = cust.id;\n      opt.textContent = cust.顧客名 || cust.name;\n      select.appendChild(opt);\n    });\n  }\n\n  // ===== 照合・評価実行 =====\n  container.querySelector('[data-testid=\"evaluate-button\"]').addEventListener('click', async () => {\n    const customerId = container.querySelector('[data-testid=\"customer-select\"]').value;\n    const title = container.querySelector('[data-testid=\"proposal-title\"]').value;\n    const amount = parseInt(container.querySelector('[data-testid=\"proposal-amount\"]').value) || 0;\n    const content = container.querySelector('[data-testid=\"proposal-content\"]').value;\n\n    if (!customerId || !title || !amount || !content) {\n      alert('すべての項目を入力してください');\n      return;\n    }\n\n    // 提案を保存\n    const saved = await window.aivicApi.save(0, {\n      顧客ID: customerId,\n      提案タイトル: title,\n      提案内容: content,\n      提案金額: amount,\n      ステータス: '下書き'\n    });\n\n    if (!saved) return;\n    currentProposal = saved;\n\n    // 照合ルール取得\n    const rules = await window.aivicApi.list(4);\n    const selectedRules = Array.from(container.querySelectorAll('input[name=\"rule\"]:checked')).map(el => el.value);\n\n    // 顧客制約条件取得\n    const constraints = await window.aivicApi.list(2);\n    const customerConstraints = constraints.filter(c => c.顧客ID === customerId);\n\n    // 簡易的な照合ロジック\n    const violations = [];\n    let score = 100;\n\n    // 予算チェック\n    if (selectedRules.includes('budget')) {\n      const budgetConstraint = customerConstraints.find(c => c.制約条件タイプ === '購買金額上限');\n      if (budgetConstraint) {\n        const limit = parseInt(budgetConstraint.制約値) || 0;\n        if (amount > limit) {\n          violations.push(`予算超過: 提案金額 ¥${amount.toLocaleString()} > 上限 ¥${limit.toLocaleString()}`);\n          score -= 30;\n        }\n      }\n    }\n\n    // 頻度チェック\n    if (selectedRules.includes('frequency')) {\n      const frequencyConstraint = customerConstraints.find(c => c.制約条件タイプ === '購買頻度制限');\n      if (frequencyConstraint) {\n        violations.push(`購買頻度制限: ${frequencyConstraint.制約値}`);\n        score -= 10;\n      }\n    }\n\n    score = Math.max(0, score);\n    const status = score >= 80 ? '合格' : score >= 60 ? '要確認' : '不合格';\n\n    // 評価結果を保存\n    const evaluation = await window.aivicApi.save(3, {\n      提案ID: currentProposal.id,\n      顧客ID: customerId,\n      評価ステータス: status,\n      適合性スコア: score,\n      照合結果詳細: `提案内容を顧客制約条件と照合しました。${violations.length === 0 ? 'すべての条件を満たしています。' : '以下の項目で制約条件に違反しています。'}`,\n      不適合項目: violations.join('\\n'),\n      評価実施日時: new Date().toISOString()\n    });\n\n    if (!evaluation) return;\n\n    // 結果表示\n    displayEvaluation(evaluation, violations);\n    evaluationHistory.unshift(evaluation);\n    updateKPIs();\n    updateEvaluationHistory();\n  });\n\n  // ===== 評価結果表示 =====\n  function displayEvaluation(evaluation, violations) {\n    const resultDiv = container.querySelector('#evaluation-result');\n    const emptyDiv = container.querySelector('#evaluation-empty');\n\n    container.querySelector('#eval-status').textContent = evaluation.評価ステータス;\n    container.querySelector('#eval-score').textContent = `${evaluation.適合性スコア}%`;\n    container.querySelector('#eval-detail').textContent = evaluation.照合結果詳細;\n    container.querySelector('#eval-violations').textContent = violations.length > 0 ? violations.join('\\n') : 'なし';\n\n    resultDiv.style.display = 'block';\n    emptyDiv.style.display = 'none';\n\n    // 最終分析結果を更新\n    const analysisDiv = container.querySelector('#analysis-result');\n    analysisDiv.innerHTML = `\n      <div><strong>提案ID:</strong> ${currentProposal.id}</div>\n      <div><strong>評価ステータス:</strong> <span style=\"color: ${evaluation.評価ステータス === '合格' ? '#2e7d32' : evaluation.評価ステータス === '要確認' ? '#f57c00' : '#d32f2f'};\">${evaluation.評価ステータス}</span></div>\n      <div><strong>適合性スコア:</strong> ${evaluation.適合性スコア}%</div>\n      <div style=\"margin-top: 8px; font-size: 11px; color: var(--text-muted);\">評価実施: ${new Date(evaluation.評価実施日時).toLocaleString('ja-JP')}</div>\n    `;\n  }\n\n  // ===== 修正内容保存 =====\n  container.querySelector('[data-testid=\"save-revision-button\"]').addEventListener('click', async () => {\n    if (!currentProposal) {\n      alert('先に提案を評価してください');\n      return;\n    }\n\n    const revisedAmount = parseInt(container.querySelector('[data-testid=\"revised-amount\"]').value) || 0;\n    const revisionNotes = container.querySelector('[data-testid=\"revision-notes\"]').value;\n\n    if (!revisedAmount || !revisionNotes) {\n      alert('修正内容をすべて入力してください');\n      return;\n    }\n\n    // 修正提案を保存\n    const updated = await window.aivicApi.update(0, currentProposal.id, {\n      提案金額: revisedAmount,\n      ステータス: '修正済み'\n    });\n\n    if (updated) {\n      alert('修正内容を保存しました');\n      container.querySelector('[data-testid=\"revised-amount\"]').value = '';\n      container.querySelector('[data-testid=\"revision-notes\"]').value = '';\n    }\n  });\n\n  // ===== PDF レポート生成 =====\n  container.querySelector('[data-testid=\"generate-report-button\"]').addEventListener('click', () => {\n    if (!currentProposal) {\n      alert('先に提案を評価してください');\n      return;\n    }\n\n    const reportContent = `\n提案管理レポート\n================\n提案ID: ${currentProposal.id}\n提案タイトル: ${currentProposal.提案タイトル}\n提案金額: ¥${currentProposal.提案金額.toLocaleString()}\n提案内容: ${currentProposal.提案内容}\n\n評価結果:\n- ステータス: ${container.querySelector('#eval-status').textContent}\n- 適合性スコア: ${container.querySelector('#eval-score').textContent}\n- 詳細: ${container.querySelector('#eval-detail').textContent}\n\n生成日時: ${new Date().toLocaleString('ja-JP')}\n    `;\n\n    const blob = new Blob([reportContent], { type: 'text/plain' });\n    const url = URL.createObjectURL(blob);\n    const a = document.createElement('a');\n    a.href = url;\n    a.download = `proposal-report-${currentProposal.id}.txt`;\n    a.click();\n    URL.revokeObjectURL(url);\n  });\n\n  // ===== CSV エクスポート =====\n  container.querySelector('[data-testid=\"export-csv-button\"]').addEventListener('click', async () => {\n    const proposals = await window.aivicApi.list(0);\n    if (!proposals || proposals.length === 0) {\n      alert('エクスポートするデータがありません');\n      return;\n    }\n\n    const headers = ['提案ID', '顧客ID', '提案タイトル', '提案金額', 'ステータス', '作成日時'];\n    const rows = proposals.map(p => [\n      p.id,\n      p.顧客ID,\n      p.提案タイトル,\n      p.提案金額,\n      p.ステータス,\n      new Date(p.作成日時).toLocaleString('ja-JP')\n    ]);\n\n    const csv = '\\uFEFF' + [headers, ...rows].map(row => row.map(cell => `\"${String(cell).replace(/\"/g, '\"\"')}\"`).join(',')).join('\\n');\n    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });\n    const url = URL.createObjectURL(blob);\n    const a = document.createElement('a');\n    a.href = url;\n    a.download = `proposals-${new Date().toISOString().slice(0, 10)}.csv`;\n    a.click();\n    URL.revokeObjectURL(url);\n  });\n\n  // ===== 評価履歴表示 =====\n  async function loadEvaluationHistory() {\n    const evaluations = await window.aivicApi.list(3);\n    if (evaluations) {\n      evaluationHistory = evaluations.sort((a, b) => new Date(b.評価実施日時) - new Date(a.評価実施日時));\n      updateEvaluationHistory();\n    }\n  }\n\n  function updateEvaluationHistory() {\n    const historyDiv = container.querySelector('#evaluation-history');\n    if (evaluationHistory.length === 0) {\n      historyDiv.innerHTML = '<div style=\"text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px;\">評価履歴はありません</div>';\n      return;\n    }\n\n    historyDiv.innerHTML = evaluationHistory.slice(0, 10).map((eval, idx) => `\n      <div style=\"display: flex; gap: 10px; padding: 10px; border-left: 2px solid var(--primary); margin-bottom: 8px; background: var(--bg-main); border-radius: 4px;\">\n        <div style=\"flex: 1;\">\n          <div style=\"font-size: 12px; font-weight: 600; color: var(--text);\">提案ID: ${eval.提案ID}</div>\n          <div style=\"font-size: 11px; color: var(--text-muted); margin-top: 2px;\">${new Date(eval.評価実施日時).toLocaleString('ja-JP')}</div>\n          <div style=\"font-size: 12px; color: var(--text); margin-top: 4px;\">\n            <span style=\"display: inline-block; padding: 2px 6px; border-radius: 3px; background: ${eval.評価ステータス === '合格' ? 'rgba(46,125,50,0.1)' : eval.評価ステータス === '要確認' ? 'rgba(245,127,0,0.1)' : 'rgba(211,47,47,0.1)'}; color: ${eval.評価ステータス === '合格' ? '#2e7d32' : eval.評価ステータス === '要確認' ? '#f57c00' : '#d32f2f'}; font-size: 11px;\">\n              ${eval.評価ステータス}\n            </span>\n            <span style=\"margin-left: 8px; font-size: 11px;\">スコア: ${eval.適合性スコア}%</span>\n          </div>\n        </div>\n      </div>\n    `).join('');\n  }\n\n  // ===== KPI 更新 =====\n  async function updateKPIs() {\n    const proposals = await window.aivicApi.list(0);\n    const evaluations = await window.aivicApi.list(3);\n\n    if (!proposals || !evaluations) return;\n\n    // 当月の提案数\n    const now = new Date();\n    const currentMonth = proposals.filter(p => {\n      const pDate = new Date(p.作成日時);\n      return pDate.getFullYear() === now.getFullYear() && pDate.getMonth() === now.getMonth();\n    });\n\n    // 平均適合性スコア\n    const avgScore = evaluations.length > 0\n      ? Math.round(evaluations.reduce((sum, e) => sum + (e.適合性スコア || 0), 0) / evaluations.length)\n      : 0;\n\n    // 修正後合格率\n    const passCount = evaluations.filter(e => e.評価ステータス === '合格').length;\n    const passRate = evaluations.length > 0 ? Math.round((passCount / evaluations.length) * 100) : 0;\n\n    container.querySelector('[data-testid=\"kpi-proposal-count\"]').textContent = currentMonth.length;\n    container.querySelector('[data-testid=\"kpi-avg-score\"]').textContent = `${avgScore}%`;\n    container.querySelector('[data-testid=\"kpi-pass-rate\"]').textContent = `${passRate}%`;\n  }\n\n  init();\n}",
+      "method": "ai"
+    }
+  ],
+  "tableDefinitions": [
+    {
+      "tableName": "ログインユーザー",
+      "purpose": "営業プロセス監査・分析管理システムのユーザー認証・アクセス管理を行い、ログイン履歴とユーザー権限を一元管理する",
+      "columns": [
+        {
+          "name": "ユーザーID",
+          "type": "uuid",
+          "required": true,
+          "description": "ユーザーの一意識別子"
+        },
+        {
+          "name": "ログインID",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ログイン時に使用するユーザー識別名"
+        },
+        {
+          "name": "メールアドレス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ユーザーのメールアドレス"
+        },
+        {
+          "name": "パスワードハッシュ",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "暗号化されたパスワード"
+        },
+        {
+          "name": "ユーザー名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ユーザーの表示名"
+        },
+        {
+          "name": "部門",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "ユーザーが属する部門"
+        },
+        {
+          "name": "ロール",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ユーザーに付与されたロール"
+        },
+        {
+          "name": "ステータス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ユーザーのステータス(有効/無効/休止)"
+        },
+        {
+          "name": "最終ログイン日時",
+          "type": "timestamp",
+          "required": false,
+          "description": "最後にログインした日時"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "ユーザーレコード作成日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "ユーザーレコード最終更新日時"
+        },
+        {
+          "name": "作成者",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ユーザーレコード作成者"
+        }
+      ]
+    },
+    {
+      "tableName": "顧客",
+      "purpose": "営業プロセス監査・分析管理システムにおいて、営業担当者が管理する顧客マスタ。顧客情報の基本属性、営業ステータス、接触履歴の集計値を保持し、営業活動の監査・分析対象となる。",
+      "columns": [
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": true,
+          "description": "顧客を一意に識別するプライマリキー"
+        },
+        {
+          "name": "顧客名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "顧客の企業名または個人名"
+        },
+        {
+          "name": "業種",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "顧客の業種分類"
+        },
+        {
+          "name": "住所",
+          "type": "text",
+          "required": false,
+          "description": "顧客の住所"
+        },
+        {
+          "name": "電話番号",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "顧客の連絡先電話番号"
+        },
+        {
+          "name": "メールアドレス",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "顧客の連絡先メールアドレス"
+        },
+        {
+          "name": "営業担当者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "この顧客を担当する営業担当者のID（営業担当者テーブルへの外部キー）"
+        },
+        {
+          "name": "営業ステータス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "営業プロセスの段階（見込み客、提案中、交渉中、成約、失注など）"
+        },
+        {
+          "name": "最終接触日時",
+          "type": "timestamp",
+          "required": false,
+          "description": "営業担当者が最後に顧客と接触した日時"
+        },
+        {
+          "name": "次回フォローアップ予定日",
+          "type": "timestamp",
+          "required": false,
+          "description": "次回の営業活動予定日"
+        },
+        {
+          "name": "推定売上金額",
+          "type": "integer",
+          "required": false,
+          "description": "この顧客からの推定売上金額（円）"
+        },
+        {
+          "name": "成約日",
+          "type": "timestamp",
+          "required": false,
+          "description": "顧客が成約した日付"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "顧客レコードが作成された日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "顧客レコードを作成したログインユーザーのID"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "顧客レコードが最後に更新された日時"
+        },
+        {
+          "name": "更新者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "顧客レコードを最後に更新したログインユーザーのID"
+        }
+      ]
+    },
+    {
+      "tableName": "顧客制約条件",
+      "purpose": "顧客ごとの購入制約条件を管理し、購入可能な商品カテゴリ、金額上限、購買頻度などの制限を記録するマスタテーブル",
+      "columns": [
+        {
+          "name": "制約条件ID",
+          "type": "uuid",
+          "required": true,
+          "description": "制約条件を一意に識別するプライマリキー"
+        },
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": true,
+          "description": "制約条件が適用される顧客を特定する外部キー"
+        },
+        {
+          "name": "制約条件タイプ",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "制約条件の種類(例:購買金額上限、購買頻度制限、カテゴリ制限)"
+        },
+        {
+          "name": "制約値",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "制約条件の具体的な値(例:月額100000、週1回)"
+        },
+        {
+          "name": "開始日",
+          "type": "timestamp",
+          "required": true,
+          "description": "制約条件が有効になる開始日時"
+        },
+        {
+          "name": "終了日",
+          "type": "timestamp",
+          "required": false,
+          "description": "制約条件が無効になる終了日時(NULLの場合は無期限)"
+        },
+        {
+          "name": "有効フラグ",
+          "type": "boolean",
+          "required": true,
+          "description": "制約条件が現在有効かどうかを示すフラグ"
+        },
+        {
+          "name": "備考",
+          "type": "text",
+          "required": false,
+          "description": "制約条件に関する追加情報や理由"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "レコード作成日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "レコードを作成したログインユーザーのID"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "レコード最終更新日時"
+        },
+        {
+          "name": "更新者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "レコードを最後に更新したログインユーザーのID"
+        }
+      ]
+    },
+    {
+      "tableName": "提案",
+      "purpose": "顧客への商品・サービス提案を管理し、提案内容、ステータス、顧客制約条件への適合性を追跡するテーブル",
+      "columns": [
+        {
+          "name": "提案ID",
+          "type": "uuid",
+          "required": true,
+          "description": "提案の一意識別子"
+        },
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": true,
+          "description": "提案対象の顧客を特定するための外部キー"
+        },
+        {
+          "name": "提案タイトル",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "提案の名称・タイトル"
+        },
+        {
+          "name": "提案内容",
+          "type": "text",
+          "required": true,
+          "description": "提案の詳細説明・商品サービス内容"
+        },
+        {
+          "name": "提案金額",
+          "type": "integer",
+          "required": true,
+          "description": "提案の見積金額"
+        },
+        {
+          "name": "ステータス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "提案のステータス(下書き、提案済み、承認、却下等)"
+        },
+        {
+          "name": "有効期限",
+          "type": "timestamp",
+          "required": false,
+          "description": "提案の有効期限"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "提案が作成された日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "提案が最後に更新された日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "提案を作成したログインユーザーの外部キー"
+        },
+        {
+          "name": "更新者ID",
+          "type": "uuid",
+          "required": false,
+          "description": "提案を最後に更新したログインユーザーの外部キー"
+        }
+      ]
+    },
+    {
+      "tableName": "提案内容",
+      "purpose": "顧客への提案に含まれる個別の商品やサービスの詳細情報を管理し、提案の構成要素を記録する",
+      "columns": [
+        {
+          "name": "提案内容ID",
+          "type": "uuid",
+          "required": true,
+          "description": "提案内容の一意識別子"
+        },
+        {
+          "name": "提案ID",
+          "type": "uuid",
+          "required": true,
+          "description": "親テーブル提案への外部キー"
+        },
+        {
+          "name": "商品サービス名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "提案に含まれる商品またはサービスの名称"
+        },
+        {
+          "name": "説明",
+          "type": "text",
+          "required": false,
+          "description": "商品サービスの詳細説明"
+        },
+        {
+          "name": "数量",
+          "type": "integer",
+          "required": true,
+          "description": "提案する商品サービスの数量"
+        },
+        {
+          "name": "単価",
+          "type": "integer",
+          "required": true,
+          "description": "商品サービスの単価"
+        },
+        {
+          "name": "小計",
+          "type": "integer",
+          "required": true,
+          "description": "数量と単価の積で計算される小計金額"
+        },
+        {
+          "name": "表示順序",
+          "type": "integer",
+          "required": true,
+          "description": "提案内での表示順序"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "提案内容の作成日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "提案内容の最終更新日時"
+        },
+        {
+          "name": "作成者",
+          "type": "uuid",
+          "required": true,
+          "description": "ログインユーザーテーブルへの外部キー、作成したユーザーID"
+        }
+      ]
+    },
+    {
+      "tableName": "照合評価結果",
+      "purpose": "顧客の購入提案に対する照合評価の結果を記録し、提案の適合性判定と顧客制約条件との整合性を管理するトランザクションテーブル",
+      "columns": [
+        {
+          "name": "照合評価結果ID",
+          "type": "uuid",
+          "required": true,
+          "description": "照合評価結果の一意識別子"
+        },
+        {
+          "name": "提案ID",
+          "type": "uuid",
+          "required": true,
+          "description": "評価対象の提案を特定する外部キー"
+        },
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": true,
+          "description": "提案対象の顧客を特定する外部キー"
+        },
+        {
+          "name": "評価ステータス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "評価結果のステータス(合格/不合格/要確認等)"
+        },
+        {
+          "name": "適合性スコア",
+          "type": "integer",
+          "required": false,
+          "description": "提案と顧客制約条件の適合度を示す数値スコア(0-100)"
+        },
+        {
+          "name": "照合結果詳細",
+          "type": "text",
+          "required": false,
+          "description": "照合評価の詳細な結果説明と判定理由"
+        },
+        {
+          "name": "不適合項目",
+          "type": "text",
+          "required": false,
+          "description": "制約条件に違反した項目の一覧"
+        },
+        {
+          "name": "評価実施日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "照合評価を実施した日時"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "レコード作成日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "レコード最終更新日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "レコード作成者のログインユーザーID"
+        },
+        {
+          "name": "更新者ID",
+          "type": "uuid",
+          "required": false,
+          "description": "レコード最終更新者のログインユーザーID"
+        }
+      ]
+    },
+    {
+      "tableName": "照合ルール",
+      "purpose": "顧客の購入制約条件と提案内容を照合するためのルール定義を管理し、提案の適合性を自動判定するマスタテーブル",
+      "columns": [
+        {
+          "name": "照合ルールID",
+          "type": "uuid",
+          "required": true,
+          "description": "照合ルールの一意識別子"
+        },
+        {
+          "name": "ルール名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "照合ルールの名称"
+        },
+        {
+          "name": "ルール説明",
+          "type": "text",
+          "required": false,
+          "description": "照合ルールの詳細説明"
+        },
+        {
+          "name": "制約条件項目",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "照合対象となる顧客制約条件の項目名"
+        },
+        {
+          "name": "提案内容項目",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "照合対象となる提案内容の項目名"
+        },
+        {
+          "name": "照合条件タイプ",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "照合ロジックの種類(完全一致、範囲内、含む等)"
+        },
+        {
+          "name": "照合条件値",
+          "type": "text",
+          "required": false,
+          "description": "照合条件の具体的な値またはパラメータ"
+        },
+        {
+          "name": "優先度",
+          "type": "integer",
+          "required": true,
+          "description": "複数ルール適用時の優先順位"
+        },
+        {
+          "name": "有効フラグ",
+          "type": "boolean",
+          "required": true,
+          "description": "ルールが有効かどうか"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "ルール作成日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "ルール最終更新日時"
+        },
+        {
+          "name": "作成者",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ルール作成者のユーザーID"
+        }
+      ]
+    },
+    {
+      "tableName": "操作履歴",
+      "purpose": "顧客購入支援ポータルにおけるユーザーの全操作を記録し、監査証跡とシステム動作分析に利用する",
+      "columns": [
+        {
+          "name": "操作履歴ID",
+          "type": "uuid",
+          "required": true,
+          "description": "操作履歴の一意識別子"
+        },
+        {
+          "name": "ログインユーザーID",
+          "type": "uuid",
+          "required": true,
+          "description": "操作を実行したログインユーザーの外部キー"
+        },
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": false,
+          "description": "操作対象の顧客の外部キー（顧客関連操作の場合）"
+        },
+        {
+          "name": "操作種別",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "実行された操作の種類（ログイン、提案閲覧、提案承認、制約条件更新等）"
+        },
+        {
+          "name": "操作対象テーブル",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "操作が対象とするテーブル名"
+        },
+        {
+          "name": "操作対象ID",
+          "type": "uuid",
+          "required": false,
+          "description": "操作対象レコードの識別子"
+        },
+        {
+          "name": "操作内容",
+          "type": "text",
+          "required": false,
+          "description": "操作の詳細内容または変更内容"
+        },
+        {
+          "name": "操作結果",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "操作の結果（成功、失敗、エラー等）"
+        },
+        {
+          "name": "エラーメッセージ",
+          "type": "text",
+          "required": false,
+          "description": "操作失敗時のエラーメッセージ"
+        },
+        {
+          "name": "IPアドレス",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "操作を実行したクライアントのIPアドレス"
+        },
+        {
+          "name": "ユーザーエージェント",
+          "type": "text",
+          "required": false,
+          "description": "操作を実行したクライアントのユーザーエージェント情報"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "操作が実行された日時"
+        }
+      ]
+    }
+  ],
+  "presetSeedData": {
+    "ログインユーザー": [
+      {
+        "ユーザーID": "550e8400-e29b-41d4-a716-446655440000",
+        "ログインID": "tanaka.sales.manager",
+        "メールアドレス": "tanaka.taro@company.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQR",
+        "ユーザー名": "田中太郎",
+        "部門": "営業部",
+        "ロール": "営業部長_管理者",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15T09:30:45+09:00",
+        "作成日時": "2024-04-01T10:00:00+09:00",
+        "更新日時": "2025-01-10T14:20:30+09:00",
+        "作成者": "system_admin"
+      },
+      {
+        "ユーザーID": "550e8400-e29b-41d4-a716-446655440000",
+        "ログインID": "tanaka.jiro",
+        "メールアドレス": "tanaka.jiro@company.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQ",
+        "ユーザー名": "田中次郎",
+        "部門": "営業一課",
+        "ロール": "一般営業",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-16T08:45:23+09:00",
+        "作成日時": "2024-04-01T10:30:00+09:00",
+        "更新日時": "2025-01-16T08:45:23+09:00",
+        "作成者": "鈴木花子"
+      },
+      {
+        "ユーザーID": "550e8400-e29b-41d4-a716-446655440000",
+        "ログインID": "yamada.hanako",
+        "メールアドレス": "yamada.hanako@company.co.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqr",
+        "ユーザー名": "山田花子",
+        "部門": "営業二課",
+        "ロール": "営業担当者",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15 09:30:00",
+        "作成日時": "2024-12-20 14:15:00",
+        "更新日時": "2025-01-10 10:45:00",
+        "作成者": "suzuki.taro"
+      },
+      {
+        "ユーザーID": "550e8400-e29b-41d4-a716-446655440000",
+        "ログインID": "rec-001",
+        "メールアドレス": "analysis@company.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQR",
+        "ユーザー名": "佐藤花子",
+        "部門": "経営企画部",
+        "ロール": "読取専用_営業分析",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15T09:30:00+09:00",
+        "作成日時": "2024-04-01T10:00:00+09:00",
+        "更新日時": "2025-01-10T14:20:00+09:00",
+        "作成者": "鈴木太郎"
+      },
+      {
+        "ユーザーID": "550e8400-e29b-41d4-a716-446655440000",
+        "ログインID": "rec-001",
+        "メールアドレス": "suzuki.yuki@company.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQR",
+        "ユーザー名": "鈴木由紀",
+        "部門": "営業事務部",
+        "ロール": "営業事務",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15 09:30:00",
+        "作成日時": "2024-04-01 10:15:00",
+        "更新日時": "2025-01-15 09:30:00",
+        "作成者": "admin"
+      },
+      {
+        "ユーザーID": "rec-001",
+        "ログインID": "tanaka.hanako",
+        "メールアドレス": "tanaka.hanako@company.co.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJ",
+        "ユーザー名": "田中花子",
+        "部門": "営業部",
+        "ロール": "営業担当者",
+        "ステータス": "休止",
+        "最終ログイン日時": "2024-08-15 14:32:00",
+        "作成日時": "2023-04-01 09:00:00",
+        "更新日時": "2024-11-20 10:15:00",
+        "作成者": "佐藤太郎"
+      },
+      {
+        "ユーザーID": "rec-001",
+        "ログインID": "tanaka.jiro",
+        "メールアドレス": "tanaka.jiro@company.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890",
+        "ユーザー名": "田中次郎",
+        "部門": "営業部",
+        "ロール": "営業担当者",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15 09:30:00",
+        "作成日時": "2018-04-01 10:00:00",
+        "更新日時": "2025-01-10 14:45:00",
+        "作成者": "人事部_山田花子"
+      },
+      {
+        "ユーザーID": "550e8400-e29b-41d4-a716-446655440000",
+        "ログインID": "admin-yamada",
+        "メールアドレス": "yamada.admin@company.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQR",
+        "ユーザー名": "山田太郎",
+        "部門": "システム運用部",
+        "ロール": "システム管理者",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15T14:32:45+09:00",
+        "作成日時": "2024-04-01T09:00:00+09:00",
+        "更新日時": "2025-01-10T10:15:30+09:00",
+        "作成者": "初期セットアップ"
+      },
+      {
+        "ユーザーID": "rec-001",
+        "ログインID": "tanaka.hanako",
+        "メールアドレス": "tanaka.hanako@company.jp",
+        "パスワードハッシュ": "$2b$12$K8mN9pQrS7tUvWxYzAbCdEfGhIjKlMnOpQrStUvWxYzAbCdEfGhIj",
+        "ユーザー名": "田中花子",
+        "部門": "営業部",
+        "ロール": "営業_新入社員",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15 09:30:00",
+        "作成日時": "2025-01-10 14:20:00",
+        "更新日時": "2025-01-15 09:30:00",
+        "作成者": "営業部長_山田太郎"
+      },
+      {
+        "ユーザーID": "550e8400-e29b-41d4-a716-446655440000",
+        "ログインID": "rec-001",
+        "メールアドレス": "suzuki.hanako@company.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQR",
+        "ユーザー名": "鈴木花子",
+        "部門": "営業支援チーム",
+        "ロール": "バックオフィス管理者",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15T09:30:45+09:00",
+        "作成日時": "2024-04-10T14:20:00+09:00",
+        "更新日時": "2025-01-10T16:45:30+09:00",
+        "作成者": "佐藤太郎"
+      }
+    ],
+    "顧客": [
+      {
+        "顧客ID": "rec-cust-20250145",
+        "顧客名": "株式会社トヨタ自動車部品工業",
+        "業種": "自動車部品製造",
+        "住所": "愛知県豊田市トヨタ町1番地",
+        "電話番号": "0565-28-2121",
+        "メールアドレス": "procurement@toyota-parts.co.jp",
+        "営業担当者ID": "rec-emp-00847",
+        "営業ステータス": "提案中",
+        "最終接触日時": "2025-01-15T14:30:00",
+        "次回フォローアップ予定日": "2025-02-05T10:00:00",
+        "推定売上金額": 45000000,
+        "成約日": null,
+        "作成日時": "2024-11-20T09:15:00",
+        "作成者ID": "rec-user-00312",
+        "更新日時": "2025-01-15T14:30:00",
+        "更新者ID": "rec-user-00312"
+      },
+      {
+        "顧客ID": "rec-001-cust-2024-08-15",
+        "顧客名": "株式会社ヤマト流通",
+        "業種": "卸売・流通業",
+        "住所": "東京都江東区青海2-4-32",
+        "電話番号": "03-5XXX-6789",
+        "メールアドレス": "procurement@yamatoflow.co.jp",
+        "営業担当者ID": "rec-001-sales-2024-01-10",
+        "営業ステータス": "成約",
+        "最終接触日時": "2024-12-18T14:30:00+09:00",
+        "次回フォローアップ予定日": "2025-02-15T10:00:00+09:00",
+        "推定売上金額": 2800000,
+        "成約日": "2024-12-10T16:45:00+09:00",
+        "作成日時": "2024-08-15T09:20:00+09:00",
+        "作成者ID": "rec-001-user-2024-05-01",
+        "更新日時": "2024-12-18T17:15:00+09:00",
+        "更新者ID": "rec-001-user-2024-05-01"
+      },
+      {
+        "顧客ID": "rec-001",
+        "顧客名": "株式会社ビジネスソリューション",
+        "業種": "情報通信業",
+        "住所": "東京都渋谷区道玄坂2-10-7",
+        "電話番号": "03-XXXX-5678",
+        "メールアドレス": "info@business-solution.co.jp",
+        "営業担当者ID": "rec-sales-042",
+        "営業ステータス": "見込み客",
+        "最終接触日時": "2025-01-15 14:30:00",
+        "次回フォローアップ予定日": "2025-01-22 10:00:00",
+        "推定売上金額": 850000,
+        "成約日": null,
+        "作成日時": "2025-01-15 15:45:00",
+        "作成者ID": "rec-user-015",
+        "更新日時": "2025-01-15 15:45:00",
+        "更新者ID": "rec-user-015"
+      },
+      {
+        "顧客ID": "rec-00147",
+        "顧客名": "株式会社ハイテックソリューション",
+        "業種": "情報通信業",
+        "住所": "東京都渋谷区道玄坂2-12-1 渋谷ビジネスタワー15階",
+        "電話番号": "03-XXXX-5847",
+        "メールアドレス": "procurement@hightech-sol.co.jp",
+        "営業担当者ID": "rec-00023",
+        "営業ステータス": "交渉中",
+        "最終接触日時": "2025-01-15 14:30:00",
+        "次回フォローアップ予定日": "2025-02-05 10:00:00",
+        "推定売上金額": 2800000,
+        "成約日": null,
+        "作成日時": "2024-08-22 09:15:00",
+        "作成者ID": "rec-00023",
+        "更新日時": "2025-01-15 14:45:00",
+        "更新者ID": "rec-00023"
+      },
+      {
+        "顧客ID": "rec-001",
+        "顧客名": "株式会社テックソリューション",
+        "業種": "情報通信業",
+        "住所": "東京都渋谷区道玄坂2-12-1",
+        "電話番号": "03-XXXX-5678",
+        "メールアドレス": "info@techsolution.co.jp",
+        "営業担当者ID": "rec-emp-042",
+        "営業ステータス": "失注",
+        "最終接触日時": "2025-01-15T14:30:00",
+        "次回フォローアップ予定日": "2025-02-28T10:00:00",
+        "推定売上金額": 2500000,
+        "成約日": null,
+        "作成日時": "2024-09-20T09:15:00",
+        "作成者ID": "rec-user-018",
+        "更新日時": "2025-01-15T16:45:00",
+        "更新者ID": "rec-user-018"
+      },
+      {
+        "顧客ID": "rec-001",
+        "顧客名": "株式会社ハイテック精密",
+        "業種": "精密機械製造",
+        "住所": "愛知県名古屋市中区栄3-15-7 ハイテックビル5階",
+        "電話番号": "052-123-4567",
+        "メールアドレス": "info@hightech-seimitsu.co.jp",
+        "営業担当者ID": "rec-102",
+        "営業ステータス": "提案中",
+        "最終接触日時": "2024-07-12 14:30:00",
+        "次回フォローアップ予定日": "2025-01-22 10:00:00",
+        "推定売上金額": 2500000,
+        "成約日": null,
+        "作成日時": "2024-03-05 09:15:00",
+        "作成者ID": "rec-201",
+        "更新日時": "2025-01-15 16:45:00",
+        "更新者ID": "rec-202"
+      },
+      {
+        "顧客ID": "rec-cust-0847",
+        "顧客名": "株式会社メディアテック",
+        "業種": "情報通信業",
+        "住所": "東京都渋谷区道玄坂2-10-7",
+        "電話番号": "03-5489-2341",
+        "メールアドレス": "procurement@mediatech.co.jp",
+        "営業担当者ID": "rec-sales-0523",
+        "営業ステータス": "提案中",
+        "最終接触日時": "2025-01-15 14:30:00",
+        "次回フォローアップ予定日": "2025-02-05 10:00:00",
+        "推定売上金額": 2800000,
+        "成約日": null,
+        "作成日時": "2024-12-10 09:15:00",
+        "作成者ID": "rec-user-0891",
+        "更新日時": "2025-01-15 14:35:00",
+        "更新者ID": "rec-user-0891"
+      },
+      {
+        "顧客ID": "rec-cust-0047",
+        "顧客名": "株式会社フジテック工業",
+        "業種": "製造業（機械・装置）",
+        "住所": "東京都江東区豊洲3-2-20 豊洲フロント",
+        "電話番号": "03-XXXX-5678",
+        "メールアドレス": "procurement@fujitec-ind.co.jp",
+        "営業担当者ID": "rec-sales-0012",
+        "営業ステータス": "提案中",
+        "最終接触日時": "2025-01-15T14:30:00+09:00",
+        "次回フォローアップ予定日": "2025-02-05T10:00:00+09:00",
+        "推定売上金額": 2800000,
+        "成約日": null,
+        "作成日時": "2023-06-20T09:15:00+09:00",
+        "作成者ID": "rec-user-0003",
+        "更新日時": "2025-01-15T16:45:00+09:00",
+        "更新者ID": "rec-user-0012"
+      },
+      {
+        "顧客ID": "rec-001",
+        "顧客名": "株式会社フューチャーテック",
+        "業種": "情報通信業",
+        "住所": "東京都渋谷区道玄坂1-2-3 渋谷ビジネスタワー15階",
+        "電話番号": "03-XXXX-5678",
+        "メールアドレス": "procurement@futuretech.co.jp",
+        "営業担当者ID": "rec-staff-042",
+        "営業ステータス": "成約",
+        "最終接触日時": "2025-02-28T15:30:00",
+        "次回フォローアップ予定日": "2025-03-15T10:00:00",
+        "推定売上金額": 48500000,
+        "成約日": "2025-02-28",
+        "作成日時": "2024-11-15T09:20:00",
+        "作成者ID": "rec-user-018",
+        "更新日時": "2025-02-28T16:45:00",
+        "更新者ID": "rec-user-018"
+      },
+      {
+        "顧客ID": "rec-cust-0847",
+        "顧客名": "株式会社ナカムラ製造",
+        "業種": "機械製造業",
+        "住所": "愛知県豊田市元町2-1-15",
+        "電話番号": "0565-28-3456",
+        "メールアドレス": "info@nakamura-mfg.co.jp",
+        "営業担当者ID": "rec-sales-0312",
+        "営業ステータス": "提案中",
+        "最終接触日時": "2024-06-15 14:30:00",
+        "次回フォローアップ予定日": null,
+        "推定売上金額": 2800000,
+        "成約日": null,
+        "作成日時": "2024-03-22 09:15:00",
+        "作成者ID": "rec-user-0156",
+        "更新日時": "2024-06-15 14:30:00",
+        "更新者ID": "rec-user-0156"
+      }
+    ],
+    "顧客制約条件": [
+      {
+        "制約条件ID": "rec-001",
+        "顧客ID": "rec-cust-2024001",
+        "制約条件タイプ": "購買金額上限",
+        "制約値": "月額500000円",
+        "開始日": "2024-11-15T00:00:00Z",
+        "終了日": "2025-02-14T23:59:59Z",
+        "有効フラグ": true,
+        "備考": "新規顧客初期段階での信用構築期間。3ヶ月間の試験運用後に制限解除を検討予定。",
+        "作成日時": "2024-11-14T10:30:00Z",
+        "作成者ID": "rec-user-admin-001",
+        "更新日時": "2024-11-14T10:30:00Z",
+        "更新者ID": "rec-user-admin-001"
+      },
+      {
+        "制約条件ID": "rec-001",
+        "顧客ID": "cust-0847",
+        "制約条件タイプ": "購買停止",
+        "制約値": "全カテゴリ購買禁止",
+        "開始日": "2024-11-15T09:00:00+09:00",
+        "終了日": "2025-02-14T23:59:59+09:00",
+        "有効フラグ": true,
+        "備考": "信用スコア低下（過去3ヶ月間の支払い延滞2件）により、3ヶ月間の購買停止措置を実施。期間終了後に信用スコア再評価予定。",
+        "作成日時": "2024-11-14T14:30:00+09:00",
+        "作成者ID": "user-0234",
+        "更新日時": "2024-11-14T14:30:00+09:00",
+        "更新者ID": "user-0234"
+      },
+      {
+        "制約条件ID": "rec-20250115-001",
+        "顧客ID": "cust-20240601-042",
+        "制約条件タイプ": "カテゴリ制限",
+        "制約値": "電子部品・半導体類（カテゴリコード: CAT-0501-0599）",
+        "開始日": "2025-01-15T00:00:00+09:00",
+        "終了日": null,
+        "有効フラグ": true,
+        "備考": "当社製品の競合他社への転売防止のため、電子部品・半導体類の全カテゴリにおける購買を禁止する。違反時は取引停止の可能性あり。",
+        "作成日時": "2025-01-15T10:30:00+09:00",
+        "作成者ID": "user-20240101-008",
+        "更新日時": "2025-01-15T10:30:00+09:00",
+        "更新者ID": "user-20240101-008"
+      },
+      {
+        "制約条件ID": "rec-001",
+        "顧客ID": "cust-2847",
+        "制約条件タイプ": "購買頻度制限",
+        "制約値": "月1回まで",
+        "開始日": "2024-11-01T00:00:00Z",
+        "終了日": "2025-02-28T23:59:59Z",
+        "有効フラグ": true,
+        "備考": "冬季限定スキーウェア商品の需給バランス調整のため、大口顧客の購買頻度を月1回に制限。品切れ防止と在庫適正化を目的とする。",
+        "作成日時": "2024-10-15T09:30:00Z",
+        "作成者ID": "user-0521",
+        "更新日時": "2024-10-15T09:30:00Z",
+        "更新者ID": "user-0521"
+      },
+      {
+        "制約条件ID": "rec-001",
+        "顧客ID": "cust-0847",
+        "制約条件タイプ": "購買金額上限",
+        "制約値": "月額5000000",
+        "開始日": "2025-04-01T00:00:00Z",
+        "終了日": null,
+        "有効フラグ": true,
+        "備考": "2025年3月契約更新に伴い、従来の月額3000000から月額5000000に引き上げ。大口顧客向け優遇措置。",
+        "作成日時": "2025-03-15T09:30:00Z",
+        "作成者ID": "user-0234",
+        "更新日時": "2025-03-15T09:30:00Z",
+        "更新者ID": "user-0234"
+      },
+      {
+        "制約条件ID": "rec-001",
+        "顧客ID": "cust-20240315",
+        "制約条件タイプ": "購買金額上限",
+        "制約値": "月額50000円",
+        "開始日": "2024-11-01T00:00:00",
+        "終了日": "2025-04-30T23:59:59",
+        "有効フラグ": true,
+        "備考": "支払い遅延が過去6ヶ月間に3回発生。信用リスク軽減のため厳格な購買額制限を実施。2025年5月に改善状況を再評価予定。",
+        "作成日時": "2024-10-25T09:30:00",
+        "作成者ID": "user-admin-002",
+        "更新日時": "2024-10-25T09:30:00",
+        "更新者ID": "user-admin-002"
+      },
+      {
+        "制約条件ID": "rec-001",
+        "顧客ID": "cust-2847",
+        "制約条件タイプ": "カテゴリ制限",
+        "制約値": "医薬品・医療機器カテゴリ購買禁止",
+        "開始日": "2024-04-01T00:00:00Z",
+        "終了日": null,
+        "有効フラグ": true,
+        "備考": "薬機法第49条に基づく販売許可取消処分により、医薬品および医療機器の購買を制限。違反時は契約解除の対象となる。",
+        "作成日時": "2024-03-28T14:30:00Z",
+        "作成者ID": "user-5621",
+        "更新日時": "2024-03-28T14:30:00Z",
+        "更新者ID": "user-5621"
+      },
+      {
+        "制約条件ID": "rec-001",
+        "顧客ID": "cust-2024-0847",
+        "制約条件タイプ": "購買金額上限",
+        "制約値": "月額50000円",
+        "開始日": "2024-11-01T00:00:00Z",
+        "終了日": "2025-02-28T23:59:59Z",
+        "有効フラグ": true,
+        "備考": "試験導入期間中の新規顧客向け初期制限。3ヶ月後に月額100000円に緩和予定。信用状況良好のため段階的な制限解除を実施。",
+        "作成日時": "2024-10-28T14:30:00Z",
+        "作成者ID": "user-2024-0156",
+        "更新日時": "2024-10-28T14:30:00Z",
+        "更新者ID": "user-2024-0156"
+      },
+      {
+        "制約条件ID": "rec-001",
+        "顧客ID": "cust-0847",
+        "制約条件タイプ": "購買数量制限",
+        "制約値": "月間50個まで",
+        "開始日": "2024-11-15T00:00:00Z",
+        "終了日": "2025-05-14T23:59:59Z",
+        "有効フラグ": true,
+        "備考": "返品率28%と高く、過去3ヶ月で返品件数が増加傾向。顧客対応の結果、一時的に購買数量を制限することで品質確認の時間を確保する。期間中に改善が見られれば制限を解除予定。",
+        "作成日時": "2024-11-14T09:30:00Z",
+        "作成者ID": "user-2156",
+        "更新日時": "2024-11-14T09:30:00Z",
+        "更新者ID": "user-2156"
+      },
+      {
+        "制約条件ID": "rec-001",
+        "顧客ID": "cust-8472",
+        "制約条件タイプ": "購買金額上限解除",
+        "制約値": "無制限",
+        "開始日": "2024-11-15T09:00:00",
+        "終了日": null,
+        "有効フラグ": true,
+        "備考": "VIP顧客ステータス昇格に伴い、月間購買金額の上限制限を撤廃。無期限で無制限購買権を付与する。",
+        "作成日時": "2024-11-15T09:30:00",
+        "作成者ID": "user-0521",
+        "更新日時": "2024-11-15T09:30:00",
+        "更新者ID": "user-0521"
+      }
+    ],
+    "提案": [
+      {
+        "提案ID": "rec-001",
+        "顧客ID": "rec-cust-0847",
+        "提案タイトル": "高速自動組立機導入による生産効率化提案",
+        "提案内容": "貴社の電子部品組立ラインの生産性向上を実現するため、最新型高速自動組立機（型式：ASM-2500X）の導入をご提案いたします。本設備により、現在の手作業による組立工程を自動化し、生産効率を約35%向上させることが可能です。導入後の保守サポート、オペレーター研修も含めた総合的なソリューションを提供いたします。",
+        "提案金額": 45800000,
+        "ステータス": "提案済み",
+        "有効期限": "2025-03-31T23:59:59Z",
+        "作成日時": "2024-12-15T10:30:00Z",
+        "更新日時": "2025-01-08T14:22:30Z",
+        "作成者ID": "rec-user-1203",
+        "更新者ID": "rec-user-1203"
+      },
+      {
+        "提案ID": "rec-001",
+        "顧客ID": "rec-042",
+        "提案タイトル": "クラウドストレージ容量拡張サービス",
+        "提案内容": "現在ご利用いただいている基本プランから、月額制のクラウドストレージ拡張サービスへのアップグレードをご提案いたします。容量を500GBから2TBに拡張し、自動バックアップ機能、優先サポート、セキュリティ強化オプションが含まれます。",
+        "提案金額": 45000,
+        "ステータス": "提案済み",
+        "有効期限": "2025-02-28T23:59:59Z",
+        "作成日時": "2024-12-15T09:30:00Z",
+        "更新日時": "2024-12-15T09:30:00Z",
+        "作成者ID": "rec-103",
+        "更新者ID": "rec-103"
+      },
+      {
+        "提案ID": "rec-001",
+        "顧客ID": "rec-cust-0247",
+        "提案タイトル": "初期コンサルティングパッケージ - 3ヶ月集中支援",
+        "提案内容": "新規事業立ち上げに向けた経営戦略立案、市場分析、競合調査、事業計画書作成、資金調達支援を含む3ヶ月間の集中コンサルティングプログラムです。専任コンサルタント1名による週2回のオンサイト訪問と、月1回の経営層向けレビュー会議が含まれます。",
+        "提案金額": 1800000,
+        "ステータス": "提案済み",
+        "有効期限": "2025-02-28T23:59:59Z",
+        "作成日時": "2025-01-15T09:30:00Z",
+        "更新日時": "2025-01-15T09:30:00Z",
+        "作成者ID": "rec-user-0089",
+        "更新者ID": "rec-user-0089"
+      },
+      {
+        "提案ID": "rec-001",
+        "顧客ID": "rec-cust-042",
+        "提案タイトル": "製造業向け生産管理システム カスタマイズ導入パッケージ",
+        "提案内容": "貴社の既存ERP環境に統合可能な生産管理システムの構築を提案いたします。リアルタイム在庫管理、生産スケジューリング最適化、品質管理モジュールのカスタマイズ実装により、生産効率を現状比30%向上させることが期待できます。導入期間は3ヶ月、保守サポートは初年度無料で対応いたします。",
+        "提案金額": 4800000,
+        "ステータス": "提案済み",
+        "有効期限": "2025-03-31T23:59:59Z",
+        "作成日時": "2024-12-15T09:30:00Z",
+        "更新日時": "2024-12-20T14:15:00Z",
+        "作成者ID": "rec-user-008",
+        "更新者ID": "rec-user-008"
+      },
+      {
+        "提案ID": "rec-20250115-001",
+        "顧客ID": "rec-cust-2847",
+        "提案タイトル": "冬季限定キャンペーン：法人向け一括購入割引プラン",
+        "提案内容": "2025年1月〜3月の冬季キャンペーン期間中、オフィス用品の一括購入に対して15%の割引を適用いたします。対象商品はコピー用紙、トナーカートリッジ、ファイル用品等の消耗品全般です。最低購入金額は50万円以上となります。",
+        "提案金額": 850000,
+        "ステータス": "提案済み",
+        "有効期限": "2025-03-31 23:59:59",
+        "作成日時": "2025-01-15 09:30:00",
+        "更新日時": "2025-01-15 14:20:00",
+        "作成者ID": "rec-user-0521",
+        "更新者ID": "rec-user-0521"
+      },
+      {
+        "提案ID": "rec-001",
+        "顧客ID": "rec-cust-0847",
+        "提案タイトル": "2025年度年間保守サービスプラン",
+        "提案内容": "既存システムの継続保守契約として、以下のサービスを提供いたします。\n【サービス内容】\n・24時間365日の技術サポート\n・月次定期メンテナンス（第2日曜日実施）\n・セキュリティパッチの自動適用\n・バージョンアップサポート（年2回まで）\n・障害対応時間帯：初期対応30分以内\n\n【対象システム】\n販売管理システムVer.8.2.1\nデータベースサーバー（PostgreSQL 14）\n\n【サポート範囲】\n平日8:00～18:00は電話・メール即時対応、夜間休日は緊急対応のみ",
+        "提案金額": 1200000,
+        "ステータス": "提案済み",
+        "有効期限": "2025-02-28T23:59:59Z",
+        "作成日時": "2024-12-10T09:30:00Z",
+        "更新日時": "2024-12-10T14:15:00Z",
+        "作成者ID": "rec-user-0512",
+        "更新者ID": "rec-user-0512"
+      },
+      {
+        "提案ID": "rec-001",
+        "顧客ID": "rec-cust-0847",
+        "提案タイトル": "競合他社対抗プラン：エンタープライズクラウドサービス年間契約特別価格",
+        "提案内容": "現在ご利用いただいているクラウドインフラストラクチャサービスについて、競合他社の提案内容を踏まえた特別な価格改定プランをご提案させていただきます。既存機能に加えて、セキュリティ監視強化、バックアップ容量2倍増、24時間専任サポートを追加でご提供いたします。本提案は貴社との長期的なパートナーシップ継続を目的とした限定オファーとなります。",
+        "提案金額": 2850000,
+        "ステータス": "提案済み",
+        "有効期限": "2025-02-28T23:59:59Z",
+        "作成日時": "2025-01-15T10:30:00Z",
+        "更新日時": "2025-01-15T10:30:00Z",
+        "作成者ID": "rec-user-0312",
+        "更新者ID": "rec-user-0312"
+      },
+      {
+        "提案ID": "rec-001",
+        "顧客ID": "rec-c-042",
+        "提案タイトル": "クラウド基幹システム導入 フェーズ別導入プラン",
+        "提案内容": "顧客の予算制約に対応するため、基幹システムの導入を3フェーズに分割。第1フェーズ(2025年4月)は会計・給与管理モジュール、第2フェーズ(2025年9月)は販売管理・在庫管理、第3フェーズ(2026年3月)は人事管理・分析機能を実装。各フェーズ間で既存システムとの連携を確保し、段階的な業務効率化を実現します。",
+        "提案金額": 8500000,
+        "ステータス": "提案済み",
+        "有効期限": "2025-03-31T23:59:59Z",
+        "作成日時": "2025-01-15T10:30:00Z",
+        "更新日時": "2025-01-15T10:30:00Z",
+        "作成者ID": "rec-u-156",
+        "更新者ID": "rec-u-156"
+      },
+      {
+        "提案ID": "rec-20250115-001",
+        "顧客ID": "cust-rec-0847",
+        "提案タイトル": "クラウド会計システム Pro版への乗り換え提案",
+        "提案内容": "現在ご利用いただいているクラウド会計システム Standard版から、新機能を搭載したPro版へのアップグレードをご提案いたします。Pro版では、AI による自動仕訳機能、リアルタイム経営分析ダッシュボード、複数拠点管理機能が追加され、業務効率が約40%向上します。導入サポートと3ヶ月間の無料トレーニングを含みます。",
+        "提案金額": 480000,
+        "ステータス": "提案済み",
+        "有効期限": "2025-02-28T23:59:59Z",
+        "作成日時": "2025-01-15T09:30:00Z",
+        "更新日時": "2025-01-15T09:30:00Z",
+        "作成者ID": "user-rec-0312",
+        "更新者ID": "user-rec-0312"
+      },
+      {
+        "提案ID": "rec-20250118-0847",
+        "顧客ID": "cust-rec-0156",
+        "提案タイトル": "製造業向け生産管理・品質管理統合システム導入提案",
+        "提案内容": "貴社の生産計画部門、品質管理部門、営業管理部門の業務プロセスを統合し、リアルタイムデータ連携により意思決定の迅速化と業務効率化を実現するクラウドベース統合ソリューションです。生産スケジューリング最適化、不良品検出の自動化、顧客納期管理の一元化を実装いたします。",
+        "提案金額": 8500000,
+        "ステータス": "提案済み",
+        "有効期限": "2025-04-18T23:59:59+09:00",
+        "作成日時": "2025-01-18T09:30:00+09:00",
+        "更新日時": "2025-01-18T14:15:00+09:00",
+        "作成者ID": "user-rec-0023",
+        "更新者ID": "user-rec-0023"
+      }
+    ],
+    "提案内容": [
+      {
+        "提案内容ID": "rec-001",
+        "提案ID": "prop-2024-0847",
+        "商品サービス名": "顧客管理システム(CRM)モジュール導入・カスタマイズサービス",
+        "説明": "営業管理、顧客情報一元化、営業パイプライン管理、レポーティング機能を含むCRMモジュールの導入支援。既存システムとのAPI連携、ユーザートレーニング、初期データ移行を含む。本番運用開始まで3ヶ月間の技術サポート付き。",
+        "数量": 1,
+        "単価": 4800000,
+        "小計": 4800000,
+        "表示順序": 1,
+        "作成日時": "2024-11-15T09:30:00+09:00",
+        "更新日時": "2024-11-20T14:15:00+09:00",
+        "作成者": "user-2024-0156"
+      },
+      {
+        "提案内容ID": "rec-001",
+        "提案ID": "prop-2024-0847",
+        "商品サービス名": "Microsoft 365 Business Standard ライセンス",
+        "説明": "既存のMicrosoft 365 Business Basic からのアップグレード。Word、Excel、PowerPoint、Outlook、Teams等の全機能が利用可能になり、チーム間のコラボレーション機能が強化されます。クラウドストレージは1TBから1TBのまま、高度な分析機能と優先サポートが追加されます。",
+        "数量": 15,
+        "単価": 1650,
+        "小計": 24750,
+        "表示順序": 1,
+        "作成日時": "2024-11-15T09:30:00",
+        "更新日時": "2024-11-15T09:30:00",
+        "作成者": "user-0523"
+      },
+      {
+        "提案内容ID": "rec-001",
+        "提案ID": "prop-2024-0847",
+        "商品サービス名": "システム保守契約（年間サポート）",
+        "説明": "既存ERP システムの定期保守、障害対応、セキュリティパッチ適用、月次レポート作成を含む年間サポートサービス。営業時間内の電話サポート対応、リモート対応による不具合解決、年2回のシステム最適化診断を提供します。",
+        "数量": 1,
+        "単価": 1200000,
+        "小計": 1200000,
+        "表示順序": 1,
+        "作成日時": "2024-11-15T09:30:00",
+        "更新日時": "2024-11-15T09:30:00",
+        "作成者": "user-5632"
+      },
+      {
+        "提案内容ID": "rec-001",
+        "提案ID": "prop-2024-001",
+        "商品サービス名": "クラウド基幹システム導入パッケージ",
+        "説明": "企業向けクラウド基幹システムの初期導入セットアップ。システム構築、データ移行、ユーザー教育を含む。初期3ヶ月のサポート付き。",
+        "数量": 1,
+        "単価": 2500000,
+        "小計": 2500000,
+        "表示順序": 1,
+        "作成日時": "2024-11-15T10:30:00",
+        "更新日時": "2024-11-15T10:30:00",
+        "作成者": "user-2024-001"
+      },
+      {
+        "提案内容ID": "rec-001",
+        "提案ID": "prop-2024-0847",
+        "商品サービス名": "クラウド移行コンサルティング（アセスメント・計画フェーズ）",
+        "説明": "現在のオンプレミス環境の詳細調査、クラウド移行戦略の立案、リスク分析、移行スケジュール策定、コスト試算を含む包括的なコンサルティングサービス。AWS/Azure/GCP対応。",
+        "数量": 1,
+        "単価": 2500000,
+        "小計": 2500000,
+        "表示順序": 1,
+        "作成日時": "2024-11-15T09:30:00+09:00",
+        "更新日時": "2024-11-15T09:30:00+09:00",
+        "作成者": "user-0056"
+      },
+      {
+        "提案内容ID": "rec-001",
+        "提案ID": "prop-2024-0847",
+        "商品サービス名": "システム保守サポート契約（年間）",
+        "説明": "基幹業務システムの24時間監視、定期メンテナンス、緊急対応、セキュリティパッチ適用を含む年間保守契約。応答時間：緊急案件1時間以内、通常案件24時間以内。月1回の定期点検と四半期ごとのパフォーマンスレビューを実施。",
+        "数量": 1,
+        "単価": 1800000,
+        "小計": 1800000,
+        "表示順序": 1,
+        "作成日時": "2024-11-15T10:30:00+09:00",
+        "更新日時": "2024-11-15T10:30:00+09:00",
+        "作成者": "user-5892"
+      },
+      {
+        "提案内容ID": "rec-001",
+        "提案ID": "prop-2024-0847",
+        "商品サービス名": "顧客管理システム カスタマイズ開発",
+        "説明": "既存の顧客管理システムに対して、営業プロセス管理機能とレポート自動生成機能をカスタマイズ開発いたします。データベース設計から画面設計、実装テストまで一貫してご対応いたします。",
+        "数量": 1,
+        "単価": 2500000,
+        "小計": 2500000,
+        "表示順序": 1,
+        "作成日時": "2024-11-15T09:30:00",
+        "更新日時": "2024-11-15T09:30:00",
+        "作成者": "user-7382"
+      },
+      {
+        "提案内容ID": "rec-001",
+        "提案ID": "prop-2024-0847",
+        "商品サービス名": "Microsoft 365 Business Standard 年間ライセンス",
+        "説明": "東京・大阪・名古屋の3拠点向けMicrosoft 365 Business Standard。ユーザーあたり月額利用料で、メール・Word・Excel・Teams等のクラウドサービスを含む。サポート対象は全従業員200名。",
+        "数量": 200,
+        "単価": 1650,
+        "小計": 330000,
+        "表示順序": 1,
+        "作成日時": "2024-11-15T09:30:00+09:00",
+        "更新日時": "2024-11-15T09:30:00+09:00",
+        "作成者": "user-5432"
+      },
+      {
+        "提案内容ID": "rec-001",
+        "提案ID": "prop-2024-0847",
+        "商品サービス名": "DX推進コンサルティング（3ヶ月プログラム）",
+        "説明": "貴社の業務プロセス診断、デジタル化戦略立案、システム導入支援を含む包括的なコンサルティングサービスです。経験豊富なコンサルタントによる現地診断、月次ワークショップ、従業員向けトレーニング、導入後3ヶ月間の技術サポートが付属します。",
+        "数量": 1,
+        "単価": 2500000,
+        "小計": 2500000,
+        "表示順序": 1,
+        "作成日時": "2024-11-15T10:30:00+09:00",
+        "更新日時": "2024-11-15T10:30:00+09:00",
+        "作成者": "user-佐藤花子"
+      },
+      {
+        "提案内容ID": "rec-001",
+        "提案ID": "prop-2024-0847",
+        "商品サービス名": "既存CRMシステム機能拡張パッケージ",
+        "説明": "現行CRMシステムに顧客分析ダッシュボード、自動メール配信機能、AI予測分析モジュールを追加。既存データベースとの完全互換性を保証し、段階的な導入が可能です。",
+        "数量": 1,
+        "単価": 2800000,
+        "小計": 2800000,
+        "表示順序": 1,
+        "作成日時": "2024-11-15T09:30:00+09:00",
+        "更新日時": "2024-11-15T09:30:00+09:00",
+        "作成者": "user-5621"
+      }
+    ],
+    "照合評価結果": [
+      {
+        "照合評価結果ID": "rec-20250215-001",
+        "提案ID": "rec-20250210-prop-042",
+        "顧客ID": "rec-cust-2024-0891",
+        "評価ステータス": "不合格",
+        "適合性スコア": 28,
+        "照合結果詳細": "提案金額が顧客の予算上限を大幅に超過しているため、不合格と判定いたしました。顧客指定の予算上限は450万円ですが、提案金額は680万円となっており、230万円（約51%）の超過が確認されました。顧客の財務制約条件を満たしていないため、本提案は承認できません。",
+        "不適合項目": "・提案総額（680万円）が予算上限（450万円）を超過\n・システム導入費用の見積もりが過大\n・保守費用の年間契約金が予算枠を超える",
+        "評価実施日時": "2025-02-15 14:30:00",
+        "作成日時": "2025-02-15 14:35:22",
+        "更新日時": "2025-02-15 14:35:22",
+        "作成者ID": "rec-user-佐藤美咲",
+        "更新者ID": "rec-user-佐藤美咲"
+      },
+      {
+        "照合評価結果ID": "rec-001",
+        "提案ID": "rec-002",
+        "顧客ID": "rec-003",
+        "評価ステータス": "合格",
+        "適合性スコア": 92,
+        "照合結果詳細": "提案内容が顧客の納期要件を満たしており、納品予定日が2025年3月15日で顧客要件の2025年3月31日以前に設定されています。品質基準、コスト条件、技術仕様についても全て顧客の制約条件を満たしています。",
+        "不適合項目": "なし",
+        "評価実施日時": "2025-01-20T14:30:00+09:00",
+        "作成日時": "2025-01-20T14:30:00+09:00",
+        "更新日時": "2025-01-20T14:30:00+09:00",
+        "作成者ID": "rec-004",
+        "更新者ID": "rec-004"
+      },
+      {
+        "照合評価結果ID": "rec-20250215-001",
+        "提案ID": "rec-20250210-prop-042",
+        "顧客ID": "rec-20241120-cust-0856",
+        "評価ステータス": "要確認",
+        "適合性スコア": 68,
+        "照合結果詳細": "提案内容は顧客の基本要件である納期（3ヶ月以内）と予算上限（500万円）を満たしており、技術仕様も大部分で適合しています。ただし、顧客が指定する保守サービスの対応時間要件（24時間以内）に対し、提案では48時間対応となっているため、この点について顧客との再協議が必要です。また、導入予定地域が北海道の離島であることから、現地サポート体制の確認も併せて実施が必要と判断されます。",
+        "不適合項目": "保守対応時間（要件：24時間以内 vs 提案：48時間対応）、離島地域への現地サポート体制未確認",
+        "評価実施日時": "2025-02-15 14:30:00",
+        "作成日時": "2025-02-15 14:30:00",
+        "更新日時": "2025-02-15 14:30:00",
+        "作成者ID": "rec-user-suzuki-hanako",
+        "更新者ID": "rec-user-suzuki-hanako"
+      },
+      {
+        "照合評価結果ID": "rec-20250215-001",
+        "提案ID": "rec-20250210-prop-042",
+        "顧客ID": "rec-20240601-cust-158",
+        "評価ステータス": "不合格",
+        "適合性スコア": 28,
+        "照合結果詳細": "提案製品はクラウドベースのデータ分析プラットフォームですが、顧客の業界制限条件により金融機関への販売が禁止されています。顧客は銀行業界に属するため、本提案は業界制限ポリシーに抵触し、不合格と判定されました。",
+        "不適合項目": "業界制限（金融機関）、クラウドデータ保管の規制要件、PCI-DSS準拠要件未対応",
+        "評価実施日時": "2025-02-15 14:32:00",
+        "作成日時": "2025-02-15 14:32:00",
+        "更新日時": "2025-02-15 14:32:00",
+        "作成者ID": "rec-user-0847",
+        "更新者ID": "rec-user-0847"
+      },
+      {
+        "照合評価結果ID": "rec-001",
+        "提案ID": "rec-002",
+        "顧客ID": "rec-003",
+        "評価ステータス": "合格",
+        "適合性スコア": 92,
+        "照合結果詳細": "提案製品の品質基準がISO9001認証済みで顧客要件を満たし、納入地域も関東圏内の指定エリアに対応可能であることを確認しました。納期も顧客指定の2025年3月15日に間に合わせることができます。",
+        "不適合項目": "",
+        "評価実施日時": "2025-01-22T14:30:00+09:00",
+        "作成日時": "2025-01-22T14:30:00+09:00",
+        "更新日時": "2025-01-22T14:30:00+09:00",
+        "作成者ID": "rec-004",
+        "更新者ID": "rec-004"
+      },
+      {
+        "照合評価結果ID": "rec-20250214-8f4a",
+        "提案ID": "rec-20250210-5c2b",
+        "顧客ID": "rec-20240601-9d7e",
+        "評価ステータス": "要確認",
+        "適合性スコア": 72,
+        "照合結果詳細": "既存契約条件との照合結果、提案内容は基本的に適合しており、適合性スコアは72点です。ただし、既存取引先との契約における「納期短縮時の追加費用」条項と、本提案の「標準納期での価格設定」の間に解釈上の相違が生じています。営業部門と顧客との確認が必要となります。",
+        "不適合項目": "・納期短縮時の追加費用計算ロジック（既存契約では10%加算、本提案では15%加算）\n・ボリュームディスカウント適用基準の相違（既存契約は年間100万円以上、本提案は年間150万円以上）",
+        "評価実施日時": "2025-02-14 10:30:00",
+        "作成日時": "2025-02-14 10:30:00",
+        "更新日時": "2025-02-14 10:30:00",
+        "作成者ID": "rec-user-0342",
+        "更新者ID": "rec-user-0342"
+      },
+      {
+        "照合評価結果ID": "rec-20250115-001",
+        "提案ID": "rec-20250110-prop-001",
+        "顧客ID": "rec-20250108-cust-001",
+        "評価ステータス": "合格",
+        "適合性スコア": 98,
+        "照合結果詳細": "新規顧客株式会社ソラミ商事の初回提案について、提示された営業支援システムの導入提案が顧客の全制約条件を満たしていることを確認しました。システムの機能要件、予算上限、導入スケジュール、セキュリティ要件、サポート体制のいずれについても顧客の要望を十分に満たしており、実装可能性も高いと判断されます。",
+        "不適合項目": "",
+        "評価実施日時": "2025-01-15 14:30:00",
+        "作成日時": "2025-01-15 14:30:00",
+        "更新日時": "2025-01-15 14:30:00",
+        "作成者ID": "rec-user-yamada",
+        "更新者ID": "rec-user-yamada"
+      },
+      {
+        "照合評価結果ID": "rec-20250115-001",
+        "提案ID": "rec-20250110-prop-042",
+        "顧客ID": "rec-cust-0847",
+        "評価ステータス": "不合格",
+        "適合性スコア": 35,
+        "照合結果詳細": "提案内容が顧客の支払条件要件と大きく相違しており、契約締結には至らない判定。顧客は月末締め翌月末払いを要求しているが、提案では月末締め翌々月15日払いとなっており、資金繰り計画に支障が生じる。また、手形払いの提案に対し顧客は全額現金払いを要件としており、決済方法についても不適合。",
+        "不適合項目": "支払期日（提案：翌々月15日払い vs 要件：翌月末払い）、決済方法（提案：約束手形 vs 要件：現金払い）、手数料負担（提案：顧客負担 vs 要件：提供側負担）",
+        "評価実施日時": "2025-01-15 14:30:00",
+        "作成日時": "2025-01-15 14:30:00",
+        "更新日時": "2025-01-15 14:30:00",
+        "作成者ID": "rec-user-suzuki",
+        "更新者ID": "rec-user-suzuki"
+      },
+      {
+        "照合評価結果ID": "rec-20250215-001",
+        "提案ID": "rec-prop-2025-0847",
+        "顧客ID": "rec-cust-2024-1523",
+        "評価ステータス": "要確認",
+        "適合性スコア": 78,
+        "照合結果詳細": "提案内容の技術仕様は顧客の要件を満たしており、機能要件・非機能要件ともに適合している。ただし、納期について顧客の希望納期が2025年4月末であるのに対し、提案納期が2025年5月中旬となっており、3週間程度の遅延が発生する見込み。顧客との納期調整協議が必要である。",
+        "不適合項目": "納期：顧客希望納期2025年4月30日に対し提案納期2025年5月15日（遅延15日）",
+        "評価実施日時": "2025-02-15 14:30:00",
+        "作成日時": "2025-02-15 14:30:00",
+        "更新日時": "2025-02-15 14:30:00",
+        "作成者ID": "rec-user-2024-0312",
+        "更新者ID": "rec-user-2024-0312"
+      },
+      {
+        "照合評価結果ID": "rec-001",
+        "提案ID": "rec-002",
+        "顧客ID": "rec-003",
+        "評価ステータス": "合格",
+        "適合性スコア": 94,
+        "照合結果詳細": "顧客の予算上限2,500万円に対し提案金額2,380万円で収まり、納期要件の2025年3月末に対し2025年3月15日での納品予定となっており、必須の機能要件（クラウド対応、API連携、多言語対応）をすべて満たしている。既存システムとの互換性も確認済みであり、複合的な制約条件を総合的に満たす優良提案である。",
+        "不適合項目": "なし",
+        "評価実施日時": "2025-02-14T10:30:00",
+        "作成日時": "2025-02-14T10:30:00",
+        "更新日時": "2025-02-14T10:30:00",
+        "作成者ID": "rec-004",
+        "更新者ID": "rec-004"
+      }
+    ],
+    "照合ルール": [
+      {
+        "照合ルールID": "rec-001",
+        "ルール名": "顧客予算上限と提案金額の範囲照合",
+        "ルール説明": "顧客の予算上限に対して、提案金額がその範囲内に収まっているかを照合するルール。予算超過を防ぎ、顧客満足度を維持する",
+        "制約条件項目": "予算上限",
+        "提案内容項目": "提案金額",
+        "照合条件タイプ": "範囲内",
+        "照合条件値": "{\"下限_比率\": 0.8, \"上限_比率\": 1.0}",
+        "優先度": 1,
+        "有効フラグ": true,
+        "作成日時": "2024-04-15T09:30:00",
+        "更新日時": "2025-01-20T14:45:00",
+        "作成者": "鈴木花子"
+      },
+      {
+        "照合ルールID": "rec-001",
+        "ルール名": "製造業向け生産管理システム提案ルール",
+        "ルール説明": "顧客が製造業に属する場合、提案製品カテゴリが生産管理システムまたはERP関連であることを確認するルール",
+        "制約条件項目": "業種分類",
+        "提案内容項目": "製品カテゴリ",
+        "照合条件タイプ": "含む",
+        "照合条件値": "製造業,自動車部品製造,電子機器製造",
+        "優先度": 1,
+        "有効フラグ": true,
+        "作成日時": "2024-04-15T09:30:00+09:00",
+        "更新日時": "2025-01-20T14:45:00+09:00",
+        "作成者": "佐藤花子"
+      },
+      {
+        "照合ルールID": "rec-001",
+        "ルール名": "契約期間とサービス提供期間の一致確認",
+        "ルール説明": "顧客の契約期間要件とシステムが提案するサービス提供期間が一致しているかを確認するルール。契約開始日から終了日までの期間が提案内容に含まれるサービス期間と重複していることを検証する。",
+        "制約条件項目": "契約期間",
+        "提案内容項目": "サービス提供期間",
+        "照合条件タイプ": "範囲内",
+        "照合条件値": "{\"契約開始日\": \"2024-04-01\", \"契約終了日\": \"2025-03-31\", \"許容日数差分\": 7}",
+        "優先度": 1,
+        "有効フラグ": true,
+        "作成日時": "2024-01-15 09:30:00",
+        "更新日時": "2024-12-10 14:45:30",
+        "作成者": "鈴木花子"
+      },
+      {
+        "照合ルールID": "rec-001",
+        "ルール名": "顧客納期指定と提案納期可能日の照合",
+        "ルール説明": "顧客が指定した納期が、提案内容に記載された納期可能日以内であることを確認するルール。顧客の納期要件を満たす提案のみを推奨対象とする。",
+        "制約条件項目": "顧客納期指定日",
+        "提案内容項目": "提案納期可能日",
+        "照合条件タイプ": "範囲内",
+        "照合条件値": "{\"最小日数\": 0, \"最大日数\": 30}",
+        "優先度": 1,
+        "有効フラグ": true,
+        "作成日時": "2024-04-15 09:30:00",
+        "更新日時": "2025-01-20 14:45:00",
+        "作成者": "山田花子"
+      },
+      {
+        "照合ルールID": "rec-001",
+        "ルール名": "ゴールド会員向け高額商品購入可能ルール",
+        "ルール説明": "年間取引実績が500万円以上のゴールド会員に対して、単価50万円以上の高級商品の購入を許可するルール。取引ランクと購入可能商品カテゴリを照合して制御する。",
+        "制約条件項目": "顧客ランク",
+        "提案内容項目": "商品単価区分",
+        "照合条件タイプ": "範囲内",
+        "照合条件値": "{\"顧客ランク\": \"ゴールド\", \"最小年間取引実績\": 5000000, \"購入可能単価下限\": 500000}",
+        "優先度": 1,
+        "有効フラグ": true,
+        "作成日時": "2024-04-15T09:30:00+09:00",
+        "更新日時": "2025-01-20T14:45:30+09:00",
+        "作成者": "山田太郎"
+      },
+      {
+        "照合ルールID": "rec-001",
+        "ルール名": "関東地域配送対応エリア照合",
+        "ルール説明": "顧客の住所が関東地域の配送対応エリアに含まれるかを照合し、配送可能性を判定するルール",
+        "制約条件項目": "顧客住所_都道府県",
+        "提案内容項目": "配送対応エリア_都道府県リスト",
+        "照合条件タイプ": "含む",
+        "照合条件値": "東京都,神奈川県,埼玉県,千葉県,茨城県,栃木県,群馬県",
+        "優先度": 1,
+        "有効フラグ": true,
+        "作成日時": "2024-04-15T09:30:00+09:00",
+        "更新日時": "2025-01-20T14:45:00+09:00",
+        "作成者": "鈴木花子"
+      },
+      {
+        "照合ルールID": "rec-001",
+        "ルール名": "月末締め翌月末払い提案ルール",
+        "ルール説明": "顧客の支払い条件が月末締め翌月末払いの場合、提案の決済方法も同じ条件である必要があります。キャッシュフロー管理の観点から、支払い条件の不一致は取引リスクとなるため、事前に照合して適合性を確認します。",
+        "制約条件項目": "支払い条件",
+        "提案内容項目": "決済方法",
+        "照合条件タイプ": "完全一致",
+        "照合条件値": "月末締め翌月末払い",
+        "優先度": 1,
+        "有効フラグ": true,
+        "作成日時": "2024-04-15T09:30:00+09:00",
+        "更新日時": "2024-11-20T14:45:00+09:00",
+        "作成者": "鈴木花子"
+      },
+      {
+        "照合ルールID": "rec-001",
+        "ルール名": "既存契約製品との互換性チェック",
+        "ルール説明": "顧客が既に契約している製品と新規提案製品の互換性を確認し、重複購入や機能重複を防止するルール",
+        "制約条件項目": "既存契約製品カテゴリ",
+        "提案内容項目": "提案製品カテゴリ",
+        "照合条件タイプ": "含む",
+        "照合条件値": "クラウドストレージ,データバックアップ,セキュリティスイート,メール管理システム",
+        "優先度": 1,
+        "有効フラグ": true,
+        "作成日時": "2024-04-15T09:30:00+09:00",
+        "更新日時": "2025-01-22T14:45:00+09:00",
+        "作成者": "山田花子"
+      },
+      {
+        "照合ルールID": "rec-001",
+        "ルール名": "耐久性基準照合ルール",
+        "ルール説明": "顧客が指定する製品耐久年数と提案製品の保証期間を照合し、顧客要件を満たす提案のみを抽出するルール",
+        "制約条件項目": "必要耐久年数",
+        "提案内容項目": "保証期間年数",
+        "照合条件タイプ": "範囲内",
+        "照合条件値": "{\"最小値\": 5, \"最大値\": 15, \"判定ロジック\": \"提案保証期間 >= 顧客必要耐久年数\"}",
+        "優先度": 1,
+        "有効フラグ": true,
+        "作成日時": "2024-04-15T09:30:00+09:00",
+        "更新日時": "2025-01-20T14:45:00+09:00",
+        "作成者": "山田花子"
+      },
+      {
+        "照合ルールID": "rec-001",
+        "ルール名": "VIP顧客向け特別提案の優先度判定",
+        "ルール説明": "年間購買額が500万円以上で、かつ顧客ランクがVIPまたはプラチナ会員の顧客に対して、新商品の先行提案を優先的に配信するルール",
+        "制約条件項目": "顧客ランク",
+        "提案内容項目": "提案優先度レベル",
+        "照合条件タイプ": "含む",
+        "照合条件値": "VIP,プラチナ会員",
+        "優先度": 1,
+        "有効フラグ": true,
+        "作成日時": "2024-04-15T09:30:00+09:00",
+        "更新日時": "2025-01-20T14:45:00+09:00",
+        "作成者": "鈴木花子"
+      }
+    ],
+    "操作履歴": [
+      {
+        "操作履歴ID": "rec-001",
+        "ログインユーザーID": "rec-usr-0847",
+        "顧客ID": null,
+        "操作種別": "ログイン",
+        "操作対象テーブル": "ログインユーザー",
+        "操作対象ID": "rec-usr-0847",
+        "操作内容": "営業ポータルへのログイン実行",
+        "操作結果": "成功",
+        "エラーメッセージ": null,
+        "IPアドレス": "203.0.113.45",
+        "ユーザーエージェント": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "作成日時": "2024-11-15 09:23:47"
+      },
+      {
+        "操作履歴ID": "rec-001",
+        "ログインユーザーID": "rec-002",
+        "顧客ID": "rec-003",
+        "操作種別": "提案閲覧",
+        "操作対象テーブル": "提案",
+        "操作対象ID": "rec-004",
+        "操作内容": "顧客ID:rec-003に対する提案ID:rec-004の詳細内容を閲覧。提案金額:2,500,000円、契約期間:36ヶ月、保証内容:機器故障時の無償交換対応を確認。",
+        "操作結果": "成功",
+        "エラーメッセージ": null,
+        "IPアドレス": "192.168.1.105",
+        "ユーザーエージェント": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "作成日時": "2024-11-15 14:32:47"
+      },
+      {
+        "操作履歴ID": "rec-20250115-001",
+        "ログインユーザーID": "rec-user-0847",
+        "顧客ID": "rec-cust-5632",
+        "操作種別": "提案承認",
+        "操作対象テーブル": "提案",
+        "操作対象ID": "rec-prop-2891",
+        "操作内容": "顧客ID:rec-cust-5632に対する提案ID:rec-prop-2891（生命保険プラン：終身保険500万円）の承認を実行。承認者：営業部長・山田太郎。承認コメント：「ご提示いただいた内容で問題ございません。契約手続きを進めてください。」",
+        "操作結果": "成功",
+        "エラーメッセージ": null,
+        "IPアドレス": "203.0.113.45",
+        "ユーザーエージェント": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "作成日時": "2025-01-15 14:32:18"
+      },
+      {
+        "操作履歴ID": "rec-001",
+        "ログインユーザーID": "rec-002",
+        "顧客ID": "rec-003",
+        "操作種別": "制約条件更新",
+        "操作対象テーブル": "顧客制約条件",
+        "操作対象ID": "rec-004",
+        "操作内容": "予算上限を500万円から800万円に変更、納期を2025年3月31日から2025年6月30日に延長",
+        "操作結果": "成功",
+        "エラーメッセージ": null,
+        "IPアドレス": "192.168.1.105",
+        "ユーザーエージェント": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "作成日時": "2024-11-15 14:32:18"
+      },
+      {
+        "操作履歴ID": "rec-20250215-001",
+        "ログインユーザーID": "user-00847",
+        "顧客ID": "cust-05234",
+        "操作種別": "見積書ダウンロード",
+        "操作対象テーブル": "見積書",
+        "操作対象ID": "quote-2025-00156",
+        "操作内容": "顧客「株式会社エクセルシステムズ」の見積書（見積番号：QT-2025-00156、金額：¥2,850,000）をPDF形式でダウンロード",
+        "操作結果": "成功",
+        "エラーメッセージ": null,
+        "IPアドレス": "203.0.113.45",
+        "ユーザーエージェント": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+        "作成日時": "2025-02-15 14:32:18"
+      },
+      {
+        "操作履歴ID": "rec-20250215-0847",
+        "ログインユーザーID": "rec-user-1523",
+        "顧客ID": "rec-cust-8764",
+        "操作種別": "顧客情報更新",
+        "操作対象テーブル": "顧客",
+        "操作対象ID": "rec-cust-8764",
+        "操作内容": "顧客「株式会社田中製作所」の与信限度額を500万円から1000万円に変更しようとしました",
+        "操作結果": "失敗",
+        "エラーメッセージ": "権限不足: 与信限度額の変更には営業管理者以上の権限が必要です。現在のユーザー権限はセールス担当者です",
+        "IPアドレス": "192.168.1.145",
+        "ユーザーエージェント": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+        "作成日時": "2025-02-15 14:47:32"
+      },
+      {
+        "操作履歴ID": "rec-20250115-0847",
+        "ログインユーザーID": "usr-2024-0523",
+        "顧客ID": null,
+        "操作種別": "一括提案配信",
+        "操作対象テーブル": "提案",
+        "操作対象ID": "prop-batch-20250115-001",
+        "操作内容": "対象顧客23件に対して保険商品「終身医療保険プレミアム」の提案を一括配信。配信先セグメント：年齢30〜50歳、年収500万円以上。配信方法：メール及びシステム内通知。",
+        "操作結果": "成功",
+        "エラーメッセージ": null,
+        "IPアドレス": "192.168.1.105",
+        "ユーザーエージェント": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+        "作成日時": "2025-01-15 08:47:32"
+      },
+      {
+        "操作履歴ID": "rec-20250215-0847",
+        "ログインユーザーID": "rec-user-0312",
+        "顧客ID": "rec-cust-5604",
+        "操作種別": "提案差し戻し",
+        "操作対象テーブル": "提案",
+        "操作対象ID": "rec-prop-8921",
+        "操作内容": "提案ID: rec-prop-8921（顧客: 株式会社山田製作所）について、承認済み状態から条件変更により差し戻し。変更理由: 金利条件を固定3.2%から変動2.8%に修正、融資期間を15年から20年に延長。承認者: 営業部長 佐藤次郎により修正指示。",
+        "操作結果": "成功",
+        "エラーメッセージ": null,
+        "IPアドレス": "192.168.1.145",
+        "ユーザーエージェント": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+        "作成日時": "2025-02-15 08:47:23"
+      },
+      {
+        "操作履歴ID": "rec-20250115-0847",
+        "ログインユーザーID": "rec-user-0523",
+        "顧客ID": "rec-cust-1204",
+        "操作種別": "ログイン",
+        "操作対象テーブル": "ユーザーセッション",
+        "操作対象ID": "rec-session-0847",
+        "操作内容": "顧客ポータルへのログイン試行。システムメンテナンス時間帯（02:00-04:00）のため、アクセスが拒否されました。",
+        "操作結果": "失敗",
+        "エラーメッセージ": "申し訳ございません。現在システムメンテナンス中のため、ご利用いただけません。メンテナンス終了予定時刻は04:00です。ご不便をおかけして申し訳ございません。",
+        "IPアドレス": "203.0.113.45",
+        "ユーザーエージェント": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "作成日時": "2025-01-15 02:47:23"
+      },
+      {
+        "操作履歴ID": "rec-001",
+        "ログインユーザーID": "rec-002",
+        "顧客ID": null,
+        "操作種別": "月次レポート出力",
+        "操作対象テーブル": "レポート管理",
+        "操作対象ID": "rec-003",
+        "操作内容": "2025年1月度の営業実績月次レポートをPDF形式で出力。対象期間：2025-01-01～2025-01-31、売上高：¥12,450,000、新規顧客数：47件、既存顧客売上：¥8,920,000、提案件数：156件、成約率：28.2%",
+        "操作結果": "成功",
+        "エラーメッセージ": null,
+        "IPアドレス": "192.168.1.105",
+        "ユーザーエージェント": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+        "作成日時": "2025-02-03 09:15:42"
+      }
+    ]
+  },
+  "shellHtml": "<!doctype html>\n<html lang=\"ja\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>顧客購買支援ポータル</title>\n  <style>\n:root {\n  --primary: #0066cc;\n  --primary-hover: #0052a3;\n  --bg-main: #f0f4f9;\n  --bg-card: #ffffff;\n  --bg-sidebar: #e8ecf1;\n  --border: #d0d8e0;\n  --text: #1a1a1a;\n  --text-muted: #666666;\n  --top-bar-bg: #ffffff;\n  --top-bar-border: #d0d8e0;\n}\n\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\nhtml, body {\n  height: 100%;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", sans-serif;\n  background: var(--bg-main);\n  color: var(--text);\n  line-height: 1.4;\n}\n\n.shell {\n  display: flex;\n  flex-direction: column;\n  height: 100vh;\n}\n\nheader {\n  background: var(--top-bar-bg);\n  border-bottom: 1px solid var(--top-bar-border);\n  padding: 0 24px;\n  height: 56px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  flex-shrink: 0;\n}\n\n.header-logo {\n  font-size: 16px;\n  font-weight: 600;\n  color: var(--text);\n  letter-spacing: -0.5px;\n}\n\n.header-user {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\n\n.user-avatar {\n  width: 32px;\n  height: 32px;\n  border-radius: 50%;\n  background: var(--primary);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: #fff;\n  font-size: 13px;\n  font-weight: 600;\n}\n\n.user-name {\n  font-size: 13px;\n  color: var(--text);\n}\n\n.user-logout {\n  font-size: 12px;\n  color: var(--primary);\n  text-decoration: none;\n  cursor: pointer;\n  transition: color 0.2s;\n}\n\n.user-logout:hover {\n  color: var(--primary-hover);\n}\n\n.main-container {\n  display: flex;\n  flex: 1;\n  overflow: hidden;\n}\n\n.sidebar {\n  width: 240px;\n  background: var(--bg-sidebar);\n  border-right: 1px solid var(--border);\n  overflow-y: auto;\n  flex-shrink: 0;\n  padding: 16px 0;\n}\n\n.sidebar-section {\n  padding: 0 12px 16px 12px;\n}\n\n.sidebar-label {\n  font-size: 11px;\n  font-weight: 600;\n  text-transform: uppercase;\n  color: var(--text-muted);\n  letter-spacing: 0.5px;\n  padding: 8px 12px;\n  margin-bottom: 4px;\n}\n\n.nav-item {\n  display: block;\n  padding: 10px 12px;\n  margin: 2px 0;\n  font-size: 13px;\n  color: var(--text);\n  text-decoration: none;\n  border-radius: 4px;\n  cursor: pointer;\n  transition: background 0.15s, color 0.15s;\n  border-left: 2px solid transparent;\n}\n\n.nav-item:hover {\n  background: rgba(0, 102, 204, 0.08);\n}\n\n.nav-item.aivic-active {\n  background: rgba(0, 102, 204, 0.12);\n  color: var(--primary);\n  border-left-color: var(--primary);\n  font-weight: 500;\n}\n\n.content-area {\n  flex: 1;\n  overflow-y: auto;\n  background: var(--bg-main);\n}\n\n[data-aivic-panel] {\n  min-height: 100%;\n  padding: 24px;\n}\n\n.workspace-header {\n  margin-bottom: 24px;\n}\n\n.workspace-title {\n  font-size: 24px;\n  font-weight: 600;\n  color: var(--text);\n  margin-bottom: 4px;\n}\n\n.workspace-subtitle {\n  font-size: 13px;\n  color: var(--text-muted);\n}\n\n.workspace-toolbar {\n  display: flex;\n  gap: 12px;\n  margin-bottom: 20px;\n  flex-wrap: wrap;\n}\n\n.btn {\n  padding: 8px 16px;\n  font-size: 13px;\n  font-weight: 500;\n  border: none;\n  border-radius: 4px;\n  cursor: pointer;\n  transition: all 0.2s;\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n}\n\n.btn-primary {\n  background: var(--primary);\n  color: #fff;\n}\n\n.btn-primary:hover {\n  background: var(--primary-hover);\n}\n\n.btn-secondary {\n  background: var(--bg-card);\n  color: var(--text);\n  border: 1px solid var(--border);\n}\n\n.btn-secondary:hover {\n  background: var(--bg-main);\n}\n\n.filter-group {\n  display: flex;\n  gap: 12px;\n  margin-bottom: 16px;\n  flex-wrap: wrap;\n}\n\n.filter-input {\n  padding: 8px 12px;\n  font-size: 13px;\n  border: 1px solid var(--border);\n  border-radius: 4px;\n  background: var(--bg-card);\n  color: var(--text);\n  min-width: 160px;\n}\n\n.filter-input::placeholder {\n  color: var(--text-muted);\n}\n\n.kpi-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: 16px;\n  margin-bottom: 24px;\n}\n\n.kpi-card {\n  background: var(--bg-card);\n  border: 1px solid var(--border);\n  border-radius: 4px;\n  padding: 16px;\n}\n\n.kpi-label {\n  font-size: 12px;\n  color: var(--text-muted);\n  font-weight: 500;\n  margin-bottom: 6px;\n  text-transform: uppercase;\n  letter-spacing: 0.3px;\n}\n\n.kpi-value {\n  font-size: 20px;\n  font-weight: 600;\n  color: var(--text);\n}\n\n.kpi-delta {\n  font-size: 12px;\n  color: var(--text-muted);\n  margin-top: 4px;\n}\n\n.table-wrapper {\n  background: var(--bg-card);\n  border: 1px solid var(--border);\n  border-radius: 4px;\n  overflow: hidden;\n}\n\ntable {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 13px;\n}\n\nthead {\n  background: var(--bg-main);\n  border-bottom: 1px solid var(--border);\n}\n\nth {\n  padding: 12px;\n  text-align: left;\n  font-weight: 600;\n  color: var(--text);\n  font-size: 12px;\n  text-transform: uppercase;\n  letter-spacing: 0.3px;\n}\n\ntd {\n  padding: 12px;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n\ntbody tr:hover {\n  background: rgba(0, 102, 204, 0.02);\n}\n\ntbody tr:last-child td {\n  border-bottom: none;\n}\n\n.status-badge {\n  display: inline-block;\n  padding: 4px 8px;\n  border-radius: 3px;\n  font-size: 11px;\n  font-weight: 500;\n}\n\n.status-pending {\n  background: rgba(255, 193, 7, 0.15);\n  color: #f57f17;\n}\n\n.status-approved {\n  background: rgba(76, 175, 80, 0.15);\n  color: #388e3c;\n}\n\n.status-rejected {\n  background: rgba(244, 67, 54, 0.15);\n  color: #c62828;\n}\n\n.status-draft {\n  background: rgba(158, 158, 158, 0.15);\n  color: #424242;\n}\n\n.match-score {\n  font-weight: 600;\n  font-size: 14px;\n}\n\n.match-high {\n  color: #388e3c;\n}\n\n.match-medium {\n  color: #f57f17;\n}\n\n.match-low {\n  color: #c62828;\n}\n\n.action-cell {\n  display: flex;\n  gap: 8px;\n}\n\n.action-link {\n  color: var(--primary);\n  text-decoration: none;\n  font-size: 12px;\n  cursor: pointer;\n  transition: color 0.2s;\n}\n\n.action-link:hover {\n  color: var(--primary-hover);\n  text-decoration: underline;\n}\n\n.split-layout {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 24px;\n}\n\n.panel-card {\n  background: var(--bg-card);\n  border: 1px solid var(--border);\n  border-radius: 4px;\n  padding: 20px;\n}\n\n.panel-title {\n  font-size: 14px;\n  font-weight: 600;\n  color: var(--text);\n  margin-bottom: 16px;\n  padding-bottom: 12px;\n  border-bottom: 1px solid var(--border);\n}\n\n.form-group {\n  margin-bottom: 16px;\n}\n\n.form-label {\n  display: block;\n  font-size: 12px;\n  font-weight: 600;\n  color: var(--text);\n  margin-bottom: 6px;\n}\n\n.form-input, .form-select, .form-textarea {\n  width: 100%;\n  padding: 8px 12px;\n  font-size: 13px;\n  border: 1px solid var(--border);\n  border-radius: 4px;\n  background: var(--bg-card);\n  color: var(--text);\n  font-family: inherit;\n}\n\n.form-textarea {\n  resize: vertical;\n  min-height: 80px;\n}\n\n.form-input:focus, .form-select:focus, .form-textarea:focus {\n  outline: none;\n  border-color: var(--primary);\n  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);\n}\n\n.form-hint {\n  font-size: 11px;\n  color: var(--text-muted);\n  margin-top: 4px;\n}\n\n.evaluation-grid {\n  display: grid;\n  gap: 12px;\n}\n\n.evaluation-row {\n  display: grid;\n  grid-template-columns: 1fr 80px 120px;\n  gap: 12px;\n  align-items: center;\n  padding: 12px;\n  background: var(--bg-main);\n  border-radius: 4px;\n  font-size: 13px;\n}\n\n.evaluation-label {\n  font-weight: 500;\n  color: var(--text);\n}\n\n.evaluation-value {\n  text-align: right;\n  color: var(--text-muted);\n  font-size: 12px;\n}\n\n.evaluation-result {\n  text-align: center;\n  font-weight: 600;\n}\n\n.match-indicator {\n  display: inline-block;\n  width: 8px;\n  height: 8px;\n  border-radius: 50%;\n  margin-right: 4px;\n}\n\n.match-ok {\n  background: #4caf50;\n}\n\n.match-ng {\n  background: #f44336;\n}\n\n.match-warning {\n  background: #ffc107;\n}\n\n.tabs {\n  display: flex;\n  gap: 0;\n  border-bottom: 1px solid var(--border);\n  margin-bottom: 20px;\n}\n\n.tab {\n  padding: 12px 16px;\n  font-size: 13px;\n  font-weight: 500;\n  color: var(--text-muted);\n  cursor: pointer;\n  border-bottom: 2px solid transparent;\n  transition: all 0.2s;\n}\n\n.tab:hover {\n  color: var(--text);\n}\n\n.tab.active {\n  color: var(--primary);\n  border-bottom-color: var(--primary);\n}\n\n.stepper {\n  display: flex;\n  gap: 16px;\n  margin-bottom: 24px;\n  align-items: center;\n}\n\n.step {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n}\n\n.step-number {\n  width: 32px;\n  height: 32px;\n  border-radius: 50%;\n  background: var(--bg-main);\n  border: 2px solid var(--border);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 12px;\n  font-weight: 600;\n  color: var(--text-muted);\n}\n\n.step.active .step-number {\n  background: var(--primary);\n  border-color: var(--primary);\n  color: #fff;\n}\n\n.step.completed .step-number {\n  background: #4caf50;\n  border-color: #4caf50;\n  color: #fff;\n}\n\n.step-label {\n  font-size: 12px;\n  font-weight: 500;\n  color: var(--text-muted);\n}\n\n.step.active .step-label {\n  color: var(--text);\n}\n\n.step-divider {\n  flex: 1;\n  height: 2px;\n  background: var(--border);\n  margin: 0 -8px;\n}\n\n.step.completed .step-divider {\n  background: #4caf50;\n}\n\n.modal-overlay {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.3);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}\n\n.modal {\n  background: var(--bg-card);\n  border-radius: 4px;\n  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);\n  max-width: 500px;\n  width: 90%;\n  max-height: 80vh;\n  overflow-y: auto;\n}\n\n.modal-header {\n  padding: 20px;\n  border-bottom: 1px solid var(--border);\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.modal-title {\n  font-size: 16px;\n  font-weight: 600;\n  color: var(--text);\n}\n\n.modal-close {\n  background: none;\n  border: none;\n  font-size: 20px;\n  color: var(--text-muted);\n  cursor: pointer;\n}\n\n.modal-body {\n  padding: 20px;\n}\n\n.modal-footer {\n  padding: 16px 20px;\n  border-top: 1px solid var(--border);\n  display: flex;\n  gap: 12px;\n  justify-content: flex-end;\n}\n\n.empty-state {\n  text-align: center;\n  padding: 40px 20px;\n  color: var(--text-muted);\n}\n\n.empty-icon {\n  font-size: 48px;\n  margin-bottom: 12px;\n  opacity: 0.5;\n}\n\n.empty-text {\n  font-size: 14px;\n  margin-bottom: 4px;\n}\n\n.empty-hint {\n  font-size: 12px;\n  color: var(--text-muted);\n}\n\n@media (max-width: 1024px) {\n  .split-layout {\n    grid-template-columns: 1fr;\n  }\n  \n  .sidebar {\n    width: 200px;\n  }\n}\n\n@media (max-width: 768px) {\n  .main-container {\n    flex-direction: column;\n  }\n  \n  .sidebar {\n    width: 100%;\n    border-right: none;\n    border-bottom: 1px solid var(--border);\n    display: flex;\n    overflow-x: auto;\n    padding: 0;\n  }\n  \n  .sidebar-section {\n    padding: 12px 16px;\n    white-space: nowrap;\n  }\n  \n  .nav-item {\n    display: inline-block;\n    margin: 0 4px;\n  }\n  \n  header {\n    padding: 0 16px;\n  }\n  \n  [data-aivic-panel] {\n    padding: 16px;\n  }\n  \n  .kpi-grid {\n    grid-template-columns: 1fr;\n  }\n}\n  </style>\n  <!--AIVIC_GLOBALS-->\n</head>\n<body>\n  <div class=\"shell\">\n    <header>\n      <div class=\"header-logo\">顧客購買支援ポータル</div>\n      <div class=\"header-user\">\n        <div class=\"user-avatar\">U</div>\n        <div class=\"user-name\">ユーザー</div>\n        <a class=\"user-logout\" href=\"./login.html\">ログアウト</a>\n      </div>\n    </header>\n    \n    <div class=\"main-container\">\n      <aside class=\"sidebar\">\n        <div class=\"sidebar-section\">\n          <div class=\"sidebar-label\">業務</div>\n          <a class=\"nav-item aivic-active\" data-aivic-nav=\"scr-1785572473485\" onclick=\"window.showScreen('scr-1785572473485')\">提案管理ワークスペース</a>\n        </div>\n      </aside>\n      \n      <main class=\"content-area\">\n        <div data-aivic-panel=\"scr-1785572473485\"></div>\n      </main>\n    </div>\n  </div>\n\n  <!--AIVIC_RUNTIME-->\n</body>\n</html>"
+}

@@ -1,0 +1,4642 @@
+[
+  {
+    "systemId": "itg-2",
+    "systemName": "営業データ品質管理システム",
+    "screens": [
+      {
+        "id": "scr-1785571032716",
+        "name": "営業データ品質管理ダッシュボード",
+        "purpose": "営業データの品質を一元管理し、顧客データの重複・不整合を検出・正規化して統合判定を行うダッシュボード。データ品質検証エンジンの実行結果、スコア、検出結果、ルール適用状況、統計分析、不整合ログを表示し、データ品質の向上と顧客マスタの信頼性確保を支援する。",
+        "items": [
+          "データ品質検証エンジン実行ボタン",
+          "全体データ品質スコア表示",
+          "品質スコア推移グラフ",
+          "顧客データ重複検出件数サマリー",
+          "重複候補一覧テーブル",
+          "重複候補詳細表示パネル",
+          "データ不整合検出件数サマリー",
+          "不整合検出結果一覧テーブル",
+          "不整合詳細表示パネル",
+          "正規化ルール適用状況確認パネル",
+          "適用済みルール一覧",
+          "ルール別適用件数グラフ"
+        ]
+      },
+      {
+        "id": "scr-1785571046336",
+        "name": "顧客データ品質検証・修正画面",
+        "purpose": "顧客マスタデータの重複・不整合を検出し、正規化ルールを適用して修正提案を行い、統合判定を実行・確認することで、営業データの品質を維持・向上させる",
+        "items": [
+          "顧客マスタ検索フォーム",
+          "顧客基本情報表示パネル",
+          "重複候補一覧テーブル",
+          "重複度スコア表示",
+          "データ不整合詳細確認パネル",
+          "不整合項目ハイライト表示",
+          "正規化ルール適用ボタン",
+          "修正提案内容表示エリア",
+          "修正前後の比較ビュー",
+          "品質検証実行ボタン",
+          "検証結果ステータス表示",
+          "検証エラー・警告メッセージ"
+        ]
+      },
+      {
+        "id": "scr-1785571058964",
+        "name": "営業データ入力・登録画面",
+        "purpose": "営業事例および顧客データの入力・登録時に、リアルタイム品質検証エンジンによるデータ品質ルール適用チェックを実施し、入力エラー・警告を表示して、品質基準を満たしたデータのみを登録する",
+        "items": [
+          "営業事例データ入力フォーム",
+          "顧客データ入力フォーム",
+          "顧客マスタ検索・選択ウィジェット",
+          "リアルタイム品質検証インジケーター",
+          "データ品質ルール適用チェック結果表示",
+          "入力エラー・警告メッセージパネル",
+          "データ不整合ログ表示エリア",
+          "顧客重複候補アラート",
+          "正規化ルール適用確認ダイアログ",
+          "品質検証結果サマリー",
+          "登録ボタン",
+          "保存ボタン"
+        ]
+      }
+    ],
+    "tableDefinitions": [
+      {
+        "tableName": "ユーザー",
+        "purpose": "営業データ品質管理システムのユーザー情報を管理し、認証・権限制御・監査ログの基盤となるマスタテーブル",
+        "columns": [
+          {
+            "name": "ユーザーID",
+            "type": "uuid",
+            "required": true,
+            "description": "ユーザーの一意識別子"
+          },
+          {
+            "name": "ユーザー名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ログイン用のユーザー名"
+          },
+          {
+            "name": "メールアドレス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーのメールアドレス"
+          },
+          {
+            "name": "氏名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーの表示用氏名"
+          },
+          {
+            "name": "部門",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "ユーザーが属する部門"
+          },
+          {
+            "name": "役割",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーの権限レベル（管理者・営業・閲覧者等）"
+          },
+          {
+            "name": "ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーの状態（有効・無効・休止等）"
+          },
+          {
+            "name": "最終ログイン日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "ユーザーの最後のログイン日時"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ユーザーレコードの作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ユーザーレコードの最終更新日時"
+          },
+          {
+            "name": "作成者",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーレコードを作成したユーザーID"
+          },
+          {
+            "name": "更新者",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーレコードを最後に更新したユーザーID"
+          }
+        ]
+      },
+      {
+        "tableName": "顧客マスタ",
+        "purpose": "営業データ品質管理システムにおける顧客情報の一元管理と営業活動の基盤となるマスタテーブル",
+        "columns": [
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "顧客を一意に識別するプライマリキー"
+          },
+          {
+            "name": "顧客名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "顧客の正式名称"
+          },
+          {
+            "name": "顧客名カナ",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "顧客名のカナ表記、検索・ソート用"
+          },
+          {
+            "name": "業種",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "顧客の業種分類"
+          },
+          {
+            "name": "住所",
+            "type": "text",
+            "required": false,
+            "description": "顧客の所在地住所"
+          },
+          {
+            "name": "電話番号",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "顧客の連絡先電話番号"
+          },
+          {
+            "name": "メールアドレス",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "顧客の連絡先メールアドレス"
+          },
+          {
+            "name": "担当営業ID",
+            "type": "uuid",
+            "required": false,
+            "description": "ユーザーテーブルへの外部キー、担当営業を指定"
+          },
+          {
+            "name": "顧客ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "顧客の営業ステータス（見込み客、既存顧客、休止中等）"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "顧客マスタレコードの作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "顧客マスタレコードの最終更新日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ユーザーテーブルへの外部キー、レコード作成者を指定"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ユーザーテーブルへの外部キー、レコード最終更新者を指定"
+          }
+        ]
+      },
+      {
+        "tableName": "顧客重複候補",
+        "purpose": "営業データ品質管理システムにおいて、顧客マスタ内の潜在的な重複顧客を検出・管理し、マージ前の確認・承認プロセスを支援するテーブル",
+        "columns": [
+          {
+            "name": "重複候補ID",
+            "type": "uuid",
+            "required": true,
+            "description": "重複候補レコードの一意識別子"
+          },
+          {
+            "name": "主顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "重複の主となる顧客マスタの顧客ID"
+          },
+          {
+            "name": "副顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "重複の副となる顧客マスタの顧客ID"
+          },
+          {
+            "name": "重複スコア",
+            "type": "integer",
+            "required": true,
+            "description": "重複の可能性を示す0-100のスコア値"
+          },
+          {
+            "name": "重複理由",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "重複と判定された理由（社名一致、電話番号一致、住所一致など）"
+          },
+          {
+            "name": "ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "重複候補の状態（未確認、確認中、重複確定、非重複、マージ済み）"
+          },
+          {
+            "name": "確認者ID",
+            "type": "uuid",
+            "required": false,
+            "description": "重複を確認したユーザーのID"
+          },
+          {
+            "name": "確認日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "重複が確認された日時"
+          },
+          {
+            "name": "備考",
+            "type": "text",
+            "required": false,
+            "description": "重複候補に関する追加情報やコメント"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "重複候補レコードが作成された日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "重複候補レコードが最後に更新された日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "重複候補レコードを作成したユーザーのID"
+          }
+        ]
+      },
+      {
+        "tableName": "データ品質ルール",
+        "purpose": "営業データの品質基準を定義・管理し、顧客マスタや営業トランザクションデータの検証ルールを一元化する",
+        "columns": [
+          {
+            "name": "ルールID",
+            "type": "uuid",
+            "required": true,
+            "description": "データ品質ルールの一意識別子"
+          },
+          {
+            "name": "ルール名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ルールの名称（例：メールアドレス形式チェック）"
+          },
+          {
+            "name": "説明",
+            "type": "text",
+            "required": false,
+            "description": "ルールの詳細説明と適用対象"
+          },
+          {
+            "name": "対象テーブル",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ルールが適用されるテーブル名（顧客マスタ等）"
+          },
+          {
+            "name": "対象カラム",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ルールが適用されるカラム名"
+          },
+          {
+            "name": "ルールタイプ",
+            "type": "varchar(50)",
+            "required": true,
+            "description": "ルールの種類（必須チェック、形式チェック、範囲チェック、重複チェック等）"
+          },
+          {
+            "name": "ルール条件",
+            "type": "text",
+            "required": true,
+            "description": "検証条件の詳細（正規表現、範囲値、参照テーブル等）"
+          },
+          {
+            "name": "エラーメッセージ",
+            "type": "varchar(255)",
+            "required": true,
+            "description": "ルール違反時に表示するエラーメッセージ"
+          },
+          {
+            "name": "重要度",
+            "type": "varchar(20)",
+            "required": true,
+            "description": "ルール違反の重要度（エラー、警告、情報）"
+          },
+          {
+            "name": "有効フラグ",
+            "type": "boolean",
+            "required": true,
+            "description": "ルールが有効かどうか"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ルール作成日時"
+          },
+          {
+            "name": "作成者",
+            "type": "uuid",
+            "required": true,
+            "description": "ルール作成者のユーザーID"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ルール最終更新日時"
+          },
+          {
+            "name": "更新者",
+            "type": "uuid",
+            "required": true,
+            "description": "ルール最終更新者のユーザーID"
+          }
+        ]
+      },
+      {
+        "tableName": "正規化ルール",
+        "purpose": "営業データの正規化処理に必要なルール定義を管理し、顧客データやその他営業データの統一的な変換・クレンジング基準を提供する",
+        "columns": [
+          {
+            "name": "ルールID",
+            "type": "uuid",
+            "required": true,
+            "description": "正規化ルールの一意識別子"
+          },
+          {
+            "name": "ルール名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "正規化ルールの名称"
+          },
+          {
+            "name": "対象フィールド",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "このルールが適用されるフィールド名"
+          },
+          {
+            "name": "ルールタイプ",
+            "type": "varchar(50)",
+            "required": true,
+            "description": "ルールの種類（例：大文字変換、空白削除、形式統一、値マッピング）"
+          },
+          {
+            "name": "ルール定義",
+            "type": "text",
+            "required": true,
+            "description": "正規化ルールの詳細な定義内容"
+          },
+          {
+            "name": "優先度",
+            "type": "integer",
+            "required": true,
+            "description": "複数ルール適用時の実行順序"
+          },
+          {
+            "name": "有効フラグ",
+            "type": "boolean",
+            "required": true,
+            "description": "ルールが有効かどうか"
+          },
+          {
+            "name": "説明",
+            "type": "text",
+            "required": false,
+            "description": "ルールの詳細説明"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ルール作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ルール最終更新日時"
+          },
+          {
+            "name": "作成者",
+            "type": "uuid",
+            "required": true,
+            "description": "ルール作成者のユーザーID"
+          },
+          {
+            "name": "更新者",
+            "type": "uuid",
+            "required": true,
+            "description": "ルール最終更新者のユーザーID"
+          }
+        ]
+      },
+      {
+        "tableName": "品質検証結果",
+        "purpose": "営業データの品質検証実行結果を記録し、検証ルール適用状況、エラー内容、改善状況を追跡管理するトランザクションテーブル",
+        "columns": [
+          {
+            "name": "検証結果ID",
+            "type": "uuid",
+            "required": true,
+            "description": "品質検証結果の一意識別子"
+          },
+          {
+            "name": "検証ルールID",
+            "type": "uuid",
+            "required": true,
+            "description": "適用されたデータ品質ルールへの外部キー参照"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "検証対象の顧客マスタへの外部キー参照"
+          },
+          {
+            "name": "検証ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "検証結果ステータス(合格/不合格/警告/スキップ等)"
+          },
+          {
+            "name": "エラーメッセージ",
+            "type": "text",
+            "required": false,
+            "description": "検証失敗時の詳細エラー内容"
+          },
+          {
+            "name": "検証対象フィールド",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "検証対象となったデータフィールド名"
+          },
+          {
+            "name": "検証値",
+            "type": "text",
+            "required": false,
+            "description": "検証時に評価されたデータ値"
+          },
+          {
+            "name": "期待値",
+            "type": "text",
+            "required": false,
+            "description": "ルール定義による期待値または許容範囲"
+          },
+          {
+            "name": "重要度",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "エラーの重要度レベル(致命的/高/中/低)"
+          },
+          {
+            "name": "改善状況",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "改善進捗状況(未対応/対応中/完了)"
+          },
+          {
+            "name": "検証実行日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "品質検証を実行した日時"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "検証結果レコード作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "検証結果レコード最終更新日時"
+          },
+          {
+            "name": "作成者",
+            "type": "uuid",
+            "required": true,
+            "description": "検証結果を作成したユーザーへの外部キー参照"
+          },
+          {
+            "name": "更新者",
+            "type": "uuid",
+            "required": false,
+            "description": "検証結果を最後に更新したユーザーへの外部キー参照"
+          }
+        ]
+      },
+      {
+        "tableName": "データ不整合ログ",
+        "purpose": "営業データの品質検証時に検出された不整合情報を記録し、追跡・分析・改善に利用するトランザクションテーブル",
+        "columns": [
+          {
+            "name": "不整合ログID",
+            "type": "uuid",
+            "required": true,
+            "description": "不整合ログの一意識別子"
+          },
+          {
+            "name": "品質検証結果ID",
+            "type": "uuid",
+            "required": true,
+            "description": "検証実行時の品質検証結果テーブルへの外部キー"
+          },
+          {
+            "name": "データ品質ルールID",
+            "type": "uuid",
+            "required": true,
+            "description": "違反したルールの品質ルールテーブルへの外部キー"
+          },
+          {
+            "name": "対象テーブル名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "不整合が検出されたテーブル名"
+          },
+          {
+            "name": "対象レコードID",
+            "type": "uuid",
+            "required": true,
+            "description": "不整合が検出されたレコードの識別子"
+          },
+          {
+            "name": "対象カラム名",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "不整合が検出されたカラム名"
+          },
+          {
+            "name": "不整合タイプ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "不整合の種類（重複、形式エラー、参照整合性違反、値域外など）"
+          },
+          {
+            "name": "検出値",
+            "type": "text",
+            "required": false,
+            "description": "実際に検出された値"
+          },
+          {
+            "name": "期待値",
+            "type": "text",
+            "required": false,
+            "description": "ルールに基づく期待値"
+          },
+          {
+            "name": "重要度",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "不整合の重要度レベル（高・中・低）"
+          },
+          {
+            "name": "ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "対応状況（未対応、対応中、解決済み、無視）"
+          },
+          {
+            "name": "対応者ID",
+            "type": "uuid",
+            "required": false,
+            "description": "対応を担当するユーザーの外部キー"
+          },
+          {
+            "name": "対応コメント",
+            "type": "text",
+            "required": false,
+            "description": "対応内容や理由に関するコメント"
+          },
+          {
+            "name": "対応完了日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "不整合が解決された日時"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ログレコード作成日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ログを作成したユーザーの外部キー"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ログレコード最終更新日時"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ログを最後に更新したユーザーの外部キー"
+          }
+        ]
+      },
+      {
+        "tableName": "統合判定履歴",
+        "purpose": "顧客データの重複判定結果と統合処理の履歴を記録し、データ品質管理と監査証跡を実現するテーブル",
+        "columns": [
+          {
+            "name": "統合判定履歴ID",
+            "type": "uuid",
+            "required": true,
+            "description": "統合判定履歴の一意識別子"
+          },
+          {
+            "name": "顧客重複候補ID",
+            "type": "uuid",
+            "required": true,
+            "description": "顧客重複候補テーブルへの外部キー参照"
+          },
+          {
+            "name": "主顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "統合後の主となる顧客マスタのID"
+          },
+          {
+            "name": "副顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "統合対象となる副の顧客マスタのID"
+          },
+          {
+            "name": "判定ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "判定結果のステータス(未判定/重複確定/非重複/保留中等)"
+          },
+          {
+            "name": "統合判定スコア",
+            "type": "integer",
+            "required": false,
+            "description": "重複判定の信頼度スコア(0-100)"
+          },
+          {
+            "name": "適用ルールID",
+            "type": "uuid",
+            "required": false,
+            "description": "判定に使用されたデータ品質ルールのID"
+          },
+          {
+            "name": "判定理由",
+            "type": "text",
+            "required": false,
+            "description": "判定結果の詳細な理由や根拠"
+          },
+          {
+            "name": "統合実行フラグ",
+            "type": "boolean",
+            "required": true,
+            "description": "実際に統合処理が実行されたかどうか"
+          },
+          {
+            "name": "統合実行日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "統合処理が実行された日時"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "判定履歴レコードの作成日時"
+          },
+          {
+            "name": "作成者",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "判定を実施したユーザーまたはシステムID"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "判定履歴レコードの最終更新日時"
+          },
+          {
+            "name": "更新者",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "最後に更新したユーザーまたはシステムID"
+          },
+          {
+            "name": "備考",
+            "type": "text",
+            "required": false,
+            "description": "判定に関する追加情報やコメント"
+          }
+        ]
+      },
+      {
+        "tableName": "操作ログ",
+        "purpose": "営業データ品質管理システムにおけるユーザーの全操作を記録し、監査証跡、トラブルシューティング、システム利用状況の追跡を実現する",
+        "columns": [
+          {
+            "name": "操作ログID",
+            "type": "uuid",
+            "required": true,
+            "description": "操作ログの一意識別子"
+          },
+          {
+            "name": "ユーザーID",
+            "type": "uuid",
+            "required": true,
+            "description": "操作を実行したユーザーの識別子、ユーザーテーブルへの外部キー"
+          },
+          {
+            "name": "操作種別",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "実行された操作の種類（作成、更新、削除、検証実行、重複判定、正規化実行等）"
+          },
+          {
+            "name": "対象テーブル",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "操作の対象となったテーブル名"
+          },
+          {
+            "name": "対象レコードID",
+            "type": "uuid",
+            "required": false,
+            "description": "操作の対象となったレコードの識別子"
+          },
+          {
+            "name": "操作内容",
+            "type": "text",
+            "required": false,
+            "description": "操作の詳細内容、変更前後の値、パラメータ等"
+          },
+          {
+            "name": "実行結果",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "操作の実行結果（成功、失敗、警告等）"
+          },
+          {
+            "name": "エラーメッセージ",
+            "type": "text",
+            "required": false,
+            "description": "操作失敗時のエラーメッセージ"
+          },
+          {
+            "name": "実行時間ミリ秒",
+            "type": "integer",
+            "required": false,
+            "description": "操作の実行時間（ミリ秒単位）"
+          },
+          {
+            "name": "IPアドレス",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "操作を実行したクライアントのIPアドレス"
+          },
+          {
+            "name": "セッションID",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "操作が実行されたセッションの識別子"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "操作ログが記録された日時"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "systemId": "itg-3",
+    "systemName": "AIエージェント推奨支援システム",
+    "screens": [
+      {
+        "id": "scr-1785571913372",
+        "name": "AIエージェント推奨支援ダッシュボード",
+        "purpose": "新規案件の顧客・商談条件を入力し、過去商談データから自動抽出した成功パターンと照合して適用可能な提案アプローチを推奨。推奨根拠を可視化表示し、推奨内容の承認・却下・修正アクションと推奨履歴の記録・追跡を実現するダッシュボード",
+        "items": [
+          "新規案件情報入力フォーム",
+          "顧客マスタ検索・選択",
+          "商談条件入力欄",
+          "AIエージェント推奨実行ボタン",
+          "推奨提案アプローチ表示パネル",
+          "推奨根拠の可視化表示",
+          "成功パターン詳細表示",
+          "類似案件一覧・比較ビュー",
+          "推奨内容詳細表示",
+          "推奨根拠詳細表示",
+          "推奨承認ボタン",
+          "推奨却下ボタン"
+        ]
+      }
+    ],
+    "tableDefinitions": [
+      {
+        "tableName": "ログインユーザー",
+        "purpose": "営業プロセス監査・分析管理システムのユーザー認証・アクセス管理を行い、ログイン履歴とユーザー権限を一元管理する",
+        "columns": [
+          {
+            "name": "ユーザーID",
+            "type": "uuid",
+            "required": true,
+            "description": "ユーザーの一意識別子"
+          },
+          {
+            "name": "ログインID",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ログイン時に使用するユーザー識別名"
+          },
+          {
+            "name": "メールアドレス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーのメールアドレス"
+          },
+          {
+            "name": "パスワードハッシュ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "暗号化されたパスワード"
+          },
+          {
+            "name": "ユーザー名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーの表示名"
+          },
+          {
+            "name": "部門",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "ユーザーが属する部門"
+          },
+          {
+            "name": "ロール",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーに付与されたロール"
+          },
+          {
+            "name": "ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーのステータス(有効/無効/休止)"
+          },
+          {
+            "name": "最終ログイン日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "最後にログインした日時"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ユーザーレコード作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ユーザーレコード最終更新日時"
+          },
+          {
+            "name": "作成者",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーレコード作成者"
+          }
+        ]
+      },
+      {
+        "tableName": "顧客マスタ",
+        "purpose": "営業データ品質管理システムにおける顧客情報の一元管理と営業活動の基盤となるマスタテーブル",
+        "columns": [
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "顧客を一意に識別するプライマリキー"
+          },
+          {
+            "name": "顧客名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "顧客の正式名称"
+          },
+          {
+            "name": "顧客名カナ",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "顧客名のカナ表記、検索・ソート用"
+          },
+          {
+            "name": "業種",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "顧客の業種分類"
+          },
+          {
+            "name": "住所",
+            "type": "text",
+            "required": false,
+            "description": "顧客の所在地住所"
+          },
+          {
+            "name": "電話番号",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "顧客の連絡先電話番号"
+          },
+          {
+            "name": "メールアドレス",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "顧客の連絡先メールアドレス"
+          },
+          {
+            "name": "担当営業ID",
+            "type": "uuid",
+            "required": false,
+            "description": "ユーザーテーブルへの外部キー、担当営業を指定"
+          },
+          {
+            "name": "顧客ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "顧客の営業ステータス（見込み客、既存顧客、休止中等）"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "顧客マスタレコードの作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "顧客マスタレコードの最終更新日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ユーザーテーブルへの外部キー、レコード作成者を指定"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ユーザーテーブルへの外部キー、レコード最終更新者を指定"
+          }
+        ]
+      },
+      {
+        "tableName": "操作ログ",
+        "purpose": "営業データ品質管理システムにおけるユーザーの全操作を記録し、監査証跡、トラブルシューティング、システム利用状況の追跡を実現する",
+        "columns": [
+          {
+            "name": "操作ログID",
+            "type": "uuid",
+            "required": true,
+            "description": "操作ログの一意識別子"
+          },
+          {
+            "name": "ユーザーID",
+            "type": "uuid",
+            "required": true,
+            "description": "操作を実行したユーザーの識別子、ユーザーテーブルへの外部キー"
+          },
+          {
+            "name": "操作種別",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "実行された操作の種類（作成、更新、削除、検証実行、重複判定、正規化実行等）"
+          },
+          {
+            "name": "対象テーブル",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "操作の対象となったテーブル名"
+          },
+          {
+            "name": "対象レコードID",
+            "type": "uuid",
+            "required": false,
+            "description": "操作の対象となったレコードの識別子"
+          },
+          {
+            "name": "操作内容",
+            "type": "text",
+            "required": false,
+            "description": "操作の詳細内容、変更前後の値、パラメータ等"
+          },
+          {
+            "name": "実行結果",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "操作の実行結果（成功、失敗、警告等）"
+          },
+          {
+            "name": "エラーメッセージ",
+            "type": "text",
+            "required": false,
+            "description": "操作失敗時のエラーメッセージ"
+          },
+          {
+            "name": "実行時間ミリ秒",
+            "type": "integer",
+            "required": false,
+            "description": "操作の実行時間（ミリ秒単位）"
+          },
+          {
+            "name": "IPアドレス",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "操作を実行したクライアントのIPアドレス"
+          },
+          {
+            "name": "セッションID",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "操作が実行されたセッションの識別子"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "操作ログが記録された日時"
+          }
+        ]
+      },
+      {
+        "tableName": "商談",
+        "purpose": "営業パイプライン管理と商談進捗追跡。顧客との商談情報を一元管理し、AIエージェントが推奨支援を行うための基礎データとなる。",
+        "columns": [
+          {
+            "name": "商談ID",
+            "type": "uuid",
+            "required": true,
+            "description": "商談の一意識別子。主キー。"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "顧客マスタへの外部キー。商談に関連する顧客を特定。"
+          },
+          {
+            "name": "商談名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "商談の名称。営業担当者が管理・検索するための識別情報。"
+          },
+          {
+            "name": "ステージ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "商談の進捗段階。例：初期接触、提案、交渉、クローズ等。"
+          },
+          {
+            "name": "予想金額",
+            "type": "integer",
+            "required": false,
+            "description": "商談の予想売上金額。パイプライン分析に使用。"
+          },
+          {
+            "name": "成約確度",
+            "type": "integer",
+            "required": false,
+            "description": "成約の見込み確度。パーセンテージ値（0-100）。"
+          },
+          {
+            "name": "予想クローズ日",
+            "type": "timestamp",
+            "required": false,
+            "description": "商談のクローズ予定日。営業計画と進捗管理に使用。"
+          },
+          {
+            "name": "説明",
+            "type": "text",
+            "required": false,
+            "description": "商談の詳細情報やメモ。営業担当者による自由記述。"
+          },
+          {
+            "name": "担当者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ログインユーザーへの外部キー。商談を担当する営業担当者。"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "商談レコードの作成日時。監査用。"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "商談レコードの最終更新日時。監査用。"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ログインユーザーへの外部キー。商談を作成したユーザー。"
+          }
+        ]
+      },
+      {
+        "tableName": "商談詳細",
+        "purpose": "AIエージェント推奨支援システムにおいて、商談の詳細情報と推奨内容を管理し、営業活動の進捗追跡と意思決定支援を行うためのテーブル",
+        "columns": [
+          {
+            "name": "商談詳細ID",
+            "type": "uuid",
+            "required": true,
+            "description": "商談詳細レコードの一意識別子"
+          },
+          {
+            "name": "商談ID",
+            "type": "uuid",
+            "required": true,
+            "description": "親テーブル商談への外部キー参照"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "顧客マスタへの外部キー参照"
+          },
+          {
+            "name": "推奨内容",
+            "type": "text",
+            "required": true,
+            "description": "AIエージェントが生成した営業推奨内容"
+          },
+          {
+            "name": "推奨理由",
+            "type": "text",
+            "required": false,
+            "description": "推奨内容の根拠となる理由説明"
+          },
+          {
+            "name": "提案商品",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "推奨される提案商品名"
+          },
+          {
+            "name": "推奨優先度",
+            "type": "integer",
+            "required": false,
+            "description": "推奨の優先度レベル（1-5など）"
+          },
+          {
+            "name": "推奨実施状況",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "推奨に対する実施状況（未実施、実施中、完了、却下など）"
+          },
+          {
+            "name": "推奨実施日",
+            "type": "timestamp",
+            "required": false,
+            "description": "推奨を実施した日時"
+          },
+          {
+            "name": "推奨結果",
+            "type": "text",
+            "required": false,
+            "description": "推奨実施後の結果や成果"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "レコード作成日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ログインユーザーへの外部キー参照、レコード作成者"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "レコード最終更新日時"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ログインユーザーへの外部キー参照、レコード最終更新者"
+          }
+        ]
+      },
+      {
+        "tableName": "提案アプローチ",
+        "purpose": "AIエージェントが生成した推奨提案アプローチを管理し、商談ごとの提案戦略と実行状況を追跡するテーブル",
+        "columns": [
+          {
+            "name": "提案アプローチID",
+            "type": "uuid",
+            "required": true,
+            "description": "提案アプローチの一意識別子"
+          },
+          {
+            "name": "商談ID",
+            "type": "uuid",
+            "required": true,
+            "description": "関連する商談の識別子（商談テーブルへの外部キー）"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "関連する顧客の識別子（顧客マスタテーブルへの外部キー）"
+          },
+          {
+            "name": "推奨アプローチ名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "AIが推奨する提案アプローチの名称"
+          },
+          {
+            "name": "アプローチ説明",
+            "type": "text",
+            "required": true,
+            "description": "提案アプローチの詳細説明と実行方針"
+          },
+          {
+            "name": "推奨理由",
+            "type": "text",
+            "required": true,
+            "description": "AIがこのアプローチを推奨した根拠と分析結果"
+          },
+          {
+            "name": "優先度",
+            "type": "integer",
+            "required": true,
+            "description": "複数アプローチ間での優先順位（1が最高）"
+          },
+          {
+            "name": "信頼度スコア",
+            "type": "integer",
+            "required": true,
+            "description": "AIの推奨信頼度を0-100で表示"
+          },
+          {
+            "name": "ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "アプローチの状態（推奨、実行中、完了、却下等）"
+          },
+          {
+            "name": "実行予定日",
+            "type": "timestamp",
+            "required": false,
+            "description": "提案アプローチの実行予定日時"
+          },
+          {
+            "name": "実行完了日",
+            "type": "timestamp",
+            "required": false,
+            "description": "提案アプローチの実行完了日時"
+          },
+          {
+            "name": "生成ユーザーID",
+            "type": "uuid",
+            "required": true,
+            "description": "このアプローチを生成したAIエージェントを操作したユーザーの識別子"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "提案アプローチが作成された日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "提案アプローチが最後に更新された日時"
+          },
+          {
+            "name": "作成者",
+            "type": "uuid",
+            "required": true,
+            "description": "提案アプローチを作成したユーザーの識別子"
+          },
+          {
+            "name": "更新者",
+            "type": "uuid",
+            "required": true,
+            "description": "提案アプローチを最後に更新したユーザーの識別子"
+          }
+        ]
+      },
+      {
+        "tableName": "成功パターン",
+        "purpose": "AIエージェントが推奨する営業成功パターンを管理し、過去の商談から抽出した成功要因や条件を蓄積・参照するテーブル",
+        "columns": [
+          {
+            "name": "成功パターンID",
+            "type": "uuid",
+            "required": true,
+            "description": "成功パターンの一意識別子"
+          },
+          {
+            "name": "パターン名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "成功パターンの名称"
+          },
+          {
+            "name": "説明",
+            "type": "text",
+            "required": false,
+            "description": "成功パターンの詳細説明"
+          },
+          {
+            "name": "業種",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "適用対象の業種"
+          },
+          {
+            "name": "商品カテゴリ",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "適用対象の商品カテゴリ"
+          },
+          {
+            "name": "成功要因",
+            "type": "text",
+            "required": true,
+            "description": "このパターンが成功した主要な要因"
+          },
+          {
+            "name": "推奨アプローチ",
+            "type": "text",
+            "required": false,
+            "description": "このパターンに基づいた推奨営業アプローチ"
+          },
+          {
+            "name": "成功率",
+            "type": "integer",
+            "required": false,
+            "description": "このパターンの成功率（パーセンテージ）"
+          },
+          {
+            "name": "参照商談数",
+            "type": "integer",
+            "required": false,
+            "description": "このパターンの抽出元となった商談数"
+          },
+          {
+            "name": "有効フラグ",
+            "type": "boolean",
+            "required": true,
+            "description": "パターンが推奨対象として有効かどうか"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "成功パターンの作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "成功パターンの最終更新日時"
+          },
+          {
+            "name": "作成者",
+            "type": "uuid",
+            "required": true,
+            "description": "成功パターンを作成したユーザーID"
+          }
+        ]
+      },
+      {
+        "tableName": "商談条件",
+        "purpose": "営業担当者が商談を進める際の条件設定・管理を行い、成功パターンマッチングや提案アプローチの推奨判定に使用される条件マスタテーブル",
+        "columns": [
+          {
+            "name": "商談条件ID",
+            "type": "uuid",
+            "required": true,
+            "description": "商談条件を一意に識別するプライマリキー"
+          },
+          {
+            "name": "商談ID",
+            "type": "uuid",
+            "required": true,
+            "description": "関連する商談を特定するための外部キー"
+          },
+          {
+            "name": "条件種別",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "条件の分類（予算規模、業界、企業規模、決定者属性など）"
+          },
+          {
+            "name": "条件値",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "条件種別に対応する具体的な値"
+          },
+          {
+            "name": "優先度",
+            "type": "integer",
+            "required": false,
+            "description": "複数条件がある場合の優先順位（1が最高）"
+          },
+          {
+            "name": "マッチ度",
+            "type": "integer",
+            "required": false,
+            "description": "成功パターンとのマッチ度スコア（0-100）"
+          },
+          {
+            "name": "備考",
+            "type": "text",
+            "required": false,
+            "description": "条件に関する追加情報や特記事項"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "条件が作成された日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "条件が最後に更新された日時"
+          },
+          {
+            "name": "作成者",
+            "type": "uuid",
+            "required": true,
+            "description": "条件を作成したログインユーザーのID"
+          }
+        ]
+      },
+      {
+        "tableName": "推奨履歴",
+        "purpose": "AIエージェントが顧客に対して行った推奨内容と結果を記録し、推奨精度の向上と営業活動の追跡を支援するための履歴管理テーブル",
+        "columns": [
+          {
+            "name": "推奨履歴ID",
+            "type": "uuid",
+            "required": true,
+            "description": "推奨履歴の一意識別子"
+          },
+          {
+            "name": "ログインユーザーID",
+            "type": "uuid",
+            "required": true,
+            "description": "推奨を受けた営業担当者のID"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "推奨対象の顧客ID"
+          },
+          {
+            "name": "商談ID",
+            "type": "uuid",
+            "required": false,
+            "description": "関連する商談ID（推奨が特定の商談に紐付く場合）"
+          },
+          {
+            "name": "成功パターンID",
+            "type": "uuid",
+            "required": false,
+            "description": "参照した成功パターンのID"
+          },
+          {
+            "name": "推奨内容",
+            "type": "text",
+            "required": true,
+            "description": "AIが生成した推奨内容の詳細"
+          },
+          {
+            "name": "推奨タイプ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "推奨の種類（提案アプローチ、商談条件、次のアクション等）"
+          },
+          {
+            "name": "信頼度スコア",
+            "type": "integer",
+            "required": false,
+            "description": "推奨の信頼度を0-100で表すスコア"
+          },
+          {
+            "name": "推奨実施フラグ",
+            "type": "boolean",
+            "required": true,
+            "description": "営業担当者が推奨を実施したかどうか"
+          },
+          {
+            "name": "実施結果",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "推奨実施後の結果（成功、失敗、保留等）"
+          },
+          {
+            "name": "結果コメント",
+            "type": "text",
+            "required": false,
+            "description": "営業担当者による実施結果の詳細コメント"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "推奨が生成された日時"
+          },
+          {
+            "name": "実施日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "推奨が実施された日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "推奨履歴が最後に更新された日時"
+          },
+          {
+            "name": "作成者",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "推奨を生成したAIエージェントまたはシステムの識別子"
+          }
+        ]
+      },
+      {
+        "tableName": "推奨根拠",
+        "purpose": "AIエージェントが顧客に対して商談や提案を推奨する際の根拠情報を記録し、推奨の妥当性と効果を追跡・分析するための履歴テーブル",
+        "columns": [
+          {
+            "name": "推奨根拠ID",
+            "type": "uuid",
+            "required": true,
+            "description": "推奨根拠の一意識別子"
+          },
+          {
+            "name": "推奨履歴ID",
+            "type": "uuid",
+            "required": true,
+            "description": "推奨履歴テーブルへの外部キー参照"
+          },
+          {
+            "name": "成功パターンID",
+            "type": "uuid",
+            "required": false,
+            "description": "マッチした成功パターンテーブルへの外部キー参照"
+          },
+          {
+            "name": "根拠タイプ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "根拠の分類（過去成功事例、顧客属性マッチ、市場トレンド、営業段階等）"
+          },
+          {
+            "name": "根拠内容",
+            "type": "text",
+            "required": true,
+            "description": "推奨の具体的な根拠説明"
+          },
+          {
+            "name": "信頼度スコア",
+            "type": "integer",
+            "required": true,
+            "description": "推奨根拠の信頼度を0-100で表現"
+          },
+          {
+            "name": "参照データ",
+            "type": "text",
+            "required": false,
+            "description": "根拠となった参照データの詳細情報"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "推奨根拠レコードの作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "推奨根拠レコードの最終更新日時"
+          },
+          {
+            "name": "作成者",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "推奨根拠を生成したAIエージェントまたはユーザーID"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "systemId": "itg-4",
+    "systemName": "営業業務自動化システム",
+    "screens": [
+      {
+        "id": "scr-1785572164277",
+        "name": "商談管理ワークスペース",
+        "purpose": "営業担当者が商談情報を一元管理し、顧客ニーズに基づいてAIエージェントが生成した提案資料の適合性を判定・確認しながら、商談内容を自動記録・追跡するワークスペース",
+        "items": [
+          "商談検索・フィルタリングパネル",
+          "商談情報表示エリア",
+          "顧客ニーズ表示パネル",
+          "AIエージェント生成提案資料表示エリア",
+          "提案資料テンプレート選択ドロップダウン",
+          "提案資料カスタマイズエディタ",
+          "適合性判定結果表示パネル",
+          "適合性スコア・判定理由表示",
+          "商談内容自動記録ボタン",
+          "商談記録履歴タイムライン",
+          "提案実行結果入力フォーム",
+          "顧客反応記録テキストエリア"
+        ]
+      },
+      {
+        "id": "scr-1785572177384",
+        "name": "営業データ入力・管理画面",
+        "purpose": "営業担当者が顧客情報と営業活動データを一元的に入力・管理し、商談進捗を追跡・更新するための業務画面",
+        "items": [
+          "顧客検索・選択フィールド",
+          "顧客基本情報表示パネル",
+          "顧客自動入力確認ボタン",
+          "商談名入力欄",
+          "商談ステージ選択ドロップダウン",
+          "商談金額入力欄",
+          "予想成約日入力欄",
+          "営業活動タイプ選択（訪問・電話・メール等）",
+          "営業活動日時入力欄",
+          "活動内容テキストエリア",
+          "活動結果選択ドロップダウン",
+          "次のアクション入力欄"
+        ]
+      }
+    ],
+    "tableDefinitions": [
+      {
+        "tableName": "ユーザー",
+        "purpose": "営業データ品質管理システムのユーザー情報を管理し、認証・権限制御・監査ログの基盤となるマスタテーブル",
+        "columns": [
+          {
+            "name": "ユーザーID",
+            "type": "uuid",
+            "required": true,
+            "description": "ユーザーの一意識別子"
+          },
+          {
+            "name": "ユーザー名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ログイン用のユーザー名"
+          },
+          {
+            "name": "メールアドレス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーのメールアドレス"
+          },
+          {
+            "name": "氏名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーの表示用氏名"
+          },
+          {
+            "name": "部門",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "ユーザーが属する部門"
+          },
+          {
+            "name": "役割",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーの権限レベル（管理者・営業・閲覧者等）"
+          },
+          {
+            "name": "ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーの状態（有効・無効・休止等）"
+          },
+          {
+            "name": "最終ログイン日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "ユーザーの最後のログイン日時"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ユーザーレコードの作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ユーザーレコードの最終更新日時"
+          },
+          {
+            "name": "作成者",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーレコードを作成したユーザーID"
+          },
+          {
+            "name": "更新者",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーレコードを最後に更新したユーザーID"
+          }
+        ]
+      },
+      {
+        "tableName": "顧客",
+        "purpose": "営業プロセス監査・分析管理システムにおいて、営業担当者が管理する顧客マスタ。顧客情報の基本属性、営業ステータス、接触履歴の集計値を保持し、営業活動の監査・分析対象となる。",
+        "columns": [
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "顧客を一意に識別するプライマリキー"
+          },
+          {
+            "name": "顧客名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "顧客の企業名または個人名"
+          },
+          {
+            "name": "業種",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "顧客の業種分類"
+          },
+          {
+            "name": "住所",
+            "type": "text",
+            "required": false,
+            "description": "顧客の住所"
+          },
+          {
+            "name": "電話番号",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "顧客の連絡先電話番号"
+          },
+          {
+            "name": "メールアドレス",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "顧客の連絡先メールアドレス"
+          },
+          {
+            "name": "営業担当者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "この顧客を担当する営業担当者のID（営業担当者テーブルへの外部キー）"
+          },
+          {
+            "name": "営業ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "営業プロセスの段階（見込み客、提案中、交渉中、成約、失注など）"
+          },
+          {
+            "name": "最終接触日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "営業担当者が最後に顧客と接触した日時"
+          },
+          {
+            "name": "次回フォローアップ予定日",
+            "type": "timestamp",
+            "required": false,
+            "description": "次回の営業活動予定日"
+          },
+          {
+            "name": "推定売上金額",
+            "type": "integer",
+            "required": false,
+            "description": "この顧客からの推定売上金額（円）"
+          },
+          {
+            "name": "成約日",
+            "type": "timestamp",
+            "required": false,
+            "description": "顧客が成約した日付"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "顧客レコードが作成された日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "顧客レコードを作成したログインユーザーのID"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "顧客レコードが最後に更新された日時"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "顧客レコードを最後に更新したログインユーザーのID"
+          }
+        ]
+      },
+      {
+        "tableName": "商談",
+        "purpose": "営業パイプライン管理と商談進捗追跡。顧客との商談情報を一元管理し、AIエージェントが推奨支援を行うための基礎データとなる。",
+        "columns": [
+          {
+            "name": "商談ID",
+            "type": "uuid",
+            "required": true,
+            "description": "商談の一意識別子。主キー。"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "顧客マスタへの外部キー。商談に関連する顧客を特定。"
+          },
+          {
+            "name": "商談名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "商談の名称。営業担当者が管理・検索するための識別情報。"
+          },
+          {
+            "name": "ステージ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "商談の進捗段階。例：初期接触、提案、交渉、クローズ等。"
+          },
+          {
+            "name": "予想金額",
+            "type": "integer",
+            "required": false,
+            "description": "商談の予想売上金額。パイプライン分析に使用。"
+          },
+          {
+            "name": "成約確度",
+            "type": "integer",
+            "required": false,
+            "description": "成約の見込み確度。パーセンテージ値（0-100）。"
+          },
+          {
+            "name": "予想クローズ日",
+            "type": "timestamp",
+            "required": false,
+            "description": "商談のクローズ予定日。営業計画と進捗管理に使用。"
+          },
+          {
+            "name": "説明",
+            "type": "text",
+            "required": false,
+            "description": "商談の詳細情報やメモ。営業担当者による自由記述。"
+          },
+          {
+            "name": "担当者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ログインユーザーへの外部キー。商談を担当する営業担当者。"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "商談レコードの作成日時。監査用。"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "商談レコードの最終更新日時。監査用。"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ログインユーザーへの外部キー。商談を作成したユーザー。"
+          }
+        ]
+      },
+      {
+        "tableName": "操作ログ",
+        "purpose": "営業データ品質管理システムにおけるユーザーの全操作を記録し、監査証跡、トラブルシューティング、システム利用状況の追跡を実現する",
+        "columns": [
+          {
+            "name": "操作ログID",
+            "type": "uuid",
+            "required": true,
+            "description": "操作ログの一意識別子"
+          },
+          {
+            "name": "ユーザーID",
+            "type": "uuid",
+            "required": true,
+            "description": "操作を実行したユーザーの識別子、ユーザーテーブルへの外部キー"
+          },
+          {
+            "name": "操作種別",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "実行された操作の種類（作成、更新、削除、検証実行、重複判定、正規化実行等）"
+          },
+          {
+            "name": "対象テーブル",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "操作の対象となったテーブル名"
+          },
+          {
+            "name": "対象レコードID",
+            "type": "uuid",
+            "required": false,
+            "description": "操作の対象となったレコードの識別子"
+          },
+          {
+            "name": "操作内容",
+            "type": "text",
+            "required": false,
+            "description": "操作の詳細内容、変更前後の値、パラメータ等"
+          },
+          {
+            "name": "実行結果",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "操作の実行結果（成功、失敗、警告等）"
+          },
+          {
+            "name": "エラーメッセージ",
+            "type": "text",
+            "required": false,
+            "description": "操作失敗時のエラーメッセージ"
+          },
+          {
+            "name": "実行時間ミリ秒",
+            "type": "integer",
+            "required": false,
+            "description": "操作の実行時間（ミリ秒単位）"
+          },
+          {
+            "name": "IPアドレス",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "操作を実行したクライアントのIPアドレス"
+          },
+          {
+            "name": "セッションID",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "操作が実行されたセッションの識別子"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "操作ログが記録された日時"
+          }
+        ]
+      },
+      {
+        "tableName": "商談記録",
+        "purpose": "営業担当者が商談の進捗状況、内容、結果を記録・管理し、営業活動の履歴を追跡するためのトランザクションテーブル",
+        "columns": [
+          {
+            "name": "商談記録ID",
+            "type": "uuid",
+            "required": true,
+            "description": "商談記録の一意識別子"
+          },
+          {
+            "name": "商談ID",
+            "type": "uuid",
+            "required": true,
+            "description": "関連する商談テーブルへの外部キー"
+          },
+          {
+            "name": "記録日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "商談記録が作成された日時"
+          },
+          {
+            "name": "営業担当者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "記録を作成したユーザーテーブルへの外部キー"
+          },
+          {
+            "name": "商談内容",
+            "type": "text",
+            "required": true,
+            "description": "商談で話し合われた内容の詳細"
+          },
+          {
+            "name": "進捗ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "商談の進捗状況（初期接触、提案、交渉、成約、失注など）"
+          },
+          {
+            "name": "次回アクション",
+            "type": "text",
+            "required": false,
+            "description": "次のステップとして実施予定のアクション"
+          },
+          {
+            "name": "次回接触予定日",
+            "type": "timestamp",
+            "required": false,
+            "description": "顧客との次回接触予定日時"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "レコードが作成された日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "レコードが最後に更新された日時"
+          }
+        ]
+      },
+      {
+        "tableName": "提案資料",
+        "purpose": "営業担当者が商談に関連する提案資料を管理し、顧客への提案内容を記録・追跡するためのテーブル",
+        "columns": [
+          {
+            "name": "提案資料ID",
+            "type": "uuid",
+            "required": true,
+            "description": "提案資料の一意識別子"
+          },
+          {
+            "name": "商談ID",
+            "type": "uuid",
+            "required": true,
+            "description": "関連する商談の識別子、商談テーブルへの外部キー"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "提案対象の顧客識別子、顧客テーブルへの外部キー"
+          },
+          {
+            "name": "提案資料名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "提案資料のタイトル名"
+          },
+          {
+            "name": "提案資料説明",
+            "type": "text",
+            "required": false,
+            "description": "提案資料の詳細説明や概要"
+          },
+          {
+            "name": "提案内容",
+            "type": "text",
+            "required": true,
+            "description": "提案の具体的な内容や提案内容の詳細"
+          },
+          {
+            "name": "提案金額",
+            "type": "integer",
+            "required": false,
+            "description": "提案に関連する金額"
+          },
+          {
+            "name": "提案日",
+            "type": "timestamp",
+            "required": true,
+            "description": "顧客に提案した日付"
+          },
+          {
+            "name": "ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "提案資料のステータス(作成中、提案済、承認待ち、承認済、却下等)"
+          },
+          {
+            "name": "ファイルパス",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "提案資料ファイルの保存パスまたはURL"
+          },
+          {
+            "name": "作成者",
+            "type": "uuid",
+            "required": true,
+            "description": "提案資料を作成したユーザーの識別子、ユーザーテーブルへの外部キー"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "提案資料の作成日時"
+          },
+          {
+            "name": "更新者",
+            "type": "uuid",
+            "required": false,
+            "description": "提案資料を最後に更新したユーザーの識別子"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "提案資料の最終更新日時"
+          }
+        ]
+      },
+      {
+        "tableName": "提案資料テンプレート",
+        "purpose": "営業担当者が商談ごとに提案資料を作成する際に使用するテンプレートを管理し、テンプレートの構成要素、レイアウト、デフォルト内容を保持する",
+        "columns": [
+          {
+            "name": "テンプレートID",
+            "type": "uuid",
+            "required": true,
+            "description": "提案資料テンプレートの一意識別子"
+          },
+          {
+            "name": "テンプレート名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "テンプレートの名称"
+          },
+          {
+            "name": "説明",
+            "type": "text",
+            "required": false,
+            "description": "テンプレートの用途や特徴の説明"
+          },
+          {
+            "name": "カテゴリ",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "テンプレートの分類（例：製品提案、サービス提案、コンサルティング）"
+          },
+          {
+            "name": "セクション構成",
+            "type": "text",
+            "required": true,
+            "description": "提案資料に含まれるセクションの構成内容"
+          },
+          {
+            "name": "デフォルト内容",
+            "type": "text",
+            "required": false,
+            "description": "テンプレートに含まれるデフォルトのテキストや構成要素"
+          },
+          {
+            "name": "使用可能フラグ",
+            "type": "boolean",
+            "required": true,
+            "description": "テンプレートが現在使用可能かどうか"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "テンプレートの作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "テンプレートの最終更新日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "テンプレートを作成したユーザーの識別子"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": false,
+            "description": "テンプレートを最後に更新したユーザーの識別子"
+          }
+        ]
+      },
+      {
+        "tableName": "顧客ニーズ",
+        "purpose": "顧客の経営課題やビジネス要件を記録し、営業活動における提案や商談の基礎情報として活用するマスタテーブル",
+        "columns": [
+          {
+            "name": "ニーズID",
+            "type": "uuid",
+            "required": true,
+            "description": "顧客ニーズの一意識別子"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ニーズを持つ顧客への外部キー参照"
+          },
+          {
+            "name": "ニーズカテゴリ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ニーズの分類（例：コスト削減、業務効率化、売上拡大、リスク管理）"
+          },
+          {
+            "name": "ニーズ内容",
+            "type": "text",
+            "required": true,
+            "description": "顧客が抱える具体的な経営課題やビジネス要件の詳細"
+          },
+          {
+            "name": "優先度",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ニーズの優先度レベル（例：高、中、低）"
+          },
+          {
+            "name": "予算規模",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "ニーズ解決に向けた予算規模の目安"
+          },
+          {
+            "name": "解決期限",
+            "type": "timestamp",
+            "required": false,
+            "description": "顧客がニーズを解決したい期限"
+          },
+          {
+            "name": "関連商談ID",
+            "type": "uuid",
+            "required": false,
+            "description": "このニーズに関連する商談への外部キー参照"
+          },
+          {
+            "name": "ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ニーズの状態（例：新規、進行中、提案済み、受注、失注、保留）"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ニーズ情報が作成された日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ニーズ情報を作成したユーザーへの外部キー参照"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ニーズ情報が最後に更新された日時"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ニーズ情報を最後に更新したユーザーへの外部キー参照"
+          }
+        ]
+      },
+      {
+        "tableName": "ニーズ適合性判定結果",
+        "purpose": "顧客ニーズと提案内容の適合性を判定し、営業活動の意思決定を支援するための判定結果を記録する",
+        "columns": [
+          {
+            "name": "判定結果ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ニーズ適合性判定結果の一意識別子"
+          },
+          {
+            "name": "商談ID",
+            "type": "uuid",
+            "required": true,
+            "description": "関連する商談の識別子"
+          },
+          {
+            "name": "顧客ニーズID",
+            "type": "uuid",
+            "required": true,
+            "description": "判定対象となった顧客ニーズの識別子"
+          },
+          {
+            "name": "提案資料ID",
+            "type": "uuid",
+            "required": false,
+            "description": "関連する提案資料の識別子"
+          },
+          {
+            "name": "適合度スコア",
+            "type": "integer",
+            "required": true,
+            "description": "ニーズとの適合度を0から100の数値で表したスコア"
+          },
+          {
+            "name": "判定ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "判定結果のステータス（高適合、中適合、低適合、不適合など）"
+          },
+          {
+            "name": "判定理由",
+            "type": "text",
+            "required": false,
+            "description": "適合性判定の根拠となった理由や分析内容"
+          },
+          {
+            "name": "推奨アクション",
+            "type": "text",
+            "required": false,
+            "description": "判定結果に基づいた営業活動の推奨アクション"
+          },
+          {
+            "name": "判定日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ニーズ適合性判定が実施された日時"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "判定結果レコードが作成された日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "判定結果レコードが最後に更新された日時"
+          },
+          {
+            "name": "作成者",
+            "type": "uuid",
+            "required": true,
+            "description": "判定結果を作成したユーザーの識別子"
+          }
+        ]
+      },
+      {
+        "tableName": "AIエージェント生成履歴",
+        "purpose": "営業業務自動化システムにおいて、AIエージェントの生成・実行履歴を記録し、生成条件、実行結果、パフォーマンス指標を追跡管理するための履歴テーブル",
+        "columns": [
+          {
+            "name": "エージェント生成履歴ID",
+            "type": "uuid",
+            "required": true,
+            "description": "AIエージェント生成履歴の一意識別子"
+          },
+          {
+            "name": "ユーザーID",
+            "type": "uuid",
+            "required": true,
+            "description": "エージェントを生成したユーザーの識別子"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": false,
+            "description": "対象顧客の識別子（顧客関連のエージェント生成の場合）"
+          },
+          {
+            "name": "商談ID",
+            "type": "uuid",
+            "required": false,
+            "description": "対象商談の識別子（商談関連のエージェント生成の場合）"
+          },
+          {
+            "name": "エージェント種別",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "生成されたエージェントの種別（提案資料生成、顧客分析、商談進捗管理等）"
+          },
+          {
+            "name": "生成条件",
+            "type": "text",
+            "required": true,
+            "description": "エージェント生成時に指定された条件やプロンプト"
+          },
+          {
+            "name": "実行ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "エージェント実行状態（実行中、完了、失敗、キャンセル等）"
+          },
+          {
+            "name": "実行結果",
+            "type": "text",
+            "required": false,
+            "description": "エージェント実行の結果内容"
+          },
+          {
+            "name": "処理時間秒",
+            "type": "integer",
+            "required": false,
+            "description": "エージェント実行に要した時間（秒単位）"
+          },
+          {
+            "name": "トークン使用数",
+            "type": "integer",
+            "required": false,
+            "description": "AI処理で消費されたトークン数"
+          },
+          {
+            "name": "エラーメッセージ",
+            "type": "text",
+            "required": false,
+            "description": "実行失敗時のエラー内容"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "エージェント生成履歴レコードの作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "エージェント生成履歴レコードの最終更新日時"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "systemId": "itg-5",
+    "systemName": "顧客購買支援ポータル",
+    "screens": [
+      {
+        "id": "scr-1785572473485",
+        "name": "提案管理ワークスペース",
+        "purpose": "顧客の制約条件に対して提案内容を自動照合・評価し、評価結果の表示・修正・分析・レポート生成を一元管理するワークスペース",
+        "items": [
+          "提案情報入力フォーム",
+          "顧客選択ドロップダウン",
+          "提案内容テキストエリア",
+          "自動照合・評価実行ボタン",
+          "照合ルール選択パネル",
+          "照合評価結果表示エリア",
+          "評価スコア表示",
+          "制約条件違反項目リスト",
+          "修正提案情報入力フォーム",
+          "修正内容保存ボタン",
+          "最終分析結果表示パネル",
+          "評価レポート生成ボタン"
+        ]
+      }
+    ],
+    "tableDefinitions": [
+      {
+        "tableName": "ログインユーザー",
+        "purpose": "営業プロセス監査・分析管理システムのユーザー認証・アクセス管理を行い、ログイン履歴とユーザー権限を一元管理する",
+        "columns": [
+          {
+            "name": "ユーザーID",
+            "type": "uuid",
+            "required": true,
+            "description": "ユーザーの一意識別子"
+          },
+          {
+            "name": "ログインID",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ログイン時に使用するユーザー識別名"
+          },
+          {
+            "name": "メールアドレス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーのメールアドレス"
+          },
+          {
+            "name": "パスワードハッシュ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "暗号化されたパスワード"
+          },
+          {
+            "name": "ユーザー名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーの表示名"
+          },
+          {
+            "name": "部門",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "ユーザーが属する部門"
+          },
+          {
+            "name": "ロール",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーに付与されたロール"
+          },
+          {
+            "name": "ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーのステータス(有効/無効/休止)"
+          },
+          {
+            "name": "最終ログイン日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "最後にログインした日時"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ユーザーレコード作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ユーザーレコード最終更新日時"
+          },
+          {
+            "name": "作成者",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ユーザーレコード作成者"
+          }
+        ]
+      },
+      {
+        "tableName": "顧客",
+        "purpose": "営業プロセス監査・分析管理システムにおいて、営業担当者が管理する顧客マスタ。顧客情報の基本属性、営業ステータス、接触履歴の集計値を保持し、営業活動の監査・分析対象となる。",
+        "columns": [
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "顧客を一意に識別するプライマリキー"
+          },
+          {
+            "name": "顧客名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "顧客の企業名または個人名"
+          },
+          {
+            "name": "業種",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "顧客の業種分類"
+          },
+          {
+            "name": "住所",
+            "type": "text",
+            "required": false,
+            "description": "顧客の住所"
+          },
+          {
+            "name": "電話番号",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "顧客の連絡先電話番号"
+          },
+          {
+            "name": "メールアドレス",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "顧客の連絡先メールアドレス"
+          },
+          {
+            "name": "営業担当者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "この顧客を担当する営業担当者のID（営業担当者テーブルへの外部キー）"
+          },
+          {
+            "name": "営業ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "営業プロセスの段階（見込み客、提案中、交渉中、成約、失注など）"
+          },
+          {
+            "name": "最終接触日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "営業担当者が最後に顧客と接触した日時"
+          },
+          {
+            "name": "次回フォローアップ予定日",
+            "type": "timestamp",
+            "required": false,
+            "description": "次回の営業活動予定日"
+          },
+          {
+            "name": "推定売上金額",
+            "type": "integer",
+            "required": false,
+            "description": "この顧客からの推定売上金額（円）"
+          },
+          {
+            "name": "成約日",
+            "type": "timestamp",
+            "required": false,
+            "description": "顧客が成約した日付"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "顧客レコードが作成された日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "顧客レコードを作成したログインユーザーのID"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "顧客レコードが最後に更新された日時"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "顧客レコードを最後に更新したログインユーザーのID"
+          }
+        ]
+      },
+      {
+        "tableName": "顧客制約条件",
+        "purpose": "顧客ごとの購入制約条件を管理し、購入可能な商品カテゴリ、金額上限、購買頻度などの制限を記録するマスタテーブル",
+        "columns": [
+          {
+            "name": "制約条件ID",
+            "type": "uuid",
+            "required": true,
+            "description": "制約条件を一意に識別するプライマリキー"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "制約条件が適用される顧客を特定する外部キー"
+          },
+          {
+            "name": "制約条件タイプ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "制約条件の種類(例:購買金額上限、購買頻度制限、カテゴリ制限)"
+          },
+          {
+            "name": "制約値",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "制約条件の具体的な値(例:月額100000、週1回)"
+          },
+          {
+            "name": "開始日",
+            "type": "timestamp",
+            "required": true,
+            "description": "制約条件が有効になる開始日時"
+          },
+          {
+            "name": "終了日",
+            "type": "timestamp",
+            "required": false,
+            "description": "制約条件が無効になる終了日時(NULLの場合は無期限)"
+          },
+          {
+            "name": "有効フラグ",
+            "type": "boolean",
+            "required": true,
+            "description": "制約条件が現在有効かどうかを示すフラグ"
+          },
+          {
+            "name": "備考",
+            "type": "text",
+            "required": false,
+            "description": "制約条件に関する追加情報や理由"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "レコード作成日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "レコードを作成したログインユーザーのID"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "レコード最終更新日時"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "レコードを最後に更新したログインユーザーのID"
+          }
+        ]
+      },
+      {
+        "tableName": "提案",
+        "purpose": "顧客への商品・サービス提案を管理し、提案内容、ステータス、顧客制約条件への適合性を追跡するテーブル",
+        "columns": [
+          {
+            "name": "提案ID",
+            "type": "uuid",
+            "required": true,
+            "description": "提案の一意識別子"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "提案対象の顧客を特定するための外部キー"
+          },
+          {
+            "name": "提案タイトル",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "提案の名称・タイトル"
+          },
+          {
+            "name": "提案内容",
+            "type": "text",
+            "required": true,
+            "description": "提案の詳細説明・商品サービス内容"
+          },
+          {
+            "name": "提案金額",
+            "type": "integer",
+            "required": true,
+            "description": "提案の見積金額"
+          },
+          {
+            "name": "ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "提案のステータス(下書き、提案済み、承認、却下等)"
+          },
+          {
+            "name": "有効期限",
+            "type": "timestamp",
+            "required": false,
+            "description": "提案の有効期限"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "提案が作成された日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "提案が最後に更新された日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "提案を作成したログインユーザーの外部キー"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": false,
+            "description": "提案を最後に更新したログインユーザーの外部キー"
+          }
+        ]
+      },
+      {
+        "tableName": "提案内容",
+        "purpose": "顧客への提案に含まれる個別の商品やサービスの詳細情報を管理し、提案の構成要素を記録する",
+        "columns": [
+          {
+            "name": "提案内容ID",
+            "type": "uuid",
+            "required": true,
+            "description": "提案内容の一意識別子"
+          },
+          {
+            "name": "提案ID",
+            "type": "uuid",
+            "required": true,
+            "description": "親テーブル提案への外部キー"
+          },
+          {
+            "name": "商品サービス名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "提案に含まれる商品またはサービスの名称"
+          },
+          {
+            "name": "説明",
+            "type": "text",
+            "required": false,
+            "description": "商品サービスの詳細説明"
+          },
+          {
+            "name": "数量",
+            "type": "integer",
+            "required": true,
+            "description": "提案する商品サービスの数量"
+          },
+          {
+            "name": "単価",
+            "type": "integer",
+            "required": true,
+            "description": "商品サービスの単価"
+          },
+          {
+            "name": "小計",
+            "type": "integer",
+            "required": true,
+            "description": "数量と単価の積で計算される小計金額"
+          },
+          {
+            "name": "表示順序",
+            "type": "integer",
+            "required": true,
+            "description": "提案内での表示順序"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "提案内容の作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "提案内容の最終更新日時"
+          },
+          {
+            "name": "作成者",
+            "type": "uuid",
+            "required": true,
+            "description": "ログインユーザーテーブルへの外部キー、作成したユーザーID"
+          }
+        ]
+      },
+      {
+        "tableName": "照合評価結果",
+        "purpose": "顧客の購入提案に対する照合評価の結果を記録し、提案の適合性判定と顧客制約条件との整合性を管理するトランザクションテーブル",
+        "columns": [
+          {
+            "name": "照合評価結果ID",
+            "type": "uuid",
+            "required": true,
+            "description": "照合評価結果の一意識別子"
+          },
+          {
+            "name": "提案ID",
+            "type": "uuid",
+            "required": true,
+            "description": "評価対象の提案を特定する外部キー"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "提案対象の顧客を特定する外部キー"
+          },
+          {
+            "name": "評価ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "評価結果のステータス(合格/不合格/要確認等)"
+          },
+          {
+            "name": "適合性スコア",
+            "type": "integer",
+            "required": false,
+            "description": "提案と顧客制約条件の適合度を示す数値スコア(0-100)"
+          },
+          {
+            "name": "照合結果詳細",
+            "type": "text",
+            "required": false,
+            "description": "照合評価の詳細な結果説明と判定理由"
+          },
+          {
+            "name": "不適合項目",
+            "type": "text",
+            "required": false,
+            "description": "制約条件に違反した項目の一覧"
+          },
+          {
+            "name": "評価実施日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "照合評価を実施した日時"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "レコード作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "レコード最終更新日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "レコード作成者のログインユーザーID"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": false,
+            "description": "レコード最終更新者のログインユーザーID"
+          }
+        ]
+      },
+      {
+        "tableName": "照合ルール",
+        "purpose": "顧客の購入制約条件と提案内容を照合するためのルール定義を管理し、提案の適合性を自動判定するマスタテーブル",
+        "columns": [
+          {
+            "name": "照合ルールID",
+            "type": "uuid",
+            "required": true,
+            "description": "照合ルールの一意識別子"
+          },
+          {
+            "name": "ルール名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "照合ルールの名称"
+          },
+          {
+            "name": "ルール説明",
+            "type": "text",
+            "required": false,
+            "description": "照合ルールの詳細説明"
+          },
+          {
+            "name": "制約条件項目",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "照合対象となる顧客制約条件の項目名"
+          },
+          {
+            "name": "提案内容項目",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "照合対象となる提案内容の項目名"
+          },
+          {
+            "name": "照合条件タイプ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "照合ロジックの種類(完全一致、範囲内、含む等)"
+          },
+          {
+            "name": "照合条件値",
+            "type": "text",
+            "required": false,
+            "description": "照合条件の具体的な値またはパラメータ"
+          },
+          {
+            "name": "優先度",
+            "type": "integer",
+            "required": true,
+            "description": "複数ルール適用時の優先順位"
+          },
+          {
+            "name": "有効フラグ",
+            "type": "boolean",
+            "required": true,
+            "description": "ルールが有効かどうか"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ルール作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ルール最終更新日時"
+          },
+          {
+            "name": "作成者",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ルール作成者のユーザーID"
+          }
+        ]
+      },
+      {
+        "tableName": "操作履歴",
+        "purpose": "顧客購入支援ポータルにおけるユーザーの全操作を記録し、監査証跡とシステム動作分析に利用する",
+        "columns": [
+          {
+            "name": "操作履歴ID",
+            "type": "uuid",
+            "required": true,
+            "description": "操作履歴の一意識別子"
+          },
+          {
+            "name": "ログインユーザーID",
+            "type": "uuid",
+            "required": true,
+            "description": "操作を実行したログインユーザーの外部キー"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": false,
+            "description": "操作対象の顧客の外部キー（顧客関連操作の場合）"
+          },
+          {
+            "name": "操作種別",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "実行された操作の種類（ログイン、提案閲覧、提案承認、制約条件更新等）"
+          },
+          {
+            "name": "操作対象テーブル",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "操作が対象とするテーブル名"
+          },
+          {
+            "name": "操作対象ID",
+            "type": "uuid",
+            "required": false,
+            "description": "操作対象レコードの識別子"
+          },
+          {
+            "name": "操作内容",
+            "type": "text",
+            "required": false,
+            "description": "操作の詳細内容または変更内容"
+          },
+          {
+            "name": "操作結果",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "操作の結果（成功、失敗、エラー等）"
+          },
+          {
+            "name": "エラーメッセージ",
+            "type": "text",
+            "required": false,
+            "description": "操作失敗時のエラーメッセージ"
+          },
+          {
+            "name": "IPアドレス",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "操作を実行したクライアントのIPアドレス"
+          },
+          {
+            "name": "ユーザーエージェント",
+            "type": "text",
+            "required": false,
+            "description": "操作を実行したクライアントのユーザーエージェント情報"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "操作が実行された日時"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "systemId": "itg-1",
+    "systemName": "営業プロセス監査・分析管理システム",
+    "screens": [
+      {
+        "id": "scr-1785570818400",
+        "name": "営業プロセス監査ダッシュボード",
+        "purpose": "営業プロセス実行状況の監視、営業担当者の行動パターン分析、成約実績との相関分析、AIエージェント推論精度の自動監視、プロセス遵守率・データ品質スコア、不適切パターン検出、成功パターン適用状況、ヘルスチェック診断結果を統合的に可視化し、営業プロセスの健全性を監査・管理するダッシュボード",
+        "items": [
+          "営業プロセス実行状況サマリーパネル",
+          "営業担当者ごとの行動パターン分析レポート表示エリア",
+          "成約実績との相関分析グラフ",
+          "AIエージェント推論精度監視ウィジェット",
+          "推論精度低下アラート表示パネル",
+          "プロセス遵守率スコア表示",
+          "データ品質スコア表示",
+          "不適切パターン検出結果リスト",
+          "成功パターン適用状況トラッキング",
+          "営業行動分析結果の可視化チャート",
+          "プロセス乖離検出結果表示",
+          "成約相関分析結果テーブル"
+        ]
+      },
+      {
+        "id": "scr-1785570831723",
+        "name": "営業事例・成功パターン検索・学習",
+        "purpose": "営業担当者が過去の成功事例を検索・分析し、成功パターンを学習することで営業プロセスの最適化と案件成功率の向上を支援する",
+        "items": [
+          "検索条件入力フォーム",
+          "顧客業種フィルター",
+          "案件金額範囲フィルター",
+          "成約期間フィルター",
+          "営業担当者フィルター",
+          "成功パターンキーワード検索",
+          "検索実行ボタン",
+          "事例一覧表示",
+          "事例分類マトリクス表示",
+          "成功パターン分類タブ",
+          "事例詳細表示パネル",
+          "成約実績情報表示"
+        ]
+      },
+      {
+        "id": "scr-1785570844176",
+        "name": "営業プロセス分析レポート生成・確認",
+        "purpose": "営業プロセスのログを抽出・分析し、レポートを生成・確認・ダウンロードするとともに、生成履歴を管理する",
+        "items": [
+          "営業プロセスログ抽出条件設定パネル",
+          "抽出対象期間選択",
+          "抽出対象営業担当者フィルタ",
+          "抽出対象顧客フィルタ",
+          "抽出対象営業案件フィルタ",
+          "営業活動タイプ選択",
+          "ログ抽出実行ボタン",
+          "抽出結果プレビュー表示",
+          "レポート生成条件設定パネル",
+          "分析対象データ範囲選択",
+          "レポートテンプレート選択",
+          "分析指標選択（成約率、活動頻度、プロセス進捗等）"
+        ]
+      }
+    ],
+    "tableDefinitions": [
+      {
+        "tableName": "営業担当者",
+        "purpose": "営業プロセス監査・分析管理システムにおいて、営業担当者の基本情報を管理し、営業活動の記録・分析・監査の対象者を識別・追跡するためのマスタテーブル",
+        "columns": [
+          {
+            "name": "営業担当者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業担当者を一意に識別するプライマリキー"
+          },
+          {
+            "name": "氏名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "営業担当者の氏名"
+          },
+          {
+            "name": "メールアドレス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "営業担当者の連絡用メールアドレス"
+          },
+          {
+            "name": "電話番号",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "営業担当者の連絡用電話番号"
+          },
+          {
+            "name": "部門ID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業担当者が所属する部門を識別する外部キー"
+          },
+          {
+            "name": "職位",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "営業担当者の職位・役職"
+          },
+          {
+            "name": "ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "営業担当者の状態(在籍/休職/退職等)"
+          },
+          {
+            "name": "入社日",
+            "type": "timestamp",
+            "required": false,
+            "description": "営業担当者の入社日"
+          },
+          {
+            "name": "退社日",
+            "type": "timestamp",
+            "required": false,
+            "description": "営業担当者の退社日"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "営業担当者レコードが作成された日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "営業担当者レコードが最後に更新された日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業担当者レコードを作成したログインユーザーの識別子"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業担当者レコードを最後に更新したログインユーザーの識別子"
+          }
+        ]
+      },
+      {
+        "tableName": "営業案件",
+        "purpose": "営業プロセス全体を監査・分析するため、営業案件の基本情報、進捗状況、金額、担当者、顧客情報を一元管理し、営業活動の可視化と業績追跡を実現する。",
+        "columns": [
+          {
+            "name": "案件ID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業案件を一意に識別するプライマリキー"
+          },
+          {
+            "name": "案件名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "営業案件の名称"
+          },
+          {
+            "name": "案件説明",
+            "type": "text",
+            "required": false,
+            "description": "営業案件の詳細説明"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "顧客テーブルへの外部キー"
+          },
+          {
+            "name": "営業担当者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業担当者テーブルへの外部キー"
+          },
+          {
+            "name": "案件ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "案件の進捗状況（例：新規、進行中、提案済み、受注、失注）"
+          },
+          {
+            "name": "予想金額",
+            "type": "integer",
+            "required": true,
+            "description": "案件の予想売上金額（円）"
+          },
+          {
+            "name": "確定金額",
+            "type": "integer",
+            "required": false,
+            "description": "案件の確定売上金額（円）、受注時に記録"
+          },
+          {
+            "name": "受注確度",
+            "type": "integer",
+            "required": false,
+            "description": "受注の見込み確度（0-100%）"
+          },
+          {
+            "name": "予想受注日",
+            "type": "timestamp",
+            "required": false,
+            "description": "案件の予想受注予定日"
+          },
+          {
+            "name": "実受注日",
+            "type": "timestamp",
+            "required": false,
+            "description": "案件の実際の受注日"
+          },
+          {
+            "name": "失注理由",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "案件が失注した場合の理由"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "案件レコードの作成日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ログインユーザーテーブルへの外部キー、案件を作成したユーザー"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "案件レコードの最終更新日時"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ログインユーザーテーブルへの外部キー、案件を最後に更新したユーザー"
+          }
+        ]
+      },
+      {
+        "tableName": "営業活動",
+        "purpose": "営業担当者の日々の営業活動（訪問、電話、メール等）を記録し、営業プロセスの進捗管理と監査を実現するトランザクションテーブル",
+        "columns": [
+          {
+            "name": "営業活動ID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業活動の一意識別子"
+          },
+          {
+            "name": "営業担当者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業活動を実施した営業担当者への外部キー"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業活動の対象顧客への外部キー"
+          },
+          {
+            "name": "営業案件ID",
+            "type": "uuid",
+            "required": false,
+            "description": "関連する営業案件への外部キー（案件に紐付く活動の場合）"
+          },
+          {
+            "name": "活動種別",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "営業活動の種類（訪問、電話、メール、提案等）"
+          },
+          {
+            "name": "活動日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "営業活動が実施された日時"
+          },
+          {
+            "name": "活動内容",
+            "type": "text",
+            "required": true,
+            "description": "営業活動の詳細内容・備考"
+          },
+          {
+            "name": "成果",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "活動の成果・結果（受注、継続検討、却下等）"
+          },
+          {
+            "name": "次回フォローアップ予定日",
+            "type": "timestamp",
+            "required": false,
+            "description": "次のフォローアップ予定日時"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "営業活動レコードが作成された日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業活動レコードを作成したログインユーザーへの外部キー"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "営業活動レコードが最後に更新された日時"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業活動レコードを最後に更新したログインユーザーへの外部キー"
+          }
+        ]
+      },
+      {
+        "tableName": "営業活動ログ",
+        "purpose": "営業プロセス監査・分析管理システムにおいて、営業担当者の活動履歴を記録し、営業活動の監査・分析・パフォーマンス評価を支援するトランザクションテーブル",
+        "columns": [
+          {
+            "name": "ログID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業活動ログの一意識別子"
+          },
+          {
+            "name": "営業担当者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "活動を実施した営業担当者の外部キー"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": false,
+            "description": "活動対象の顧客の外部キー（顧客関連活動の場合）"
+          },
+          {
+            "name": "営業案件ID",
+            "type": "uuid",
+            "required": false,
+            "description": "活動に関連する営業案件の外部キー"
+          },
+          {
+            "name": "活動種別",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "活動の種類（訪問、電話、メール、提案、受注等）"
+          },
+          {
+            "name": "活動内容",
+            "type": "text",
+            "required": false,
+            "description": "活動の詳細説明"
+          },
+          {
+            "name": "活動日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "営業活動が実施された日時"
+          },
+          {
+            "name": "所要時間分",
+            "type": "integer",
+            "required": false,
+            "description": "活動に要した時間（分単位）"
+          },
+          {
+            "name": "成果フラグ",
+            "type": "boolean",
+            "required": false,
+            "description": "活動が成果に結びついたかどうか"
+          },
+          {
+            "name": "次回フォローアップ予定日",
+            "type": "timestamp",
+            "required": false,
+            "description": "次のフォローアップ予定日時"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ログレコードが作成された日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ログレコードが最後に更新された日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ログを作成したユーザーの外部キー"
+          }
+        ]
+      },
+      {
+        "tableName": "成約実績",
+        "purpose": "営業案件の成約結果を記録し、営業プロセスの成果を追跡・分析するためのトランザクションテーブル",
+        "columns": [
+          {
+            "name": "成約実績ID",
+            "type": "uuid",
+            "required": true,
+            "description": "成約実績の一意識別子"
+          },
+          {
+            "name": "営業案件ID",
+            "type": "uuid",
+            "required": true,
+            "description": "関連する営業案件への外部キー"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": true,
+            "description": "成約した顧客への外部キー"
+          },
+          {
+            "name": "営業担当者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "成約を達成した営業担当者への外部キー"
+          },
+          {
+            "name": "成約日",
+            "type": "timestamp",
+            "required": true,
+            "description": "実際の成約が確定した日時"
+          },
+          {
+            "name": "成約金額",
+            "type": "integer",
+            "required": true,
+            "description": "成約した契約金額（単位：円）"
+          },
+          {
+            "name": "成約商品名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "成約した商品またはサービスの名称"
+          },
+          {
+            "name": "契約期間開始日",
+            "type": "timestamp",
+            "required": false,
+            "description": "契約の開始日"
+          },
+          {
+            "name": "契約期間終了日",
+            "type": "timestamp",
+            "required": false,
+            "description": "契約の終了日"
+          },
+          {
+            "name": "備考",
+            "type": "text",
+            "required": false,
+            "description": "成約に関する追加情報やコメント"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "成約実績レコードが作成された日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "成約実績を登録したログインユーザーへの外部キー"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "成約実績レコードが最後に更新された日時"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "成約実績を最後に更新したログインユーザーへの外部キー"
+          }
+        ]
+      },
+      {
+        "tableName": "行動パターン分析結果",
+        "purpose": "営業担当者の行動パターンを分析し、営業活動の効率性や成約率との相関を記録・管理するテーブル",
+        "columns": [
+          {
+            "name": "分析結果ID",
+            "type": "uuid",
+            "required": true,
+            "description": "行動パターン分析結果の一意識別子"
+          },
+          {
+            "name": "営業担当者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "分析対象の営業担当者を特定するID"
+          },
+          {
+            "name": "分析期間開始日",
+            "type": "timestamp",
+            "required": true,
+            "description": "行動パターン分析の対象期間開始日時"
+          },
+          {
+            "name": "分析期間終了日",
+            "type": "timestamp",
+            "required": true,
+            "description": "行動パターン分析の対象期間終了日時"
+          },
+          {
+            "name": "活動件数",
+            "type": "integer",
+            "required": true,
+            "description": "分析期間内の営業活動総件数"
+          },
+          {
+            "name": "成約件数",
+            "type": "integer",
+            "required": true,
+            "description": "分析期間内の成約実績件数"
+          },
+          {
+            "name": "成約率",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "活動件数に対する成約率をパーセンテージで記録"
+          },
+          {
+            "name": "平均活動間隔日数",
+            "type": "integer",
+            "required": false,
+            "description": "営業活動の平均実施間隔を日数で記録"
+          },
+          {
+            "name": "主要活動タイプ",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "分析期間内で最も頻繁に実施された営業活動タイプ"
+          },
+          {
+            "name": "パターン分類",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "行動パターンの分類結果（積極型、安定型、改善型など）"
+          },
+          {
+            "name": "分析コメント",
+            "type": "text",
+            "required": false,
+            "description": "行動パターン分析の詳細所見やコメント"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "分析結果レコードの作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "分析結果レコードの最終更新日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "分析結果を作成したログインユーザーのID"
+          }
+        ]
+      },
+      {
+        "tableName": "AIエージェント推論ログ",
+        "purpose": "AIエージェントの推論実行履歴を記録し、意思決定プロセス、入力データ、出力結果、パフォーマンスメトリクスを監査・分析するための詳細ログテーブル",
+        "columns": [
+          {
+            "name": "推論ログID",
+            "type": "uuid",
+            "required": true,
+            "description": "推論ログの一意識別子"
+          },
+          {
+            "name": "AIエージェント名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "推論を実行したAIエージェントの名称"
+          },
+          {
+            "name": "推論タイプ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "推論の種類（営業予測、顧客分析、案件評価等）"
+          },
+          {
+            "name": "営業案件ID",
+            "type": "uuid",
+            "required": false,
+            "description": "関連する営業案件の識別子"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": false,
+            "description": "関連する顧客の識別子"
+          },
+          {
+            "name": "営業担当者ID",
+            "type": "uuid",
+            "required": false,
+            "description": "関連する営業担当者の識別子"
+          },
+          {
+            "name": "入力パラメータ",
+            "type": "text",
+            "required": true,
+            "description": "推論に使用された入力データ・パラメータの詳細"
+          },
+          {
+            "name": "推論結果",
+            "type": "text",
+            "required": true,
+            "description": "AIエージェントが出力した推論結果・判定内容"
+          },
+          {
+            "name": "信頼度スコア",
+            "type": "integer",
+            "required": false,
+            "description": "推論結果の信頼度を0-100で表すスコア"
+          },
+          {
+            "name": "推奨アクション",
+            "type": "text",
+            "required": false,
+            "description": "推論に基づいて提案された営業アクション"
+          },
+          {
+            "name": "実行時間ミリ秒",
+            "type": "integer",
+            "required": false,
+            "description": "推論処理の実行時間（ミリ秒）"
+          },
+          {
+            "name": "ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "推論実行のステータス（成功、失敗、部分的成功等）"
+          },
+          {
+            "name": "エラーメッセージ",
+            "type": "text",
+            "required": false,
+            "description": "推論実行時に発生したエラーの詳細"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "推論ログが記録された日時"
+          },
+          {
+            "name": "作成者",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "推論を実行したシステムまたはユーザー"
+          }
+        ]
+      },
+      {
+        "tableName": "AIエージェント推論精度監視",
+        "purpose": "AIエージェントの推論結果の精度を監視・追跡し、推論ログとの紐付けにより精度改善を支援するための監視テーブル",
+        "columns": [
+          {
+            "name": "監視ID",
+            "type": "uuid",
+            "required": true,
+            "description": "AIエージェント推論精度監視レコードの一意識別子"
+          },
+          {
+            "name": "推論ログID",
+            "type": "uuid",
+            "required": true,
+            "description": "AIエージェント推論ログテーブルへの外部キー参照"
+          },
+          {
+            "name": "営業案件ID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業案件テーブルへの外部キー参照"
+          },
+          {
+            "name": "推論タイプ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "推論の種類（例：成約確度予測、次アクション推奨、顧客セグメント分類）"
+          },
+          {
+            "name": "推論結果",
+            "type": "text",
+            "required": true,
+            "description": "AIエージェントが出力した推論結果の内容"
+          },
+          {
+            "name": "実績値",
+            "type": "text",
+            "required": false,
+            "description": "実際に発生した結果・実績値（検証用）"
+          },
+          {
+            "name": "精度スコア",
+            "type": "integer",
+            "required": false,
+            "description": "推論結果と実績値の一致度を0-100で表したスコア"
+          },
+          {
+            "name": "精度判定",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "精度評価の判定結果（例：正確、許容範囲、不正確）"
+          },
+          {
+            "name": "検証状態",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "検証の進行状況（例：未検証、検証中、検証完了）"
+          },
+          {
+            "name": "検証者ID",
+            "type": "uuid",
+            "required": false,
+            "description": "ログインユーザーテーブルへの外部キー参照（検証を実施したユーザー）"
+          },
+          {
+            "name": "検証日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "推論結果の検証が完了した日時"
+          },
+          {
+            "name": "改善提案",
+            "type": "text",
+            "required": false,
+            "description": "精度向上のための改善提案やコメント"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "監視レコードが作成された日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "監視レコードが最後に更新された日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ログインユーザーテーブルへの外部キー参照（レコード作成者）"
+          }
+        ]
+      },
+      {
+        "tableName": "アラート設定",
+        "purpose": "営業プロセス監査・分析管理システムにおいて、ユーザーが監視対象となるKPI・異常値・営業活動の閾値を定義し、条件に基づいて自動的にアラートを生成・通知するための設定を一元管理する。",
+        "columns": [
+          {
+            "name": "アラート設定ID",
+            "type": "uuid",
+            "required": true,
+            "description": "アラート設定を一意に識別するプライマリキー"
+          },
+          {
+            "name": "設定名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "アラート設定の名称（例：案件進捗停滞、売上目標未達）"
+          },
+          {
+            "name": "説明",
+            "type": "text",
+            "required": false,
+            "description": "アラート設定の詳細説明"
+          },
+          {
+            "name": "監視対象タイプ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "監視対象の種類（例：営業案件、営業活動、成約実績、行動パターン）"
+          },
+          {
+            "name": "条件フィールド",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "監視対象となるフィールド名（例：案件ステータス、活動日数、成約率）"
+          },
+          {
+            "name": "条件演算子",
+            "type": "varchar(50)",
+            "required": true,
+            "description": "比較演算子（例：等しい、より大きい、より小さい、含む、含まない）"
+          },
+          {
+            "name": "条件値",
+            "type": "text",
+            "required": true,
+            "description": "条件の比較値（例：停滞、30、0.8）"
+          },
+          {
+            "name": "追加フィルタ条件",
+            "type": "text",
+            "required": false,
+            "description": "複合条件が必要な場合の追加フィルタ条件（JSON形式で保存）"
+          },
+          {
+            "name": "アラート重要度",
+            "type": "varchar(50)",
+            "required": true,
+            "description": "アラートの重要度レベル（例：高、中、低）"
+          },
+          {
+            "name": "通知先ユーザーID",
+            "type": "uuid",
+            "required": true,
+            "description": "アラート通知を受け取るユーザーのID（ログインユーザーテーブルへの外部キー）"
+          },
+          {
+            "name": "通知方法",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "通知方法（例：メール、システム内通知、SMS）"
+          },
+          {
+            "name": "有効フラグ",
+            "type": "boolean",
+            "required": true,
+            "description": "アラート設定が有効かどうか"
+          },
+          {
+            "name": "実行頻度",
+            "type": "varchar(50)",
+            "required": true,
+            "description": "アラート監視の実行頻度（例：リアルタイム、毎日、毎週）"
+          },
+          {
+            "name": "最終トリガー日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "このアラート設定が最後にトリガーされた日時"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "アラート設定が作成された日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "アラート設定を作成したユーザーのID"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "アラート設定が最後に更新された日時"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "アラート設定を最後に更新したユーザーのID"
+          }
+        ]
+      },
+      {
+        "tableName": "アラート履歴",
+        "purpose": "営業プロセス監査・分析管理システムにおいて、アラート設定に基づいて発生したアラートイベントの履歴を記録し、アラート発生の時系列追跡、原因分析、対応状況の管理を実現する。",
+        "columns": [
+          {
+            "name": "アラート履歴ID",
+            "type": "uuid",
+            "required": true,
+            "description": "アラート履歴レコードの一意識別子"
+          },
+          {
+            "name": "アラート設定ID",
+            "type": "uuid",
+            "required": true,
+            "description": "このアラートが基づくアラート設定への外部キー参照"
+          },
+          {
+            "name": "営業担当者ID",
+            "type": "uuid",
+            "required": false,
+            "description": "アラート対象の営業担当者ID（該当する場合）"
+          },
+          {
+            "name": "営業案件ID",
+            "type": "uuid",
+            "required": false,
+            "description": "アラート対象の営業案件ID（該当する場合）"
+          },
+          {
+            "name": "顧客ID",
+            "type": "uuid",
+            "required": false,
+            "description": "アラート対象の顧客ID（該当する場合）"
+          },
+          {
+            "name": "アラートレベル",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "アラートの重要度レベル（例：INFO、WARNING、CRITICAL）"
+          },
+          {
+            "name": "アラートタイプ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "アラートの種類（例：営業活動遅延、成約率低下、異常行動検知）"
+          },
+          {
+            "name": "アラートメッセージ",
+            "type": "text",
+            "required": true,
+            "description": "アラートの詳細メッセージ内容"
+          },
+          {
+            "name": "トリガー条件",
+            "type": "text",
+            "required": false,
+            "description": "アラートをトリガーした具体的な条件値や閾値"
+          },
+          {
+            "name": "発生日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "アラートが発生した日時"
+          },
+          {
+            "name": "ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "アラートの状態（例：未対応、対応中、解決済み、無視）"
+          },
+          {
+            "name": "対応者ID",
+            "type": "uuid",
+            "required": false,
+            "description": "アラートに対応したログインユーザーID"
+          },
+          {
+            "name": "対応日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "アラートに対応した日時"
+          },
+          {
+            "name": "対応コメント",
+            "type": "text",
+            "required": false,
+            "description": "対応時に記録されたコメント"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "レコード作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "レコード最終更新日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "レコードを作成したシステムまたはユーザーID"
+          }
+        ]
+      },
+      {
+        "tableName": "営業プロセス定義",
+        "purpose": "営業プロセスの標準フロー、ステージ、遷移ルール、KPI基準を一元管理し、営業活動の監査・分析の基準となるマスタデータを提供する",
+        "columns": [
+          {
+            "name": "プロセス定義ID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業プロセス定義の一意識別子"
+          },
+          {
+            "name": "プロセス名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "営業プロセスの名称（例：新規営業フロー、既存顧客拡大フロー）"
+          },
+          {
+            "name": "プロセス説明",
+            "type": "text",
+            "required": false,
+            "description": "営業プロセスの詳細説明と目的"
+          },
+          {
+            "name": "ステージ数",
+            "type": "integer",
+            "required": true,
+            "description": "このプロセスに含まれるステージの総数"
+          },
+          {
+            "name": "標準期間日数",
+            "type": "integer",
+            "required": false,
+            "description": "プロセス完了までの標準期間（日数）"
+          },
+          {
+            "name": "目標成約率",
+            "type": "integer",
+            "required": false,
+            "description": "このプロセスの目標成約率（パーセンテージ）"
+          },
+          {
+            "name": "必須活動タイプ",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "プロセス中に必須となる営業活動タイプ（複数の場合は別テーブルで管理）"
+          },
+          {
+            "name": "ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "プロセス定義のステータス（有効/無効/廃止予定）"
+          },
+          {
+            "name": "適用開始日",
+            "type": "timestamp",
+            "required": true,
+            "description": "このプロセス定義の適用開始日時"
+          },
+          {
+            "name": "適用終了日",
+            "type": "timestamp",
+            "required": false,
+            "description": "このプロセス定義の適用終了日時（廃止時に設定）"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "プロセス定義の作成日時"
+          },
+          {
+            "name": "作成者",
+            "type": "uuid",
+            "required": true,
+            "description": "プロセス定義を作成したユーザーID"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "プロセス定義の最終更新日時"
+          },
+          {
+            "name": "更新者",
+            "type": "uuid",
+            "required": true,
+            "description": "プロセス定義を最後に更新したユーザーID"
+          }
+        ]
+      },
+      {
+        "tableName": "営業プロセス実行状況",
+        "purpose": "営業案件ごとの営業プロセス定義に基づいた実行進捗を追跡・管理し、各プロセスステップの完了状況、遅延検知、AIエージェント推論との連携を記録するトランザクションテーブル",
+        "columns": [
+          {
+            "name": "営業プロセス実行状況ID",
+            "type": "uuid",
+            "required": true,
+            "description": "営業プロセス実行状況の一意識別子"
+          },
+          {
+            "name": "営業案件ID",
+            "type": "uuid",
+            "required": true,
+            "description": "関連する営業案件の外部キー"
+          },
+          {
+            "name": "営業プロセス定義ID",
+            "type": "uuid",
+            "required": true,
+            "description": "適用される営業プロセス定義の外部キー"
+          },
+          {
+            "name": "現在のステップ番号",
+            "type": "integer",
+            "required": true,
+            "description": "プロセス定義内の現在実行中のステップ番号"
+          },
+          {
+            "name": "ステップ名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "現在のステップの名称"
+          },
+          {
+            "name": "ステップ開始日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "現在のステップが開始された日時"
+          },
+          {
+            "name": "ステップ予定完了日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "プロセス定義に基づくステップの予定完了日時"
+          },
+          {
+            "name": "ステップ実績完了日時",
+            "type": "timestamp",
+            "required": false,
+            "description": "ステップが実際に完了した日時、未完了の場合はNULL"
+          },
+          {
+            "name": "ステップ実行状態",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ステップの状態：未開始、進行中、完了、遅延、スキップ"
+          },
+          {
+            "name": "遅延フラグ",
+            "type": "boolean",
+            "required": true,
+            "description": "予定完了日時を超過しているかを示すフラグ"
+          },
+          {
+            "name": "遅延日数",
+            "type": "integer",
+            "required": false,
+            "description": "予定完了日時からの遅延日数、遅延がない場合はNULL"
+          },
+          {
+            "name": "担当営業ID",
+            "type": "uuid",
+            "required": true,
+            "description": "このステップを実行する営業担当者の外部キー"
+          },
+          {
+            "name": "AIエージェント推論ログID",
+            "type": "uuid",
+            "required": false,
+            "description": "関連するAIエージェント推論ログの外部キー、推論が実行された場合のみ"
+          },
+          {
+            "name": "推奨アクション",
+            "type": "text",
+            "required": false,
+            "description": "AIエージェントから提示された推奨アクション内容"
+          },
+          {
+            "name": "推奨アクション実施状況",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "推奨アクションの実施状況：未実施、実施中、完了、却下"
+          },
+          {
+            "name": "プロセス全体進捗率",
+            "type": "integer",
+            "required": true,
+            "description": "営業案件全体のプロセス進捗率（0-100）"
+          },
+          {
+            "name": "備考",
+            "type": "text",
+            "required": false,
+            "description": "ステップ実行に関する補足情報や特記事項"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "レコード作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "レコード最終更新日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "レコード作成者のログインユーザーID"
+          },
+          {
+            "name": "更新者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "レコード最終更新者のログインユーザーID"
+          }
+        ]
+      },
+      {
+        "tableName": "レポート生成履歴",
+        "purpose": "営業プロセス監査・分析管理システムにおいて生成されたレポートの履歴を記録し、レポート生成の実行状況、パラメータ、結果を追跡管理するための履歴テーブル",
+        "columns": [
+          {
+            "name": "レポート生成履歴ID",
+            "type": "uuid",
+            "required": true,
+            "description": "レポート生成履歴の一意識別子"
+          },
+          {
+            "name": "レポート種別",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "生成されたレポートの種別（営業活動分析、成約実績、行動パターン分析、AIエージェント推論精度等）"
+          },
+          {
+            "name": "生成ユーザーID",
+            "type": "uuid",
+            "required": true,
+            "description": "レポート生成を実行したログインユーザーの識別子"
+          },
+          {
+            "name": "対象営業担当者ID",
+            "type": "uuid",
+            "required": false,
+            "description": "レポートの対象となる営業担当者の識別子（全体レポートの場合はNULL）"
+          },
+          {
+            "name": "対象顧客ID",
+            "type": "uuid",
+            "required": false,
+            "description": "レポートの対象となる顧客の識別子（該当する場合）"
+          },
+          {
+            "name": "対象営業案件ID",
+            "type": "uuid",
+            "required": false,
+            "description": "レポートの対象となる営業案件の識別子（該当する場合）"
+          },
+          {
+            "name": "集計期間開始日",
+            "type": "timestamp",
+            "required": false,
+            "description": "レポート集計対象期間の開始日時"
+          },
+          {
+            "name": "集計期間終了日",
+            "type": "timestamp",
+            "required": false,
+            "description": "レポート集計対象期間の終了日時"
+          },
+          {
+            "name": "フィルタ条件",
+            "type": "text",
+            "required": false,
+            "description": "レポート生成時に適用されたフィルタ条件の詳細"
+          },
+          {
+            "name": "生成ステータス",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "レポート生成の状態（成功、失敗、処理中等）"
+          },
+          {
+            "name": "生成結果ファイルパス",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "生成されたレポートファイルの保存パスまたはURL"
+          },
+          {
+            "name": "生成結果レコード数",
+            "type": "integer",
+            "required": false,
+            "description": "レポートに含まれるデータレコード数"
+          },
+          {
+            "name": "エラーメッセージ",
+            "type": "text",
+            "required": false,
+            "description": "レポート生成失敗時のエラーメッセージ"
+          },
+          {
+            "name": "処理実行時間秒",
+            "type": "integer",
+            "required": false,
+            "description": "レポート生成処理の実行時間（秒単位）"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "レポート生成履歴レコードの作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "レポート生成履歴レコードの最終更新日時"
+          }
+        ]
+      },
+      {
+        "tableName": "ダッシュボード設定",
+        "purpose": "ログインユーザーごとのダッシュボード表示設定を管理し、ウィジェット配置、表示項目、フィルター条件などをユーザーの好みに応じてカスタマイズできる機能を提供する",
+        "columns": [
+          {
+            "name": "ダッシュボード設定ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ダッシュボード設定の一意識別子"
+          },
+          {
+            "name": "ログインユーザーID",
+            "type": "uuid",
+            "required": true,
+            "description": "設定を所有するログインユーザーの外部キー"
+          },
+          {
+            "name": "設定名",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ダッシュボード設定の名称（例：営業マネージャー用、個人営業用）"
+          },
+          {
+            "name": "説明",
+            "type": "text",
+            "required": false,
+            "description": "ダッシュボード設定の詳細説明"
+          },
+          {
+            "name": "デフォルト設定フラグ",
+            "type": "boolean",
+            "required": true,
+            "description": "ユーザーがログイン時に最初に表示するデフォルト設定かどうか"
+          },
+          {
+            "name": "レイアウトタイプ",
+            "type": "varchar(100)",
+            "required": true,
+            "description": "ダッシュボードのレイアウト形式（例：2カラム、3カラム、カスタム）"
+          },
+          {
+            "name": "表示期間",
+            "type": "varchar(100)",
+            "required": false,
+            "description": "デフォルト表示期間（例：本日、今週、今月、カスタム）"
+          },
+          {
+            "name": "自動更新間隔秒",
+            "type": "integer",
+            "required": false,
+            "description": "ダッシュボードの自動更新間隔（秒単位、0で無効）"
+          },
+          {
+            "name": "有効フラグ",
+            "type": "boolean",
+            "required": true,
+            "description": "この設定が有効かどうか"
+          },
+          {
+            "name": "作成日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ダッシュボード設定の作成日時"
+          },
+          {
+            "name": "更新日時",
+            "type": "timestamp",
+            "required": true,
+            "description": "ダッシュボード設定の最終更新日時"
+          },
+          {
+            "name": "作成者ID",
+            "type": "uuid",
+            "required": true,
+            "description": "ダッシュボード設定を作成したユーザーID"
+          }
+        ]
+      }
+    ]
+  }
+]

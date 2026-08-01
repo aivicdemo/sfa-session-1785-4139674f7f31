@@ -1,0 +1,2334 @@
+{
+  "systemId": "itg-3",
+  "systemName": "AIエージェント推奨支援システム",
+  "cssTheme": "```css\n:root {\n  --primary: #0066cc;\n  --primary-hover: #0052a3;\n  --bg-main: #f0f4f9;\n  --bg-card: #ffffff;\n  --bg-sidebar: #e8ecf1;\n  --border: #d0d8e0;\n  --text: #1a1a1a;\n  --text-muted: #666666;\n  --top-bar-bg: #ffffff;\n  --top-bar-border: #d0d8e0;\n}\n```",
+  "screens": [
+    {
+      "id": "scr-1785571913372",
+      "name": "AIエージェント推奨支援ダッシュボード",
+      "purpose": "新規案件の顧客・商談条件を入力し、過去商談データから自動抽出した成功パターンと照合して適用可能な提案アプローチを推奨。推奨根拠を可視化表示し、推奨内容の承認・却下・修正アクションと推奨履歴の記録・追跡を実現するダッシュボード",
+      "items": [
+        "新規案件情報入力フォーム",
+        "顧客マスタ検索・選択",
+        "商談条件入力欄",
+        "AIエージェント推奨実行ボタン",
+        "推奨提案アプローチ表示パネル",
+        "推奨根拠の可視化表示",
+        "成功パターン詳細表示",
+        "類似案件一覧・比較ビュー",
+        "推奨内容詳細表示",
+        "推奨根拠詳細表示",
+        "推奨承認ボタン",
+        "推奨却下ボタン"
+      ]
+    }
+  ],
+  "screenPanels": [
+    {
+      "screenId": "scr-1785571913372",
+      "panelHtml": "<div style=\"display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px;\">\n  <div class=\"card\" style=\"padding: 12px;\">\n    <div style=\"font-size: 12px; color: var(--text-muted); margin-bottom: 4px;\">推奨実施率</div>\n    <div style=\"font-size: 24px; font-weight: 600; color: var(--primary);\" data-testid=\"kpi-execution-rate\">-</div>\n    <div style=\"font-size: 11px; color: var(--text-light); margin-top: 4px;\">今月</div>\n  </div>\n  <div class=\"card\" style=\"padding: 12px;\">\n    <div style=\"font-size: 12px; color: var(--text-muted); margin-bottom: 4px;\">推奨成功率</div>\n    <div style=\"font-size: 24px; font-weight: 600; color: var(--success);\" data-testid=\"kpi-success-rate\">-</div>\n    <div style=\"font-size: 11px; color: var(--text-light); margin-top: 4px;\">実施済み推奨</div>\n  </div>\n  <div class=\"card\" style=\"padding: 12px;\">\n    <div style=\"font-size: 12px; color: var(--text-muted); margin-bottom: 4px;\">平均信頼度</div>\n    <div style=\"font-size: 24px; font-weight: 600; color: var(--info);\" data-testid=\"kpi-avg-confidence\">-</div>\n    <div style=\"font-size: 11px; color: var(--text-light); margin-top: 4px;\">スコア</div>\n  </div>\n</div>\n\n<div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;\">\n  <div class=\"card\" style=\"padding: 12px; position: relative; height: 240px;\">\n    <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px;\">推奨タイプ別分布</div>\n    <div class=\"chart-wrap\" style=\"position: relative; height: 200px;\">\n      <canvas id=\"chart-recommendation-type\"></canvas>\n    </div>\n  </div>\n  <div class=\"card\" style=\"padding: 12px; position: relative; height: 240px;\">\n    <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px;\">推奨実施状況推移</div>\n    <div class=\"chart-wrap\" style=\"position: relative; height: 200px;\">\n      <canvas id=\"chart-execution-trend\"></canvas>\n    </div>\n  </div>\n</div>\n\n<div style=\"display: grid; grid-template-columns: 350px 1fr 1fr; gap: 12px; margin-bottom: 16px;\">\n  <!-- 左: 新規案件入力フォーム -->\n  <div class=\"card\" style=\"padding: 12px; display: flex; flex-direction: column; gap: 10px;\">\n    <div style=\"font-size: 13px; font-weight: 600; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 8px;\">新規案件情報</div>\n    \n    <div>\n      <label style=\"font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 3px;\">顧客名</label>\n      <input type=\"text\" data-testid=\"customer-search\" placeholder=\"顧客を検索\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(255,255,255,0.18); background: var(--bg-card); color: var(--text); border-radius: 4px; font-size: 12px;\" />\n      <div id=\"customer-dropdown\" style=\"display: none; position: absolute; background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; max-height: 120px; overflow-y: auto; z-index: 10; width: 320px; margin-top: 2px; box-shadow: var(--shadow-md);\"></div>\n    </div>\n\n    <div>\n      <label style=\"font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 3px;\">業種</label>\n      <select data-testid=\"industry-select\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(255,255,255,0.18); background: var(--bg-card); color: var(--text); border-radius: 4px; font-size: 12px;\">\n        <option value=\"\">選択してください</option>\n        <option value=\"製造業\">製造業</option>\n        <option value=\"小売業\">小売業</option>\n        <option value=\"金融\">金融</option>\n        <option value=\"医療\">医療</option>\n        <option value=\"IT\">IT</option>\n        <option value=\"その他\">その他</option>\n      </select>\n    </div>\n\n    <div>\n      <label style=\"font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 3px;\">企業規模</label>\n      <select data-testid=\"company-size-select\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(255,255,255,0.18); background: var(--bg-card); color: var(--text); border-radius: 4px; font-size: 12px;\">\n        <option value=\"\">選択してください</option>\n        <option value=\"大企業\">大企業</option>\n        <option value=\"中堅企業\">中堅企業</option>\n        <option value=\"中小企業\">中小企業</option>\n        <option value=\"スタートアップ\">スタートアップ</option>\n      </select>\n    </div>\n\n    <div>\n      <label style=\"font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 3px;\">予想金額（万円）</label>\n      <input type=\"number\" data-testid=\"expected-amount\" placeholder=\"0\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(255,255,255,0.18); background: var(--bg-card); color: var(--text); border-radius: 4px; font-size: 12px;\" />\n    </div>\n\n    <div>\n      <label style=\"font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 3px;\">商談ステージ</label>\n      <select data-testid=\"deal-stage-select\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(255,255,255,0.18); background: var(--bg-card); color: var(--text); border-radius: 4px; font-size: 12px;\">\n        <option value=\"\">選択してください</option>\n        <option value=\"初期接触\">初期接触</option>\n        <option value=\"提案\">提案</option>\n        <option value=\"交渉\">交渉</option>\n        <option value=\"決定待ち\">決定待ち</option>\n      </select>\n    </div>\n\n    <div>\n      <label style=\"font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 3px;\">商談条件（複数選択可）</label>\n      <div style=\"display: flex; flex-direction: column; gap: 4px;\">\n        <label style=\"font-size: 11px; display: flex; align-items: center; gap: 6px;\">\n          <input type=\"checkbox\" data-testid=\"condition-budget\" value=\"予算確保済み\" style=\"accent-color: var(--primary);\" />\n          <span>予算確保済み</span>\n        </label>\n        <label style=\"font-size: 11px; display: flex; align-items: center; gap: 6px;\">\n          <input type=\"checkbox\" data-testid=\"condition-decision\" value=\"決定者確定\" style=\"accent-color: var(--primary);\" />\n          <span>決定者確定</span>\n        </label>\n        <label style=\"font-size: 11px; display: flex; align-items: center; gap: 6px;\">\n          <input type=\"checkbox\" data-testid=\"condition-urgent\" value=\"緊急案件\" style=\"accent-color: var(--primary);\" />\n          <span>緊急案件</span>\n        </label>\n        <label style=\"font-size: 11px; display: flex; align-items: center; gap: 6px;\">\n          <input type=\"checkbox\" data-testid=\"condition-renewal\" value=\"更新案件\" style=\"accent-color: var(--primary);\" />\n          <span>更新案件</span>\n        </label>\n      </div>\n    </div>\n\n    <div>\n      <label style=\"font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 3px;\">備考</label>\n      <textarea data-testid=\"deal-notes\" placeholder=\"商談の詳細情報\" style=\"width: 100%; padding: 6px 8px; border: 1px solid rgba(255,255,255,0.18); background: var(--bg-card); color: var(--text); border-radius: 4px; font-size: 12px; resize: vertical; min-height: 60px;\"></textarea>\n    </div>\n\n    <button data-testid=\"execute-recommendation\" class=\"action-btn\" style=\"width: 100%; padding: 8px; font-size: 12px; font-weight: 600; margin-top: 4px;\">推奨を実行</button>\n  </div>\n\n  <!-- 中央: 推奨内容パネル -->\n  <div class=\"card\" style=\"padding: 12px; display: flex; flex-direction: column; gap: 10px;\">\n    <div style=\"font-size: 13px; font-weight: 600; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 8px;\">推奨提案アプローチ</div>\n    \n    <div id=\"recommendation-content\" style=\"flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;\">\n      <div style=\"padding: 8px; background: var(--bg-main); border-radius: 4px; border-left: 3px solid var(--primary); color: var(--text-muted); font-size: 12px;\">\n        案件情報を入力して「推奨を実行」ボタンをクリックしてください\n      </div>\n    </div>\n\n    <div style=\"display: flex; gap: 6px; border-top: 1px solid var(--border); padding-top: 8px;\">\n      <button data-testid=\"approve-recommendation\" class=\"action-btn\" style=\"flex: 1; padding: 8px; font-size: 12px; font-weight: 600; display: none;\">承認</button>\n      <button data-testid=\"reject-recommendation\" class=\"action-btn secondary\" style=\"flex: 1; padding: 8px; font-size: 12px; font-weight: 600; display: none;\">却下</button>\n      <button data-testid=\"modify-recommendation\" class=\"action-btn secondary\" style=\"flex: 1; padding: 8px; font-size: 12px; font-weight: 600; display: none;\">修正</button>\n    </div>\n  </div>\n\n  <!-- 右: 推奨根拠・類似案件 -->\n  <div class=\"card\" style=\"padding: 12px; display: flex; flex-direction: column; gap: 10px;\">\n    <div style=\"font-size: 13px; font-weight: 600; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 8px;\">推奨根拠・参考情報</div>\n    \n    <div id=\"recommendation-basis\" style=\"flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;\">\n      <div style=\"padding: 8px; background: var(--bg-main); border-radius: 4px; color: var(--text-muted); font-size: 12px;\">\n        推奨実行後に根拠情報が表示されます\n      </div>\n    </div>\n  </div>\n</div>\n\n<!-- 推奨履歴テーブル -->\n<div class=\"card\" style=\"padding: 12px;\">\n  <div style=\"font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;\">\n    <span>推奨履歴</span>\n    <button data-testid=\"export-history\" class=\"action-btn secondary\" style=\"padding: 6px 12px; font-size: 11px;\">CSVエクスポート</button>\n  </div>\n  <div class=\"table-wrap\" style=\"max-height: 300px; overflow-y: auto;\">\n    <table data-testid=\"recommendation-history\" style=\"width: 100%; font-size: 12px;\">\n      <thead style=\"position: sticky; top: 0; background: var(--bg-main);\">\n        <tr>\n          <th style=\"padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;\">顧客名</th>\n          <th style=\"padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;\">推奨タイプ</th>\n          <th style=\"padding: 6px 8px; text-align: center; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;\">信頼度</th>\n          <th style=\"padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;\">実施状況</th>\n          <th style=\"padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;\">結果</th>\n          <th style=\"padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;\">生成日時</th>\n        </tr>\n      </thead>\n      <tbody id=\"history-tbody\">\n        <tr>\n          <td colspan=\"6\" style=\"padding: 12px; text-align: center; color: var(--text-muted); font-size: 12px;\">推奨履歴はまだありません</td>\n        </tr>\n      </tbody>\n    </table>\n  </div>\n</div>\n\n<!-- 詳細モーダル（推奨内容詳細） -->\n<div class=\"modal-overlay\" id=\"detail-modal\" style=\"display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0, 0, 0, 0.55); display: flex; align-items: center; justify-content: center;\">\n  <div style=\"background: var(--bg-card); color: var(--text); padding: 24px; border-radius: 8px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: var(--shadow-lg);\">\n    <div style=\"display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px;\">\n      <h3 style=\"font-size: 16px; font-weight: 600; margin: 0;\">推奨内容詳細</h3>\n      <button data-testid=\"close-detail-modal\" style=\"background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;\">×</button>\n    </div>\n    <div id=\"detail-content\" style=\"display: flex; flex-direction: column; gap: 12px;\">\n      <!-- 詳細内容がここに挿入される -->\n    </div>\n  </div>\n</div>\n\n<!-- 類似案件比較モーダル -->\n<div class=\"modal-overlay\" id=\"similar-deals-modal\" style=\"display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0, 0, 0, 0.55); display: flex; align-items: center; justify-content: center;\">\n  <div style=\"background: var(--bg-card); color: var(--text); padding: 24px; border-radius: 8px; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: var(--shadow-lg);\">\n    <div style=\"display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px;\">\n      <h3 style=\"font-size: 16px; font-weight: 600; margin: 0;\">類似案件一覧</h3>\n      <button data-testid=\"close-similar-modal\" style=\"background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;\">×</button>\n    </div>\n    <div class=\"table-wrap\" style=\"max-height: 500px; overflow-y: auto;\">\n      <table style=\"width: 100%; font-size: 12px;\">\n        <thead style=\"position: sticky; top: 0; background: var(--bg-main);\">\n          <tr>\n            <th style=\"padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;\">顧客名</th>\n            <th style=\"padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;\">業種</th>\n            <th style=\"padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;\">ステージ</th>\n            <th style=\"padding: 6px 8px; text-align: center; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;\">マッチ度</th>\n            <th style=\"padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;\">結果</th>\n          </tr>\n        </thead>\n        <tbody id=\"similar-deals-tbody\">\n          <tr>\n            <td colspan=\"5\" style=\"padding: 12px; text-align: center; color: var(--text-muted); font-size: 12px;\">類似案件はありません</td>\n          </tr>\n        </tbody>\n      </table>\n    </div>\n  </div>\n</div>",
+      "initJs": "",
+      "method": "ai"
+    }
+  ],
+  "tableDefinitions": [
+    {
+      "tableName": "ログインユーザー",
+      "purpose": "営業プロセス監査・分析管理システムのユーザー認証・アクセス管理を行い、ログイン履歴とユーザー権限を一元管理する",
+      "columns": [
+        {
+          "name": "ユーザーID",
+          "type": "uuid",
+          "required": true,
+          "description": "ユーザーの一意識別子"
+        },
+        {
+          "name": "ログインID",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ログイン時に使用するユーザー識別名"
+        },
+        {
+          "name": "メールアドレス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ユーザーのメールアドレス"
+        },
+        {
+          "name": "パスワードハッシュ",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "暗号化されたパスワード"
+        },
+        {
+          "name": "ユーザー名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ユーザーの表示名"
+        },
+        {
+          "name": "部門",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "ユーザーが属する部門"
+        },
+        {
+          "name": "ロール",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ユーザーに付与されたロール"
+        },
+        {
+          "name": "ステータス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ユーザーのステータス(有効/無効/休止)"
+        },
+        {
+          "name": "最終ログイン日時",
+          "type": "timestamp",
+          "required": false,
+          "description": "最後にログインした日時"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "ユーザーレコード作成日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "ユーザーレコード最終更新日時"
+        },
+        {
+          "name": "作成者",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "ユーザーレコード作成者"
+        }
+      ]
+    },
+    {
+      "tableName": "顧客マスタ",
+      "purpose": "営業データ品質管理システムにおける顧客情報の一元管理と営業活動の基盤となるマスタテーブル",
+      "columns": [
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": true,
+          "description": "顧客を一意に識別するプライマリキー"
+        },
+        {
+          "name": "顧客名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "顧客の正式名称"
+        },
+        {
+          "name": "顧客名カナ",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "顧客名のカナ表記、検索・ソート用"
+        },
+        {
+          "name": "業種",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "顧客の業種分類"
+        },
+        {
+          "name": "住所",
+          "type": "text",
+          "required": false,
+          "description": "顧客の所在地住所"
+        },
+        {
+          "name": "電話番号",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "顧客の連絡先電話番号"
+        },
+        {
+          "name": "メールアドレス",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "顧客の連絡先メールアドレス"
+        },
+        {
+          "name": "担当営業ID",
+          "type": "uuid",
+          "required": false,
+          "description": "ユーザーテーブルへの外部キー、担当営業を指定"
+        },
+        {
+          "name": "顧客ステータス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "顧客の営業ステータス（見込み客、既存顧客、休止中等）"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "顧客マスタレコードの作成日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "顧客マスタレコードの最終更新日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "ユーザーテーブルへの外部キー、レコード作成者を指定"
+        },
+        {
+          "name": "更新者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "ユーザーテーブルへの外部キー、レコード最終更新者を指定"
+        }
+      ]
+    },
+    {
+      "tableName": "操作ログ",
+      "purpose": "営業データ品質管理システムにおけるユーザーの全操作を記録し、監査証跡、トラブルシューティング、システム利用状況の追跡を実現する",
+      "columns": [
+        {
+          "name": "操作ログID",
+          "type": "uuid",
+          "required": true,
+          "description": "操作ログの一意識別子"
+        },
+        {
+          "name": "ユーザーID",
+          "type": "uuid",
+          "required": true,
+          "description": "操作を実行したユーザーの識別子、ユーザーテーブルへの外部キー"
+        },
+        {
+          "name": "操作種別",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "実行された操作の種類（作成、更新、削除、検証実行、重複判定、正規化実行等）"
+        },
+        {
+          "name": "対象テーブル",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "操作の対象となったテーブル名"
+        },
+        {
+          "name": "対象レコードID",
+          "type": "uuid",
+          "required": false,
+          "description": "操作の対象となったレコードの識別子"
+        },
+        {
+          "name": "操作内容",
+          "type": "text",
+          "required": false,
+          "description": "操作の詳細内容、変更前後の値、パラメータ等"
+        },
+        {
+          "name": "実行結果",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "操作の実行結果（成功、失敗、警告等）"
+        },
+        {
+          "name": "エラーメッセージ",
+          "type": "text",
+          "required": false,
+          "description": "操作失敗時のエラーメッセージ"
+        },
+        {
+          "name": "実行時間ミリ秒",
+          "type": "integer",
+          "required": false,
+          "description": "操作の実行時間（ミリ秒単位）"
+        },
+        {
+          "name": "IPアドレス",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "操作を実行したクライアントのIPアドレス"
+        },
+        {
+          "name": "セッションID",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "操作が実行されたセッションの識別子"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "操作ログが記録された日時"
+        }
+      ]
+    },
+    {
+      "tableName": "商談",
+      "purpose": "営業パイプライン管理と商談進捗追跡。顧客との商談情報を一元管理し、AIエージェントが推奨支援を行うための基礎データとなる。",
+      "columns": [
+        {
+          "name": "商談ID",
+          "type": "uuid",
+          "required": true,
+          "description": "商談の一意識別子。主キー。"
+        },
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": true,
+          "description": "顧客マスタへの外部キー。商談に関連する顧客を特定。"
+        },
+        {
+          "name": "商談名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "商談の名称。営業担当者が管理・検索するための識別情報。"
+        },
+        {
+          "name": "ステージ",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "商談の進捗段階。例：初期接触、提案、交渉、クローズ等。"
+        },
+        {
+          "name": "予想金額",
+          "type": "integer",
+          "required": false,
+          "description": "商談の予想売上金額。パイプライン分析に使用。"
+        },
+        {
+          "name": "成約確度",
+          "type": "integer",
+          "required": false,
+          "description": "成約の見込み確度。パーセンテージ値（0-100）。"
+        },
+        {
+          "name": "予想クローズ日",
+          "type": "timestamp",
+          "required": false,
+          "description": "商談のクローズ予定日。営業計画と進捗管理に使用。"
+        },
+        {
+          "name": "説明",
+          "type": "text",
+          "required": false,
+          "description": "商談の詳細情報やメモ。営業担当者による自由記述。"
+        },
+        {
+          "name": "担当者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "ログインユーザーへの外部キー。商談を担当する営業担当者。"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "商談レコードの作成日時。監査用。"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "商談レコードの最終更新日時。監査用。"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "ログインユーザーへの外部キー。商談を作成したユーザー。"
+        }
+      ]
+    },
+    {
+      "tableName": "商談詳細",
+      "purpose": "AIエージェント推奨支援システムにおいて、商談の詳細情報と推奨内容を管理し、営業活動の進捗追跡と意思決定支援を行うためのテーブル",
+      "columns": [
+        {
+          "name": "商談詳細ID",
+          "type": "uuid",
+          "required": true,
+          "description": "商談詳細レコードの一意識別子"
+        },
+        {
+          "name": "商談ID",
+          "type": "uuid",
+          "required": true,
+          "description": "親テーブル商談への外部キー参照"
+        },
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": true,
+          "description": "顧客マスタへの外部キー参照"
+        },
+        {
+          "name": "推奨内容",
+          "type": "text",
+          "required": true,
+          "description": "AIエージェントが生成した営業推奨内容"
+        },
+        {
+          "name": "推奨理由",
+          "type": "text",
+          "required": false,
+          "description": "推奨内容の根拠となる理由説明"
+        },
+        {
+          "name": "提案商品",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "推奨される提案商品名"
+        },
+        {
+          "name": "推奨優先度",
+          "type": "integer",
+          "required": false,
+          "description": "推奨の優先度レベル（1-5など）"
+        },
+        {
+          "name": "推奨実施状況",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "推奨に対する実施状況（未実施、実施中、完了、却下など）"
+        },
+        {
+          "name": "推奨実施日",
+          "type": "timestamp",
+          "required": false,
+          "description": "推奨を実施した日時"
+        },
+        {
+          "name": "推奨結果",
+          "type": "text",
+          "required": false,
+          "description": "推奨実施後の結果や成果"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "レコード作成日時"
+        },
+        {
+          "name": "作成者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "ログインユーザーへの外部キー参照、レコード作成者"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "レコード最終更新日時"
+        },
+        {
+          "name": "更新者ID",
+          "type": "uuid",
+          "required": true,
+          "description": "ログインユーザーへの外部キー参照、レコード最終更新者"
+        }
+      ]
+    },
+    {
+      "tableName": "提案アプローチ",
+      "purpose": "AIエージェントが生成した推奨提案アプローチを管理し、商談ごとの提案戦略と実行状況を追跡するテーブル",
+      "columns": [
+        {
+          "name": "提案アプローチID",
+          "type": "uuid",
+          "required": true,
+          "description": "提案アプローチの一意識別子"
+        },
+        {
+          "name": "商談ID",
+          "type": "uuid",
+          "required": true,
+          "description": "関連する商談の識別子（商談テーブルへの外部キー）"
+        },
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": true,
+          "description": "関連する顧客の識別子（顧客マスタテーブルへの外部キー）"
+        },
+        {
+          "name": "推奨アプローチ名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "AIが推奨する提案アプローチの名称"
+        },
+        {
+          "name": "アプローチ説明",
+          "type": "text",
+          "required": true,
+          "description": "提案アプローチの詳細説明と実行方針"
+        },
+        {
+          "name": "推奨理由",
+          "type": "text",
+          "required": true,
+          "description": "AIがこのアプローチを推奨した根拠と分析結果"
+        },
+        {
+          "name": "優先度",
+          "type": "integer",
+          "required": true,
+          "description": "複数アプローチ間での優先順位（1が最高）"
+        },
+        {
+          "name": "信頼度スコア",
+          "type": "integer",
+          "required": true,
+          "description": "AIの推奨信頼度を0-100で表示"
+        },
+        {
+          "name": "ステータス",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "アプローチの状態（推奨、実行中、完了、却下等）"
+        },
+        {
+          "name": "実行予定日",
+          "type": "timestamp",
+          "required": false,
+          "description": "提案アプローチの実行予定日時"
+        },
+        {
+          "name": "実行完了日",
+          "type": "timestamp",
+          "required": false,
+          "description": "提案アプローチの実行完了日時"
+        },
+        {
+          "name": "生成ユーザーID",
+          "type": "uuid",
+          "required": true,
+          "description": "このアプローチを生成したAIエージェントを操作したユーザーの識別子"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "提案アプローチが作成された日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "提案アプローチが最後に更新された日時"
+        },
+        {
+          "name": "作成者",
+          "type": "uuid",
+          "required": true,
+          "description": "提案アプローチを作成したユーザーの識別子"
+        },
+        {
+          "name": "更新者",
+          "type": "uuid",
+          "required": true,
+          "description": "提案アプローチを最後に更新したユーザーの識別子"
+        }
+      ]
+    },
+    {
+      "tableName": "成功パターン",
+      "purpose": "AIエージェントが推奨する営業成功パターンを管理し、過去の商談から抽出した成功要因や条件を蓄積・参照するテーブル",
+      "columns": [
+        {
+          "name": "成功パターンID",
+          "type": "uuid",
+          "required": true,
+          "description": "成功パターンの一意識別子"
+        },
+        {
+          "name": "パターン名",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "成功パターンの名称"
+        },
+        {
+          "name": "説明",
+          "type": "text",
+          "required": false,
+          "description": "成功パターンの詳細説明"
+        },
+        {
+          "name": "業種",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "適用対象の業種"
+        },
+        {
+          "name": "商品カテゴリ",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "適用対象の商品カテゴリ"
+        },
+        {
+          "name": "成功要因",
+          "type": "text",
+          "required": true,
+          "description": "このパターンが成功した主要な要因"
+        },
+        {
+          "name": "推奨アプローチ",
+          "type": "text",
+          "required": false,
+          "description": "このパターンに基づいた推奨営業アプローチ"
+        },
+        {
+          "name": "成功率",
+          "type": "integer",
+          "required": false,
+          "description": "このパターンの成功率（パーセンテージ）"
+        },
+        {
+          "name": "参照商談数",
+          "type": "integer",
+          "required": false,
+          "description": "このパターンの抽出元となった商談数"
+        },
+        {
+          "name": "有効フラグ",
+          "type": "boolean",
+          "required": true,
+          "description": "パターンが推奨対象として有効かどうか"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "成功パターンの作成日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "成功パターンの最終更新日時"
+        },
+        {
+          "name": "作成者",
+          "type": "uuid",
+          "required": true,
+          "description": "成功パターンを作成したユーザーID"
+        }
+      ]
+    },
+    {
+      "tableName": "商談条件",
+      "purpose": "営業担当者が商談を進める際の条件設定・管理を行い、成功パターンマッチングや提案アプローチの推奨判定に使用される条件マスタテーブル",
+      "columns": [
+        {
+          "name": "商談条件ID",
+          "type": "uuid",
+          "required": true,
+          "description": "商談条件を一意に識別するプライマリキー"
+        },
+        {
+          "name": "商談ID",
+          "type": "uuid",
+          "required": true,
+          "description": "関連する商談を特定するための外部キー"
+        },
+        {
+          "name": "条件種別",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "条件の分類（予算規模、業界、企業規模、決定者属性など）"
+        },
+        {
+          "name": "条件値",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "条件種別に対応する具体的な値"
+        },
+        {
+          "name": "優先度",
+          "type": "integer",
+          "required": false,
+          "description": "複数条件がある場合の優先順位（1が最高）"
+        },
+        {
+          "name": "マッチ度",
+          "type": "integer",
+          "required": false,
+          "description": "成功パターンとのマッチ度スコア（0-100）"
+        },
+        {
+          "name": "備考",
+          "type": "text",
+          "required": false,
+          "description": "条件に関する追加情報や特記事項"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "条件が作成された日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "条件が最後に更新された日時"
+        },
+        {
+          "name": "作成者",
+          "type": "uuid",
+          "required": true,
+          "description": "条件を作成したログインユーザーのID"
+        }
+      ]
+    },
+    {
+      "tableName": "推奨履歴",
+      "purpose": "AIエージェントが顧客に対して行った推奨内容と結果を記録し、推奨精度の向上と営業活動の追跡を支援するための履歴管理テーブル",
+      "columns": [
+        {
+          "name": "推奨履歴ID",
+          "type": "uuid",
+          "required": true,
+          "description": "推奨履歴の一意識別子"
+        },
+        {
+          "name": "ログインユーザーID",
+          "type": "uuid",
+          "required": true,
+          "description": "推奨を受けた営業担当者のID"
+        },
+        {
+          "name": "顧客ID",
+          "type": "uuid",
+          "required": true,
+          "description": "推奨対象の顧客ID"
+        },
+        {
+          "name": "商談ID",
+          "type": "uuid",
+          "required": false,
+          "description": "関連する商談ID（推奨が特定の商談に紐付く場合）"
+        },
+        {
+          "name": "成功パターンID",
+          "type": "uuid",
+          "required": false,
+          "description": "参照した成功パターンのID"
+        },
+        {
+          "name": "推奨内容",
+          "type": "text",
+          "required": true,
+          "description": "AIが生成した推奨内容の詳細"
+        },
+        {
+          "name": "推奨タイプ",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "推奨の種類（提案アプローチ、商談条件、次のアクション等）"
+        },
+        {
+          "name": "信頼度スコア",
+          "type": "integer",
+          "required": false,
+          "description": "推奨の信頼度を0-100で表すスコア"
+        },
+        {
+          "name": "推奨実施フラグ",
+          "type": "boolean",
+          "required": true,
+          "description": "営業担当者が推奨を実施したかどうか"
+        },
+        {
+          "name": "実施結果",
+          "type": "varchar(100)",
+          "required": false,
+          "description": "推奨実施後の結果（成功、失敗、保留等）"
+        },
+        {
+          "name": "結果コメント",
+          "type": "text",
+          "required": false,
+          "description": "営業担当者による実施結果の詳細コメント"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "推奨が生成された日時"
+        },
+        {
+          "name": "実施日時",
+          "type": "timestamp",
+          "required": false,
+          "description": "推奨が実施された日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "推奨履歴が最後に更新された日時"
+        },
+        {
+          "name": "作成者",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "推奨を生成したAIエージェントまたはシステムの識別子"
+        }
+      ]
+    },
+    {
+      "tableName": "推奨根拠",
+      "purpose": "AIエージェントが顧客に対して商談や提案を推奨する際の根拠情報を記録し、推奨の妥当性と効果を追跡・分析するための履歴テーブル",
+      "columns": [
+        {
+          "name": "推奨根拠ID",
+          "type": "uuid",
+          "required": true,
+          "description": "推奨根拠の一意識別子"
+        },
+        {
+          "name": "推奨履歴ID",
+          "type": "uuid",
+          "required": true,
+          "description": "推奨履歴テーブルへの外部キー参照"
+        },
+        {
+          "name": "成功パターンID",
+          "type": "uuid",
+          "required": false,
+          "description": "マッチした成功パターンテーブルへの外部キー参照"
+        },
+        {
+          "name": "根拠タイプ",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "根拠の分類（過去成功事例、顧客属性マッチ、市場トレンド、営業段階等）"
+        },
+        {
+          "name": "根拠内容",
+          "type": "text",
+          "required": true,
+          "description": "推奨の具体的な根拠説明"
+        },
+        {
+          "name": "信頼度スコア",
+          "type": "integer",
+          "required": true,
+          "description": "推奨根拠の信頼度を0-100で表現"
+        },
+        {
+          "name": "参照データ",
+          "type": "text",
+          "required": false,
+          "description": "根拠となった参照データの詳細情報"
+        },
+        {
+          "name": "作成日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "推奨根拠レコードの作成日時"
+        },
+        {
+          "name": "更新日時",
+          "type": "timestamp",
+          "required": true,
+          "description": "推奨根拠レコードの最終更新日時"
+        },
+        {
+          "name": "作成者",
+          "type": "varchar(100)",
+          "required": true,
+          "description": "推奨根拠を生成したAIエージェントまたはユーザーID"
+        }
+      ]
+    }
+  ],
+  "presetSeedData": {
+    "ログインユーザー": [
+      {
+        "ユーザーID": "550e8400-e29b-41d4-a716-446655440000",
+        "ログインID": "rec-001",
+        "メールアドレス": "yamada.taro@company.jp",
+        "パスワードハッシュ": "$2b$12$R9h7cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jKMm2",
+        "ユーザー名": "山田太郎",
+        "部門": "営業部",
+        "ロール": "営業部長",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15 09:30:00",
+        "作成日時": "2024-04-01 10:00:00",
+        "更新日時": "2025-01-10 14:20:00",
+        "作成者": "admin"
+      },
+      {
+        "ユーザーID": "550e8400-e29b-41d4-a716-446655440000",
+        "ログインID": "tanaka.taro",
+        "メールアドレス": "tanaka.taro@company.jp",
+        "パスワードハッシュ": "$2b$12$R9h7cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jKMm2",
+        "ユーザー名": "田中太郎",
+        "部門": "営業一課",
+        "ロール": "営業担当者",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15T08:45:30+09:00",
+        "作成日時": "2024-04-01T10:00:00+09:00",
+        "更新日時": "2025-01-10T14:20:15+09:00",
+        "作成者": "佐藤花子"
+      },
+      {
+        "ユーザーID": "550e8400-e29b-41d4-a716-446655440000",
+        "ログインID": "rec-001",
+        "メールアドレス": "tanaka.jiro@company.co.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQR",
+        "ユーザー名": "田中次郎",
+        "部門": "営業二課",
+        "ロール": "営業担当者",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15T09:30:00+09:00",
+        "作成日時": "2024-04-01T10:00:00+09:00",
+        "更新日時": "2025-01-15T09:30:00+09:00",
+        "作成者": "佐藤花子"
+      },
+      {
+        "ユーザーID": "550e8400-e29b-41d4-a716-446655440000",
+        "ログインID": "audit-suzuki-001",
+        "メールアドレス": "suzuki.audit@company.jp",
+        "パスワードハッシュ": "$2b$12$R9h7cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jKstW",
+        "ユーザー名": "鈴木監査太郎",
+        "部門": "管理部監査室",
+        "ロール": "監査担当者",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15T09:30:45+09:00",
+        "作成日時": "2024-04-01T10:00:00+09:00",
+        "更新日時": "2025-01-10T14:20:30+09:00",
+        "作成者": "佐藤管理者"
+      },
+      {
+        "ユーザーID": "550e8400-e29b-41d4-a716-446655440000",
+        "ログインID": "rec-001",
+        "メールアドレス": "suzuki.hanako@company.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQR",
+        "ユーザー名": "鈴木花子",
+        "部門": "営業企画室",
+        "ロール": "分析担当者",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15T09:30:45+09:00",
+        "作成日時": "2024-04-10T14:22:18+09:00",
+        "更新日時": "2025-01-10T16:45:32+09:00",
+        "作成者": "佐藤次郎"
+      },
+      {
+        "ユーザーID": "550e8400-e29b-41d4-a716-446655440000",
+        "ログインID": "admin_tanaka",
+        "メールアドレス": "tanaka.admin@company.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQR",
+        "ユーザー名": "田中太郎",
+        "部門": "情報システム部",
+        "ロール": "システム管理者",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15T09:30:45+09:00",
+        "作成日時": "2024-04-01T10:00:00+09:00",
+        "更新日時": "2025-01-10T14:22:30+09:00",
+        "作成者": "rec-001"
+      },
+      {
+        "ユーザーID": "rec-001",
+        "ログインID": "tanaka.hanako",
+        "メールアドレス": "tanaka.hanako@company.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqr",
+        "ユーザー名": "田中花子",
+        "部門": "営業部",
+        "ロール": "営業_研修生",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15T09:30:00+09:00",
+        "作成日時": "2024-10-01T10:00:00+09:00",
+        "更新日時": "2025-01-15T09:30:00+09:00",
+        "作成者": "佐藤太郎"
+      },
+      {
+        "ユーザーID": "rec-001",
+        "ログインID": "tanaka.hanako",
+        "メールアドレス": "tanaka.hanako@company.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQR",
+        "ユーザー名": "田中花子",
+        "部門": "営業部",
+        "ロール": "営業担当者",
+        "ステータス": "休止",
+        "最終ログイン日時": "2024-08-15 14:32:00",
+        "作成日時": "2023-04-10 09:00:00",
+        "更新日時": "2024-11-01 10:15:00",
+        "作成者": "admin"
+      },
+      {
+        "ユーザーID": "rec-001",
+        "ログインID": "tanaka.hanako",
+        "メールアドレス": "tanaka.hanako@company.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQR",
+        "ユーザー名": "田中花子",
+        "部門": "営業部",
+        "ロール": "営業",
+        "ステータス": "無効",
+        "最終ログイン日時": "2024-11-15 09:30:45",
+        "作成日時": "2022-04-01 10:00:00",
+        "更新日時": "2025-01-20 14:15:30",
+        "作成者": "admin"
+      },
+      {
+        "ユーザーID": "550e8400-e29b-41d4-a716-446655440000",
+        "ログインID": "rec-001",
+        "メールアドレス": "suzuki.hanako@company.co.jp",
+        "パスワードハッシュ": "$2b$12$abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQR",
+        "ユーザー名": "鈴木花子",
+        "部門": "営業支援部",
+        "ロール": "営業支援マネージャー",
+        "ステータス": "有効",
+        "最終ログイン日時": "2025-01-15T09:30:45+09:00",
+        "作成日時": "2024-04-10T10:15:00+09:00",
+        "更新日時": "2025-01-15T09:30:45+09:00",
+        "作成者": "admin_user"
+      }
+    ],
+    "顧客マスタ": [
+      {
+        "顧客ID": "rec-cust-00247",
+        "顧客名": "株式会社トヨタ精密工業",
+        "顧客名カナ": "トヨタセイミツコウギョウ",
+        "業種": "自動車部品製造",
+        "住所": "愛知県豊田市豊田町2丁目1番地1",
+        "電話番号": "0565-28-2121",
+        "メールアドレス": "contact@toyota-seimitsu.co.jp",
+        "担当営業ID": "rec-user-00089",
+        "顧客ステータス": "既存顧客",
+        "作成日時": "2023-06-15T09:30:00+09:00",
+        "更新日時": "2025-01-20T14:45:30+09:00",
+        "作成者ID": "rec-user-00045",
+        "更新者ID": "rec-user-00089"
+      },
+      {
+        "顧客ID": "rec-001",
+        "顧客名": "株式会社デジタルソリューション東京",
+        "顧客名カナ": "デジタルソリューショントウキョウ",
+        "業種": "情報通信業",
+        "住所": "東京都渋谷区道玄坂1-2-3 渋谷ビジネスタワー8階",
+        "電話番号": "03-XXXX-5678",
+        "メールアドレス": "inquiry@digitalsolution-tokyo.co.jp",
+        "担当営業ID": "rec-u-042",
+        "顧客ステータス": "見込み客",
+        "作成日時": "2025-01-15T10:30:00+09:00",
+        "更新日時": "2025-01-22T14:45:00+09:00",
+        "作成者ID": "rec-u-042",
+        "更新者ID": "rec-u-042"
+      },
+      {
+        "顧客ID": "rec-00145",
+        "顧客名": "株式会社山田卸売",
+        "顧客名カナ": "ヤマダオロシウリ",
+        "業種": "卸売業",
+        "住所": "愛知県豊田市栄町2-15-8",
+        "電話番号": "0565-32-4891",
+        "メールアドレス": "info@yamada-oroshiuri.co.jp",
+        "担当営業ID": "rec-00089",
+        "顧客ステータス": "休止中",
+        "作成日時": "2019-06-14T09:30:00+09:00",
+        "更新日時": "2024-11-20T14:15:00+09:00",
+        "作成者ID": "rec-00012",
+        "更新者ID": "rec-00089"
+      },
+      {
+        "顧客ID": "rec-001",
+        "顧客名": "横浜市港湾局",
+        "顧客名カナ": "ヨコハマシコウワン局",
+        "業種": "公共機関・自治体",
+        "住所": "神奈川県横浜市中区海岸通1-1",
+        "電話番号": "045-211-2600",
+        "メールアドレス": "kouwan@city.yokohama.jp",
+        "担当営業ID": "rec-a001",
+        "顧客ステータス": "見込み客",
+        "作成日時": "2025-01-15T10:30:00Z",
+        "更新日時": "2025-01-15T10:30:00Z",
+        "作成者ID": "rec-u001",
+        "更新者ID": "rec-u001"
+      },
+      {
+        "顧客ID": "rec-001",
+        "顧客名": "株式会社フレッシュマート田中",
+        "顧客名カナ": "フレッシュマートタナカ",
+        "業種": "小売業",
+        "住所": "東京都渋谷区道玄坂2-15-1",
+        "電話番号": "03-1234-5678",
+        "メールアドレス": "info@freshmart-tanaka.jp",
+        "担当営业ID": "rec-u-042",
+        "顧客ステータス": "既存顧客",
+        "作成日時": "2023-06-15T09:30:00Z",
+        "更新日時": "2025-01-20T14:45:00Z",
+        "作成者ID": "rec-u-001",
+        "更新者ID": "rec-u-042"
+      },
+      {
+        "顧客ID": "rec-001",
+        "顧客名": "株式会社大地建設",
+        "顧客名カナ": "ダイチケンセツ",
+        "業種": "建設業",
+        "住所": "東京都渋谷区道玄坂2-12-1 渋谷ビジネスタワー8階",
+        "電話番号": "03-XXXX-5678",
+        "メールアドレス": "info@daichi-kensetsu.jp",
+        "担当営業ID": "rec-u001",
+        "顧客ステータス": "既存顧客",
+        "作成日時": "2023-06-15T09:30:00Z",
+        "更新日時": "2025-01-20T14:45:00Z",
+        "作成者ID": "rec-u002",
+        "更新者ID": "rec-u001"
+      },
+      {
+        "顧客ID": "rec-001",
+        "顧客名": "医療法人社団仁心会 東京中央病院",
+        "顧客名カナ": "トウキョウチュウオウビョウイン",
+        "業種": "医療機関",
+        "住所": "東京都渋谷区道玄坂2-12-5",
+        "電話番号": "03-XXXX-5678",
+        "メールアドレス": "inquiry@tokyo-chuo-hospital.jp",
+        "担当営業ID": "rec-u001",
+        "顧客ステータス": "見込み客",
+        "作成日時": "2025-01-15 14:30:00",
+        "更新日時": "2025-01-15 14:30:00",
+        "作成者ID": "rec-u002",
+        "更新者ID": "rec-u002"
+      },
+      {
+        "顧客ID": "rec-cust-20250001",
+        "顧客名": "株式会社グローバルマート関西",
+        "顧客名カナ": "グローバルマートカンサイ",
+        "業種": "流通業",
+        "住所": "大阪府大阪市北区中之島3丁目2番4号",
+        "電話番号": "06-6123-4567",
+        "メールアドレス": "procurement@globalmart-kansai.co.jp",
+        "担当営業ID": "rec-user-20240015",
+        "顧客ステータス": "既存顧客",
+        "作成日時": "2024-03-15T09:30:00+09:00",
+        "更新日時": "2025-01-08T14:22:00+09:00",
+        "作成者ID": "rec-user-20240008",
+        "更新者ID": "rec-user-20240015"
+      },
+      {
+        "顧客ID": "rec-001",
+        "顧客名": "株式会社ネクストイノベーション",
+        "顧客名カナ": "カブシキガイシャネクストイノベーション",
+        "業種": "情報通信業",
+        "住所": "東京都渋谷区道玄坂1-2-3 渋谷テックビル5階",
+        "電話番号": "03-XXXX-5678",
+        "メールアドレス": "contact@next-innovation.jp",
+        "担当営業ID": "rec-101",
+        "顧客ステータス": "既存顧客",
+        "作成日時": "2024-11-15T10:30:00Z",
+        "更新日時": "2025-01-22T14:45:00Z",
+        "作成者ID": "rec-201",
+        "更新者ID": "rec-202"
+      },
+      {
+        "顧客ID": "rec-001",
+        "顧客名": "株式会社フロンティア印刷",
+        "顧客名カナ": "フロンティアインサツ",
+        "業種": "印刷・製本業",
+        "住所": "東京都渋谷区代々木2-1-1 新宿ビジネスビル3階",
+        "電話番号": "03-XXXX-5847",
+        "メールアドレス": "info@frontier-print.jp",
+        "担当営業ID": "rec-102",
+        "顧客ステータス": "休止中",
+        "作成日時": "2022-06-15T10:30:00+09:00",
+        "更新日時": "2025-01-22T14:15:00+09:00",
+        "作成者ID": "rec-201",
+        "更新者ID": "rec-203"
+      }
+    ],
+    "操作ログ": [
+      {
+        "操作ログID": "rec-20250115-001",
+        "ユーザーID": "rec-user-0847",
+        "操作種別": "作成",
+        "対象テーブル": "リード顧客",
+        "対象レコードID": "rec-lead-5234",
+        "操作内容": "新規リード顧客を作成。会社名：株式会社サンテック、担当者名：鈴木健太、電話番号：03-5234-7891、メール：k.suzuki@suntech.co.jp、住所：東京都渋谷区道玄坂2-10-7、業種：IT関連サービス、従業員数：150名、初期接触経路：展示会、見込み度：中",
+        "実行結果": "成功",
+        "エラーメッセージ": null,
+        "実行時間ミリ秒": 247,
+        "IPアドレス": "192.168.1.105",
+        "セッションID": "sess-b7f3e9c2d1a4",
+        "作成日時": "2025-01-15T14:32:18+09:00"
+      },
+      {
+        "操作ログID": "rec-20250215-00847",
+        "ユーザーID": "rec-user-05432",
+        "操作種別": "重複判定",
+        "対象テーブル": "顧客マスタ",
+        "対象レコードID": "rec-cust-12856",
+        "操作内容": "顧客ID:rec-cust-12856(佐藤花子、東京都渋谷区)に対して重複判定を実行。既存顧客rec-cust-09234(佐藤花子、東京都渋谷区道玄坂2-1-1)との間で以下の一致項目を検出:氏名完全一致、住所部分一致(市区町村まで一致)、生年月日一致(1985-03-15)。信頼度スコア:92%。重複の可能性が高いため警告を発行。",
+        "実行結果": "警告",
+        "エラーメッセージ": null,
+        "実行時間ミリ秒": 2847,
+        "IPアドレス": "192.168.1.105",
+        "セッションID": "sess-20250215-7f3a9c2e",
+        "作成日時": "2025-02-15T14:32:18.000+09:00"
+      },
+      {
+        "操作ログID": "rec-20250115-0847",
+        "ユーザーID": "rec-admin-0023",
+        "操作種別": "更新",
+        "対象テーブル": "顧客",
+        "対象レコードID": "rec-cust-1547",
+        "操作内容": "顧客電話番号を修正しました。変更前: 090-1234-5678、変更後: 090-1234-5679。修正理由: 入力誤りによる末尾の数字訂正。対象顧客: 鈴木花子。",
+        "実行結果": "成功",
+        "エラーメッセージ": null,
+        "実行時間ミリ秒": 142,
+        "IPアドレス": "192.168.1.105",
+        "セッションID": "sess-admin-20250115-084723",
+        "作成日時": "2025-01-15T08:47:23+09:00"
+      },
+      {
+        "操作ログID": "rec-20250115-0847",
+        "ユーザーID": "rec-user-0324",
+        "操作種別": "正規化実行",
+        "対象テーブル": "請求先マスタ",
+        "対象レコードID": "rec-batch-0156",
+        "操作内容": "請求先住所の一括正規化処理を実行。対象件数: 2,847件。処理内容: 住所表記の統一（都道府県コード付与、丁目以下の形式統一、全角英数字を半角に変換）、郵便番号形式の検証・補正、重複住所の検出。変更対象: 2,156件（住所表記統一: 1,834件、郵便番号補正: 287件、重複検出: 35件）",
+        "実行結果": "成功",
+        "エラーメッセージ": null,
+        "実行時間ミリ秒": 18750,
+        "IPアドレス": "192.168.1.45",
+        "セッションID": "sess-6f8d2c1b9e4a7d5",
+        "作成日時": "2025-01-15T08:47:32+09:00"
+      },
+      {
+        "操作ログID": "rec-20250215-0847",
+        "ユーザーID": "rec-user-0324",
+        "操作種別": "削除",
+        "対象テーブル": "顧客",
+        "対象レコードID": "rec-cust-5891",
+        "操作内容": "失注顧客レコード削除。顧客名：株式会社テックソリューション、担当者：佐藤次郎、失注理由：予算削減により案件中止、削除実行者：営業部 山田花子",
+        "実行結果": "成功",
+        "エラーメッセージ": null,
+        "実行時間ミリ秒": 342,
+        "IPアドレス": "192.168.1.105",
+        "セッションID": "sess-a7f2c9e1d5b4",
+        "作成日時": "2025-02-15 08:47:23"
+      },
+      {
+        "操作ログID": "rec-20250115-0847",
+        "ユーザーID": "rec-user-0042",
+        "操作種別": "正規化実行",
+        "対象テーブル": "顧客マスタ",
+        "対象レコードID": "rec-cust-15847",
+        "操作内容": "住所データ自動正規化バッチ処理。変更前: '東京都渋谷区道玄坂　1-2-3' → 変更後: '東京都渋谷区道玄坂1-2-3'。全角スペース削除、郵便番号フォーマット統一（150-0043）、建物名補完処理実行。対象レコード数: 1件、処理時間: 245ms",
+        "実行結果": "成功",
+        "エラーメッセージ": null,
+        "実行時間ミリ秒": 245,
+        "IPアドレス": "192.168.10.54",
+        "セッションID": "sess_batch_20250115_084700",
+        "作成日時": "2025-01-15T08:47:23.847+09:00"
+      },
+      {
+        "操作ログID": "rec-20250115-0847",
+        "ユーザーID": "rec-user-2024-0342",
+        "操作種別": "更新",
+        "対象テーブル": "顧客ランク",
+        "対象レコードID": "rec-customer-2024-1156",
+        "操作内容": "顧客ランク: ゴールド → プラチナ、理由: 年間取引額が5000万円を超過、営業担当者による昇格承認、適用日: 2025-01-15",
+        "実行結果": "成功",
+        "エラーメッセージ": null,
+        "実行時間ミリ秒": 234,
+        "IPアドレス": "192.168.1.105",
+        "セッションID": "sess-a7f2d9e1c4b6",
+        "作成日時": "2025-01-15T08:47:32+09:00"
+      },
+      {
+        "操作ログID": "rec-20250215-0847",
+        "ユーザーID": "rec-user-0342",
+        "操作種別": "削除",
+        "対象テーブル": "顧客マスタ",
+        "対象レコードID": "rec-cust-5891",
+        "操作内容": "WHERE句: 登録日時 < '2023-01-01' の条件で顧客レコード1,247件の一括削除を実行。対象: 顧客ID rec-cust-5891 を含む過去顧客データセット。削除前レコード数: 1,247件、削除予定件数: 1,247件",
+        "実行結果": "失敗",
+        "エラーメッセージ": "削除操作が拒否されました。理由: 対象レコード数が管理者権限の単一操作上限(500件)を超過しています。一括削除は最大500件までの制限があります。監査ログ記録済み。",
+        "実行時間ミリ秒": 2847,
+        "IPアドレス": "192.168.15.84",
+        "セッションID": "sess-20250215-0847-7f3a2b1c",
+        "作成日時": "2025-02-15T08:47:33.000Z"
+      },
+      {
+        "操作ログID": "rec-20250115-0847",
+        "ユーザーID": "rec-usr-0324",
+        "操作種別": "検証実行",
+        "対象テーブル": "取引実績",
+        "対象レコードID": "rec-trx-5891",
+        "操作内容": "顧客ID: rec-cst-1247（株式会社佐藤物流）の2024年度取引実績データを検証。対象期間: 2024/04/01～2025/01/15、取引件数: 287件、合計金額: ¥48,750,000、検証項目: 請求金額の整合性、納期遵守率、支払い条件の妥当性",
+        "実行結果": "成功",
+        "エラーメッセージ": null,
+        "実行時間ミリ秒": 2847,
+        "IPアドレス": "192.168.1.105",
+        "セッションID": "sess-20250115-a7f2c9e1",
+        "作成日時": "2025-01-15T08:47:33+09:00"
+      },
+      {
+        "操作ログID": "rec-20250215-008472",
+        "ユーザーID": "rec-user-00547",
+        "操作種別": "削除",
+        "対象テーブル": "顧客マスタ",
+        "対象レコードID": "rec-cust-12834",
+        "操作内容": "顧客レコード(ID:rec-cust-12834、顧客名:株式会社山田商事)を削除。削除前データ:住所=東京都渋谷区、電話=03-XXXX-5678、登録日=2023-06-15、売上累計=2,450,000円。削除実行ユーザー:山田太郎(管理者権限)。削除理由:重複顧客の統合処理。",
+        "実行結果": "成功",
+        "エラーメッセージ": "",
+        "実行時間ミリ秒": 287,
+        "IPアドレス": "192.168.1.105",
+        "セッションID": "sess-20250215-a7f3e9c2d1b8",
+        "作成日時": "2025-02-15T14:32:18+09:00"
+      }
+    ],
+    "商談": [
+      {
+        "商談ID": "rec-20250115-001",
+        "顧客ID": "rec-cust-0847",
+        "商談名": "トヨタ自動車豊田工場 生産管理システム統合プロジェクト",
+        "ステージ": "提案",
+        "予想金額": 85000000,
+        "成約確度": 65,
+        "予想クローズ日": "2025-06-30T00:00:00Z",
+        "説明": "豊田工場の既存生産管理システムの老朽化に伴い、クラウドベースの統合ERP導入を提案。工程管理、在庫最適化、品質管理の3モジュール構成。導入期間は6ヶ月、保守契約は3年。顧客側の決定権者は生産技術部長・山田健一氏。2024年12月の初期ヒアリング完了、2025年1月中旬にデモンストレーション実施予定。競合他社との比較検討中だが、既存システムとの連携性で優位性あり。",
+        "担当者ID": "rec-user-0312",
+        "作成日時": "2024-12-20T10:30:00Z",
+        "更新日時": "2025-01-15T14:45:00Z",
+        "作成者ID": "rec-user-0312"
+      },
+      {
+        "商談ID": "rec-20250115-001",
+        "顧客ID": "rec-cust-0847",
+        "商談名": "株式会社ジャパンテック 顧客管理システム追加ライセンス",
+        "ステージ": "提案",
+        "予想金額": 2800000,
+        "成約確度": 75,
+        "予想クローズ日": "2025-02-28T23:59:59Z",
+        "説明": "既存の基本パッケージ導入顧客。今期新規部門立ち上げに伴い、追加ユーザーライセンス（50ユーザー）とレポート機能モジュールのアップセル。先月のキックオフミーティングで要件確認済み。決定権者は経営企画部長・山田花子。1月中旬に正式提案資料を提出予定。",
+        "担当者ID": "rec-user-0523",
+        "作成日時": "2025-01-15T09:30:00Z",
+        "更新日時": "2025-01-15T14:45:00Z",
+        "作成者ID": "rec-user-0523"
+      },
+      {
+        "商談ID": "rec-001",
+        "顧客ID": "rec-cust-0847",
+        "商談名": "AI画像解析ツール導入検討",
+        "ステージ": "初期接触",
+        "予想金額": 2500000,
+        "成約確度": 25,
+        "予想クローズ日": "2025-03-31T00:00:00Z",
+        "説明": "渋谷のスタートアップ企業。AI画像解析を活用した品質検査ソリューションを開発。現在、製造業向けの導入先を探索中。初回面談で製品デモを実施予定。予算規模は300万円程度の見込み。",
+        "担当者ID": "rec-user-0312",
+        "作成日時": "2025-01-15T09:30:00Z",
+        "更新日時": "2025-01-15T09:30:00Z",
+        "作成者ID": "rec-user-0312"
+      },
+      {
+        "商談ID": "rec-20250147",
+        "顧客ID": "rec-cust-0892",
+        "商談名": "株式会社フューチャーシステムズ 既存契約更新 - 競合切替",
+        "ステージ": "交渉",
+        "予想金額": 2400000,
+        "成約確度": 75,
+        "予想クローズ日": "2025-03-31T23:59:59Z",
+        "説明": "既存顧客のフューチャーシステムズが現在契約している競合他社（A社）のシステム保守契約の更新時期を迎える。当社の提案内容（保守費用15%削減、応答時間短縮）に対して顧客の購買担当者・技術責任者ともに好意的。1月中旬に最終提案資料を提出予定。競合他社も同時期に提案活動中のため確度は75%。",
+        "担当者ID": "rec-user-0445",
+        "作成日時": "2024-12-10T09:30:00Z",
+        "更新日時": "2025-01-08T14:15:00Z",
+        "作成者ID": "rec-user-0445"
+      },
+      {
+        "商談ID": "rec-001",
+        "顧客ID": "rec-cust-0847",
+        "商談名": "ABC流通グループ 関東・中部地域 物流管理システム導入案件",
+        "ステージ": "提案",
+        "予想金額": 8500000,
+        "成約確度": 65,
+        "予想クローズ日": "2025-03-31T23:59:59Z",
+        "説明": "顧客の関東・中部地域の6拠点における在庫・配送管理の統一化を目的とした物流管理システム導入。初回ヒアリング（2024年11月）で経営課題を確認。12月中旬に提案資料を提出予定。決裁者は執行役員・物流部長の佐藤。予算確保の見通しは良好だが、既存システムとの連携が懸念事項。",
+        "担当者ID": "rec-user-0312",
+        "作成日時": "2024-11-15T09:30:00Z",
+        "更新日時": "2024-11-22T14:15:00Z",
+        "作成者ID": "rec-user-0312"
+      },
+      {
+        "商談ID": "rec-001",
+        "顧客ID": "rec-cust-0847",
+        "商談名": "鶏そば専門店チェーン向けPOS導入プロジェクト",
+        "ステージ": "提案",
+        "予想金額": 2800000,
+        "成約確度": 65,
+        "予想クローズ日": "2025-03-15T00:00:00Z",
+        "説明": "東京都内で鶏そば店を5店舗展開する顧客。現在は手書みレジを使用しており、在庫管理と売上集計に課題を抱えている。POSシステム導入により、各店舗の売上一元管理と食材発注の自動化を実現予定。初回訪問で経営層から導入意欲が高く、2月中旬の見積提出を予定している。",
+        "担当者ID": "rec-user-0312",
+        "作成日時": "2024-12-10T09:30:00Z",
+        "更新日時": "2024-12-18T14:15:00Z",
+        "作成者ID": "rec-user-0312"
+      },
+      {
+        "商談ID": "rec-001",
+        "顧客ID": "rec-cust-047",
+        "商談名": "〇〇県庁 2025年度情報システム保守運用業務委託",
+        "ステージ": "提案",
+        "予想金額": 24500000,
+        "成約確度": 65,
+        "予想クローズ日": "2025-03-15T00:00:00Z",
+        "説明": "〇〇県庁の既存情報システムの保守運用業務。入札説明会は2025年1月22日開催予定。技術提案書提出期限は2月28日。県の要件：24時間365日サポート体制、セキュリティ対応、月次レポート提出。競合は大手SIer3社程度と予想。当社の強みはローカル対応力と技術者の地元採用実績。",
+        "担当者ID": "rec-user-012",
+        "作成日時": "2024-12-10T09:30:00Z",
+        "更新日時": "2024-12-20T14:15:00Z",
+        "作成者ID": "rec-user-012"
+      },
+      {
+        "商談ID": "rec-20250115-001",
+        "顧客ID": "rec-cust-0847",
+        "商談名": "ABC製造株式会社 保守契約更新（緊急対応含む）",
+        "ステージ": "交渉",
+        "予想金額": 2400000,
+        "成約確度": 85,
+        "予想クローズ日": "2025-02-28T23:59:59Z",
+        "説明": "既存顧客ABC製造からの保守契約更新案件。現在の契約期限が2025年3月末のため、更新手続きが必要。先月のシステム障害対応実績を踏まえ、緊急対応サポートの強化を要望されている。年間保守料金2,400,000円で調整中。顧客担当者は山田花子氏。",
+        "担当者ID": "rec-user-0312",
+        "作成日時": "2025-01-15T09:30:00Z",
+        "更新日時": "2025-01-15T14:45:00Z",
+        "作成者ID": "rec-user-0312"
+      },
+      {
+        "商談ID": "rec-20250115-001",
+        "顧客ID": "rec-cust-20250115-042",
+        "商談名": "△△製造株式会社 IoT生産管理システム導入案件",
+        "ステージ": "初期接触",
+        "予想金額": 2500000,
+        "成約確度": 35,
+        "予想クローズ日": "2025-06-30T00:00:00Z",
+        "説明": "2025年1月12日の関西工業展示会で初接触。同社の製造部長 山田次郎氏と名刺交換。現在の生産管理は紙ベースで、デジタル化を検討中。予算は第2四半期での承認予定。フォローアップ商談は1月末に予定。",
+        "担当者ID": "rec-user-20240401-015",
+        "作成日時": "2025-01-13T10:30:00Z",
+        "更新日時": "2025-01-13T10:30:00Z",
+        "作成者ID": "rec-user-20240401-015"
+      },
+      {
+        "商談ID": "rec-20250115-001",
+        "顧客ID": "rec-cust-00847",
+        "商談名": "株式会社ソリューション企画 新担当者との関係構築",
+        "ステージ": "初期接触",
+        "予想金額": 2500000,
+        "成約確度": 45,
+        "予想クローズ日": "2025-03-31T23:59:59Z",
+        "説明": "既存顧客である株式会社ソリューション企画の営業担当者が前任の鈴木から山田に交代となった。新担当者との信頼構築と既存契約の継続確認を目的とした初回面談を予定。前年度の取引実績は1,800万円。新規提案としてシステム保守サービスの拡張を検討中。",
+        "担当者ID": "rec-user-00234",
+        "作成日時": "2025-01-15T09:30:00Z",
+        "更新日時": "2025-01-15T09:30:00Z",
+        "作成者ID": "rec-user-00234"
+      }
+    ],
+    "商談詳細": [
+      {
+        "商談詳細ID": "rec-001",
+        "商談ID": "rec-deal-0847",
+        "顧客ID": "rec-cust-2156",
+        "推奨内容": "現在ご契約いただいているクラウドストレージサービスの利用状況から、データ分析機能の追加導入をお勧めします。月間アップロード容量が80%に達しており、今後のデータ増加に備えて、リアルタイム分析ダッシュボード機能の導入により、業務効率化と意思決定の迅速化が期待できます。",
+        "推奨理由": "顧客のストレージ利用率が過去3ヶ月で平均75%に達しており、拡張ニーズが高い状態です。同業他社の導入事例では、データ分析機能導入後、業務効率が平均23%向上しています。また、現在のプランとの相乗効果により、総コスト効率が向上する試算結果が出ています。",
+        "提案商品": "クラウドストレージプレミアムプラン + データ分析ダッシュボード",
+        "推奨優先度": 3,
+        "推奨実施状況": "実施中",
+        "推奨実施日": "2025-01-15T10:30:00+09:00",
+        "推奨結果": "顧客担当者（佐藤花子様）との初回提案ミーティングを実施。提案内容に対して好意的な反応を得られ、2月中の詳細デモンストレーション実施で合意。導入予定時期は3月末を予定しており、次回フォローアップは1月29日に設定。",
+        "作成日時": "2025-01-10T14:22:00+09:00",
+        "作成者ID": "rec-user-0512",
+        "更新日時": "2025-01-15T11:45:00+09:00",
+        "更新者ID": "rec-user-0512"
+      },
+      {
+        "商談詳細ID": "rec-20250215-001",
+        "商談ID": "rec-20250201-deal-042",
+        "顧客ID": "rec-cust-0847",
+        "推奨内容": "既存顧客の利用頻度低下を受け、専任のカスタマーサクセスマネージャーを配置し、月次のビジネスレビューと利用シーン提案を実施する継続支援プログラムの導入を推奨します。",
+        "推奨理由": "過去6ヶ月間の利用率が前年比で62%低下しており、チャーン予兆が顕著です。同業他社への乗り換え検討の可能性が高いため、早期の関係強化が必須です。当社の高付加価値サービス提案により顧客満足度向上と継続利用の確保が期待できます。",
+        "提案商品": "エンタープライズサポートパッケージ + カスタマーサクセスコンサルティング",
+        "推奨優先度": 5,
+        "推奨実施状況": "実施中",
+        "推奨実施日": "2025-02-10T10:30:00+09:00",
+        "推奨結果": "顧客企業の経営層との初回ビジネスレビュー会議を実施し、新規活用領域として部門横断的なデータ分析活用を提案。顧客側から3ヶ月のトライアル実施に合意を得られました。",
+        "作成日時": "2025-02-08T14:15:00+09:00",
+        "作成者ID": "rec-user-1203",
+        "更新日時": "2025-02-15T09:45:00+09:00",
+        "更新者ID": "rec-user-1203"
+      },
+      {
+        "商談詳細ID": "rec-20250115-001",
+        "商談ID": "rec-deal-20250110-045",
+        "顧客ID": "rec-cust-00892",
+        "推奨内容": "冬季から春季への季節転換期に向けて、暖房機器から空調機器への切り替え需要が高まります。顧客の既存の暖房システムの保守契約を踏まえ、省エネ型エアコンユニットの導入提案を実施することで、顧客満足度向上と追加売上の確保が期待できます。",
+        "推奨理由": "顧客は製造業で、冬季は暖房需要が高かったが、3月以降の気温上昇に伴い冷房需要へシフトします。過去3年の販売データから、同業種顧客の春季空調機器購入率は82%であり、今期の提案タイミングは最適です。また、顧客の施設規模（約2,500㎡）から複数台の導入が見込まれます。",
+        "提案商品": "業務用省エネエアコン「CoolMax Pro-5000」",
+        "推奨優先度": 4,
+        "推奨実施状況": "実施中",
+        "推奨実施日": "2025-01-15 10:30:00",
+        "推奨結果": "顧客担当者（購買部長・鈴木健二）から導入前の現地調査実施の承認を取得。2月中旬に施設視察予定。見積提出予定日は1月31日。顧客の予算承認プロセス上、最終決定は2月末見込み。",
+        "作成日時": "2025-01-15 09:45:00",
+        "作成者ID": "rec-user-04521",
+        "更新日時": "2025-01-15 10:30:00",
+        "更新者ID": "rec-user-04521"
+      },
+      {
+        "商談詳細ID": "rec-20250145",
+        "商談ID": "rec-20250089",
+        "顧客ID": "rec-00012847",
+        "推奨内容": "顧客の過去3ヶ月の購買履歴から、業務用プリンターの購入実績が確認されました。現在、トナーカートリッジと保守契約の同時購入を提案することで、顧客の運用コスト削減と当社の継続的な収益機会を創出できます。",
+        "推奨理由": "顧客は2024年11月にPRO-X2000型プリンターを導入し、月間印刷枚数が平均15,000枚と高頻度利用が想定されます。現在、トナーの在庫切れリスクが高く、保守契約未加入による故障時の業務停止リスクも存在します。関連商品の同時提案により、顧客満足度向上と売上機会の最大化が期待できます。",
+        "提案商品": "PRO-X2000用トナーカートリッジ(4色セット)、年間保守契約プラン",
+        "推奨優先度": 4,
+        "推奨実施状況": "実施中",
+        "推奨実施日": "2025-01-22T10:30:00",
+        "推奨結果": "顧客との初期接触完了。提案資料を提供し、2月初旬の詳細説明会を予定。顧客の購買担当者から好意的なフィードバックを得ており、成約可能性は高い見込み。",
+        "作成日時": "2025-01-20T14:15:00",
+        "作成者ID": "rec-00005634",
+        "更新日時": "2025-01-22T11:45:00",
+        "更新者ID": "rec-00005634"
+      },
+      {
+        "商談詳細ID": "rec-001",
+        "商談ID": "rec-deal-0847",
+        "顧客ID": "rec-cust-2341",
+        "推奨内容": "既存契約の年間購買額に対して10%の値引きと、専任サポート窓口の設置を提示し、競合他社への乗り換えを防止する",
+        "推奨理由": "顧客からの問い合わせ頻度が低下し、競合A社からのアプローチがあったとの情報を入手。現在の契約更新時期が迫っており、早期の優遇条件提示が流出防止に有効と判断",
+        "提案商品": "プレミアムサポートパッケージ＋ボリュームディスカウント",
+        "推奨優先度": 4,
+        "推奨実施状況": "完了",
+        "推奨実施日": "2024-11-15T14:30:00",
+        "推奨結果": "顧客との面談を実施し、年間10%値引き、専任営業担当者の配置、月次経営会議への参加を条件に契約継続が決定。契約金額は年間1,850万円で確定",
+        "作成日時": "2024-11-08T09:15:00",
+        "作成者ID": "rec-user-0156",
+        "更新日時": "2024-11-15T16:45:00",
+        "更新者ID": "rec-user-0156"
+      },
+      {
+        "商談詳細ID": "rec-20250115-001",
+        "商談ID": "rec-20250115-deal-001",
+        "顧客ID": "rec-cust-20250110-001",
+        "推奨内容": "初回購入いただいたクラウド会計ソフトの導入に伴い、月次決算業務の効率化を支援するコンサルティングサービスの提案を実施。顧客の経理担当者との面談を通じて、現在の手作業による決算プロセスの課題を把握し、自動化による月次決算期間の短縮を提案します。",
+        "推奨理由": "顧客企業は従業員50名規模の製造業で、初回購入時のヒアリングで月次決算に5日間を要していることが判明。クラウド会計ソフト導入後の運用最適化により、決算期間を3日に短縮可能と試算。経理業務の効率化ニーズが高く、クロスセル成功確度が高いと判断。",
+        "提案商品": "月次決算コンサルティングパッケージ（3ヶ月プラン）",
+        "推奨優先度": 4,
+        "推奨実施状況": "完了",
+        "推奨実施日": "2025-01-15T14:30:00+09:00",
+        "推奨結果": "顧客企業の経理部長と営業担当者による面談を実施。提案内容に対して顧客側から高い関心を示され、3月からのコンサルティング開始で合意。契約予定金額は月額25万円（3ヶ月75万円）。初回購入額120万円に対するクロスセル率は62.5%。",
+        "作成日時": "2025-01-10T09:15:00+09:00",
+        "作成者ID": "rec-user-20240401-015",
+        "更新日時": "2025-01-15T16:45:00+09:00",
+        "更新者ID": "rec-user-20240401-015"
+      },
+      {
+        "商談詳細ID": "rec-20250156",
+        "商談ID": "rec-20250089",
+        "顧客ID": "rec-cust-0047",
+        "推奨内容": "大型案件の納入後3ヶ月間、システム運用サポートパッケージの契約を提案し、初期トラブル対応と運用最適化支援を実施することで、顧客満足度向上と継続取引の基盤を構築する",
+        "推奨理由": "当社の過去事例分析より、大型案件受注後の付帯サービス導入企業は顧客維持率が87%と高く、さらに12ヶ月以内の追加受注確度が2.3倍高い。本案件は契約金額8,500万円の大型案件であり、顧客の運用リスク軽減ニーズが高いと判断",
+        "提案商品": "システム運用サポートパッケージ Premium 3ヶ月版",
+        "推奨優先度": 4,
+        "推奨実施状況": "実施中",
+        "推奨実施日": "2025-01-22T14:30:00+09:00",
+        "推奨結果": "顧客との提案説明会を1月22日に実施。顧客の情報システム部長より好意的な反応を得られ、現在購買部門での予算承認プロセス中。2月中旬の契約締結を見込む",
+        "作成日時": "2025-01-15T09:45:00+09:00",
+        "作成者ID": "rec-user-0012",
+        "更新日時": "2025-01-23T16:20:00+09:00",
+        "更新者ID": "rec-user-0012"
+      },
+      {
+        "商談詳細ID": "rec-20250156",
+        "商談ID": "rec-20250089",
+        "顧客ID": "rec-20240512",
+        "推奨内容": "現在のスタンダードプランから、利用データ量が月平均150GBに増加しているため、プレミアムプランへのアップグレードを提案します。これにより追加料金を抑制しながら、優先サポートと無制限ストレージを活用できます。",
+        "推奨理由": "過去6ヶ月の利用ログ分析により、顧客のデータ利用量が前年同期比で32%増加しており、現プランの制限容量(100GB/月)を超過する傾向が見られています。このままでは超過料金が月額8,000円程度発生する見込みです。プレミアムプランへの切り替えで年間コスト削減が可能です。",
+        "提案商品": "クラウドストレージプレミアムプラン",
+        "推奨優先度": 4,
+        "推奨実施状況": "実施中",
+        "推奨実施日": "2025-01-22T10:30:00+09:00",
+        "推奨結果": "顧客との初回提案ミーティングを実施。プラン比較資料を提供し、2月の契約更新タイミングでの切り替えに向けて検討中。顧客の決裁者である経営企画部長との次回面談は2月3日に予定。",
+        "作成日時": "2025-01-20T14:15:00+09:00",
+        "作成者ID": "rec-user-0847",
+        "更新日時": "2025-01-22T11:45:00+09:00",
+        "更新者ID": "rec-user-0847"
+      },
+      {
+        "商談詳細ID": "rec-20250115-001",
+        "商談ID": "rec-20250115-deal-001",
+        "顧客ID": "rec-cust-20240801-045",
+        "推奨内容": "過去12ヶ月間接触がない顧客に対して、新製品「クラウド経費管理システム」の無料トライアル案内をメール配信し、その後1週間で営業電話によるフォローアップを実施。顧客の現在の課題を再度ヒアリングし、カスタマイズ提案を行う。",
+        "推奨理由": "当該顧客は過去3年間で累計150万円の取引実績があるが、前回接触から13ヶ月間音信不通の状態。業界動向分析では同業他社への流出リスクが高い。新製品のトライアル提供により関心喚起し、既存顧客との関係を再構築する段階的アプローチが有効と判断。",
+        "提案商品": "クラウド経費管理システム Professional版",
+        "推奨優先度": 4,
+        "推奨実施状況": "実施中",
+        "推奨実施日": "2025-01-15T09:30:00+09:00",
+        "推奨結果": "メール配信完了。開封率62%。うち3社より問い合わせメール受信。営業電話フォローアップは1月20日予定。",
+        "作成日時": "2025-01-14T16:45:00+09:00",
+        "作成者ID": "rec-user-20240401-012",
+        "更新日時": "2025-01-15T10:20:00+09:00",
+        "更新者ID": "rec-user-20240401-012"
+      },
+      {
+        "商談詳細ID": "rec-20250115-001",
+        "商談ID": "rec-20250110-deal-042",
+        "顧客ID": "rec-cust-00847",
+        "推奨内容": "支払遅延リスク顧客に対して、分割払い制度の導入と専任担当者による月次フォローアップを実施し、信用状況の改善を図る。同時に担保設定の検討も行う。",
+        "推奨理由": "当該顧客は過去3ヶ月間で2回の支払遅延が発生しており、現在の売掛金残高が520万円に達している。業界動向から一時的なキャッシュフロー悪化と判断されるため、早期対策により関係維持と回収リスク軽減が可能と考えられる。",
+        "提案商品": "分割払い支援プラン・経営改善コンサルティング",
+        "推奨優先度": 5,
+        "推奨実施状況": "実施中",
+        "推奨実施日": "2025-01-15T10:30:00",
+        "推奨結果": "顧客との協議により、月次返済額を180万円の3分割に変更することで合意。初回返済は2025年2月末予定。専任担当者（山田花子）を配置し、月次面談を開始した。",
+        "作成日時": "2025-01-10T14:20:00",
+        "作成者ID": "rec-user-0156",
+        "更新日時": "2025-01-15T10:30:00",
+        "更新者ID": "rec-user-0156"
+      }
+    ],
+    "提案アプローチ": [
+      {
+        "提案アプローチID": "rec-20250115-001",
+        "商談ID": "rec-deal-20250110-042",
+        "顧客ID": "rec-cust-20240615-087",
+        "推奨アプローチ名": "3年間の包括保守契約による顧客基盤の強化",
+        "アプローチ説明": "現在の単発受注体制から、3年間の包括保守・技術サポート契約への転換を提案。月次の定期メンテナンス、24時間対応のテクニカルサポート、年2回の設備診断を含める。初年度は基本料金を15%割引し、2年目以降は標準料金適用とすることで、顧客の予算計画の安定化と当社の売上予測の精度向上を実現する。",
+        "推奨理由": "顧客の過去12ヶ月の購買データ分析より、平均3.2ヶ月間隔での追加発注パターンを確認。既存設備の老朽化に伴う保守需要が今後3年間で40%増加すると予測される。競合他社との差別化ポイントとして、当社の専任技術者による現地駐在型サポートを強調することで、解約リスクを低減できる。",
+        "優先度": 1,
+        "信頼度スコア": 87,
+        "ステータス": "推奨",
+        "実行予定日": "2025-02-15T09:00:00",
+        "実行完了日": null,
+        "生成ユーザーID": "rec-user-20240801-015",
+        "作成日時": "2025-01-15T14:32:00",
+        "更新日時": "2025-01-15T14:32:00",
+        "作成者": "rec-user-20240801-015",
+        "更新者": "rec-user-20240801-015"
+      },
+      {
+        "提案アプローチID": "rec-001-2024-upsell-001",
+        "商談ID": "rec-deal-2024-1847",
+        "顧客ID": "rec-cust-2023-5421",
+        "推奨アプローチ名": "既存顧客向けプレミアムプランアップセル",
+        "アプローチ説明": "現在、基本プランを利用している顧客に対して、利用実績データに基づくカスタマイズ提案を実施。顧客の月間利用量が基本プランの80%に達していることを踏まえ、プレミアムプランへの段階的な移行を提案。初回は1ヶ月間の無料トライアルを提供し、追加機能の価値を体験させた上で、正式な契約切り替えへ導く。営業担当者による個別面談を2月中旬に実施予定。",
+        "推奨理由": "顧客の過去12ヶ月の利用ログ分析により、月間平均利用量が基本プランの容量上限の78%に達していることが判明。既存顧客の解約率低下とLTV向上の観点から、プレミアムプランへのアップセルは成功確度が高い。同業他社への乗り換えリスクも存在するため、早期の提案が重要。",
+        "優先度": 1,
+        "信頼度スコア": 87,
+        "ステータス": "推奨",
+        "実行予定日": "2025-02-15T10:00:00Z",
+        "実行完了日": null,
+        "生成ユーザーID": "rec-user-2024-0892",
+        "作成日時": "2025-01-28T14:32:15Z",
+        "更新日時": "2025-01-28T14:32:15Z",
+        "作成者": "rec-user-2024-0892",
+        "更新者": "rec-user-2024-0892"
+      },
+      {
+        "提案アプローチID": "rec-001",
+        "商談ID": "rec-002",
+        "顧客ID": "rec-003",
+        "推奨アプローチ名": "プレミアムサポートプラン乗り換え提案",
+        "アプローチ説明": "現在の基本プランから年間契約でプレミアムサポートプランへのアップグレードを提案。専任サポート担当者の配置、優先対応、月次経営レポート提供、四半期ビジネスレビューを含む。契約期間を2年とし、初年度20%割引を適用することで顧客の継続意思を引き出す。",
+        "推奨理由": "過去6ヶ月間のサポート問い合わせが月平均2.3件から0.8件に低下し、ログイン頻度が前月比35%減少。顧客満足度スコアが78点から64点に低下。同業他社への問い合わせ活動が検知されたため、チャーン予兆が高い。プレミアムサポートプランへの乗り換えにより、接触頻度を増加させ、顧客ニーズの早期把握が可能になる。",
+        "優先度": 1,
+        "信頼度スコア": 82,
+        "ステータス": "推奨",
+        "実行予定日": "2025-02-15T10:00:00Z",
+        "実行完了日": null,
+        "生成ユーザーID": "rec-004",
+        "作成日時": "2025-01-28T14:32:15Z",
+        "更新日時": "2025-01-28T14:32:15Z",
+        "作成者": "rec-005",
+        "更新者": "rec-005"
+      },
+      {
+        "提案アプローチID": "rec-20250115-001",
+        "商談ID": "rec-deal-2025-0847",
+        "顧客ID": "rec-cust-2024-5432",
+        "推奨アプローチ名": "段階的信頼構築型営業プロセス",
+        "アプローチ説明": "初期接触から3ヶ月かけて段階的に信頼を構築するアプローチ。第1段階（初期接触～2週間）：業界トレンド情報の提供による価値創出。第2段階（2週間～1ヶ月）：顧客課題のヒアリングと現状分析レポート提供。第3段階（1ヶ月～2ヶ月）：カスタマイズされたソリューション提案。第4段階（2ヶ月～3ヶ月）：導入検討と契約交渉。各段階で定期的なフォローアップミーティングを実施し、相手の購買プロセスに合わせた情報提供を行う。",
+        "推奨理由": "顧客企業は製造業向けDXソリューション導入検討段階にあり、初めての大型投資のため慎重な検討が予想される。過去の類似案件分析より、段階的アプローチにより初期接触から受注までの平均期間が2.3ヶ月短縮され、受注率が68%向上している。本顧客の業界・企業規模・意思決定プロセスから同様の効果が期待できる。",
+        "優先度": 1,
+        "信頼度スコア": 82,
+        "ステータス": "推奨",
+        "実行予定日": "2025-01-20T10:00:00Z",
+        "実行完了日": null,
+        "生成ユーザーID": "rec-user-2024-1156",
+        "作成日時": "2025-01-15T14:32:45Z",
+        "更新日時": "2025-01-15T14:32:45Z",
+        "作成者": "rec-user-2024-1156",
+        "更新者": "rec-user-2024-1156"
+      },
+      {
+        "提案アプローチID": "rec-001",
+        "商談ID": "rec-102",
+        "顧客ID": "rec-203",
+        "推奨アプローチ名": "冬季需要対応型バンドルプロモーション",
+        "アプローチ説明": "12月〜1月の季節需要ピーク期間に、既存顧客向けに限定バンドルセット（基本製品＋季節限定オプション）を提供。購入単価の20%割引と送料無料を組み合わせたキャンペーン。期間限定（2024年12月1日〜2025年1月31日）での展開により、顧客獲得コストの削減と既存顧客のLTV向上を同時実現。メール、SNS、営業電話による多層接触で認知度向上を図る。",
+        "推奨理由": "過去3年の売上データ分析から、12月〜1月期間の季節需要は平均月比150%以上に達することが確認されている。当顧客（株式会社〇〇）は過去2年連続で同時期に大口発注実績があり、購買パターンの一貫性が高い。競合他社の同期間プロモーション分析から、バンドル提案による平均成約率は単品提案比で1.8倍に達する傾向が見られた。顧客の過去購買履歴から、季節商品への関心度が高く、このアプローチとの親和性が高い。",
+        "優先度": 1,
+        "信頼度スコア": 82,
+        "ステータス": "推奨",
+        "実行予定日": "2024-11-15T09:00:00",
+        "実行完了日": null,
+        "生成ユーザーID": "rec-301",
+        "作成日時": "2024-10-28T14:32:15",
+        "更新日時": "2024-10-28T14:32:15",
+        "作成者": "rec-301",
+        "更新者": "rec-301"
+      },
+      {
+        "提案アプローチID": "rec-001-2024-1127-ap-001",
+        "商談ID": "rec-001-2024-1120-deal-045",
+        "顧客ID": "rec-001-2024-cust-0892",
+        "推奨アプローチ名": "クラウド統合ソリューション + 専任サポート体制の提案",
+        "アプローチ説明": "現在、競合他社（A社SaaS）を利用している顧客に対して、当社のクラウド統合プラットフォームと業界特化型の機能、および日本語による24時間専任サポート体制を組み合わせた包括的なソリューションを提案。導入支援から運用最適化までのコンサルティングサービスを含める。初期3ヶ月間は月次レビュー会議を実施し、ROI最大化を実現する。",
+        "推奨理由": "顧客の過去12ヶ月間のシステム利用ログ分析により、A社製品の日本語サポート不足による問題チケット数が月平均8件発生していることが判明。当社ソリューションは顧客が重視する「多言語対応」「カスタマイズ性」「ローカルサポート」の3要件を全て満たし、競合比較で総所有コスト（TCO）を年間240万円削減可能。同業他社の切り替え事例でも平均導入期間3ヶ月で効果実証されている。",
+        "優先度": 1,
+        "信頼度スコア": 87,
+        "ステータス": "推奨",
+        "実行予定日": "2025-02-10T10:00:00+09:00",
+        "実行完了日": null,
+        "生成ユーザーID": "rec-001-user-0445",
+        "作成日時": "2024-11-27T14:32:18+09:00",
+        "更新日時": "2024-11-27T14:32:18+09:00",
+        "作成者": "rec-001-user-0445",
+        "更新者": "rec-001-user-0445"
+      },
+      {
+        "提案アプローチID": "rec-001",
+        "商談ID": "rec-002",
+        "顧客ID": "rec-003",
+        "推奨アプローチ名": "段階的値引き提案による長期契約化",
+        "アプローチ説明": "現行契約の更新時期を迎える顧客に対して、初年度は現行価格を維持しつつ、2年目以降の段階的な割引（年2-3%）を提示することで、3年間の長期契約を実現するアプローチ。同時に付加価値サービス（定期メンテナンス、優先サポート）を組み込み、顧客の総合的な満足度向上を図る。",
+        "推奨理由": "過去12ヶ月の取引履歴から顧客の購買パターンが安定しており、競合他社への流出リスクが中程度と判定。現行の単年度更新方式では顧客の不安定性が高まる傾向があるため、長期契約化により顧客満足度を向上させつつ、当社の売上予測精度を高める効果が期待できる。同業他社の値引き圧力も考慮し、段階的割引により競争力を維持しながらも利益率の低下を最小化できる。",
+        "優先度": 1,
+        "信頼度スコア": 78,
+        "ステータス": "推奨",
+        "実行予定日": "2024-12-15T10:00:00",
+        "実行完了日": null,
+        "生成ユーザーID": "rec-004",
+        "作成日時": "2024-11-20T14:30:00",
+        "更新日時": "2024-11-20T14:30:00",
+        "作成者": "rec-005",
+        "更新者": "rec-005"
+      },
+      {
+        "提案アプローチID": "rec-001",
+        "商談ID": "rec-002",
+        "顧客ID": "rec-003",
+        "推奨アプローチ名": "製造部門・営業部門・管理部門向け統合ソリューション提案",
+        "アプローチ説明": "大型顧客の3つの主要部門に対して、各部門の業務課題に特化したカスタマイズ提案を段階的に実行します。第1段階として製造部門向けに生産効率化と品質管理システムの導入を提案、第2段階で営業部門向けに顧客管理と受注予測システムを提案、第3段階で管理部門向けに財務・会計統合システムを提案します。各部門の責任者との個別ヒアリングを実施し、現行システムとの連携方法を詳細に設計した上で、統合的な導入ロードマップを提示します。",
+        "推奨理由": "顧客企業の売上規模が年間50億円超であり、複数部門の独立した課題が存在することが初期ヒアリングで判明しました。部門ごとのニーズが異なるため、一括提案よりも部門別アプローチにより各部門長の納得度が向上し、承認確度が35%以上向上する傾向が過去事例から確認されています。また、統合ソリューションとして提案することで、全社最適化の視点から顧客企業の経営層への訴求力が強まります。",
+        "優先度": 1,
+        "信頼度スコア": 82,
+        "ステータス": "推奨",
+        "実行予定日": "2024-11-15T10:00:00Z",
+        "実行完了日": null,
+        "生成ユーザーID": "rec-004",
+        "作成日時": "2024-10-28T14:30:00Z",
+        "更新日時": "2024-10-28T14:30:00Z",
+        "作成者": "rec-005",
+        "更新者": "rec-005"
+      },
+      {
+        "提案アプローチID": "rec-001",
+        "商談ID": "rec-102",
+        "顧客ID": "rec-203",
+        "推奨アプローチ名": "エンタープライズプラン機能活用ワークショップ",
+        "アプローチ説明": "現在、導入されたSaaS製品の利用率が30%に留まっている顧客に対して、未活用機能の体験ワークショップを実施します。特にレポート自動化機能とAPI連携機能に焦点を当て、顧客の業務効率化シナリオを具体的にデモンストレーションします。ワークショップ後、専任サポートエンジニアによる3ヶ月間の定期フォローアップを提供し、段階的な機能活用を支援します。",
+        "推奨理由": "顧客の過去3ヶ月間のログ分析より、基本機能のみの使用に限定されており、契約プランに含まれる高度な分析機能やワークフロー自動化機能が全く活用されていません。同業他社との比較分析では、これらの機能活用により業務時間を約25%削減できる見込みです。顧客企業の組織規模（従業員数150名）と業種（流通・小売）を考慮すると、当該機能の導入効果が高いと判断されます。",
+        "優先度": 1,
+        "信頼度スコア": 78,
+        "ステータス": "推奨",
+        "実行予定日": "2025-02-15T10:00:00+09:00",
+        "実行完了日": null,
+        "生成ユーザーID": "rec-501",
+        "作成日時": "2025-01-20T14:30:00+09:00",
+        "更新日時": "2025-01-20T14:30:00+09:00",
+        "作成者": "rec-501",
+        "更新者": "rec-501"
+      },
+      {
+        "提案アプローチID": "rec-20250215-001",
+        "商談ID": "rec-deal-2024-0847",
+        "顧客ID": "rec-cust-0312",
+        "推奨アプローチ名": "決算期集中営業キャンペーン",
+        "アプローチ説明": "3月決算期を控えた2月中旬から3月上旬にかけて、既存顧客への追加受注獲得を目的とした集中営業活動を実施します。顧客の予算消化ニーズと当社の売上目標の合致点を活用し、カスタマイズ提案と特別割引パッケージを組み合わせた営業アプローチを展開します。営業担当者による直接訪問、オンラインプレゼンテーション、決算対応特別メニューの提示を3段階で実行します。",
+        "推奨理由": "顧客の過去12ヶ月の購買データ分析より、決算期前の追加発注率が平年比32%高いことが判明。本顧客は昨年同期に150万円の追加受注実績があり、今年度予算消化状況から200万円程度の追加購買余力があると推定されます。また、競合他社の提案活動が低調な時期であり、提案成功率が70%以上と高い傾向にあります。",
+        "優先度": 1,
+        "信頼度スコア": 78,
+        "ステータス": "推奨",
+        "実行予定日": "2025-02-17T10:00:00",
+        "実行完了日": null,
+        "生成ユーザーID": "rec-user-ai-agent-001",
+        "作成日時": "2025-02-10T14:30:00",
+        "更新日時": "2025-02-10T14:30:00",
+        "作成者": "rec-user-0156",
+        "更新者": "rec-user-0156"
+      }
+    ],
+    "成功パターン": [
+      {
+        "成功パターンID": "rec-001",
+        "パターン名": "大規模製造業への長期契約獲得パターン",
+        "説明": "自動車部品・電子機器製造業などの大規模製造業に対して、複数年の長期契約を獲得するための営業パターン。経営層への提案から導入後の継続的なサポートまで一貫したアプローチにより、初期受注から3年以上の継続取引を実現するモデル。",
+        "業種": "製造業",
+        "商品カテゴリ": "産業用部品・製造設備・メンテナンスサービス",
+        "成功要因": "経営層と現場層の両面からのアプローチ、導入前の徹底的なコスト削減シミュレーション、導入後の定期的なレビュー会議による信頼構築、専任の技術サポートチームの配置",
+        "推奨アプローチ": "1段階目：経営企画部門へのROI提案資料の事前提出、2段階目：工場長・購買部長との現場視察及びデモンストレーション、3段階目：複数年契約による割引パッケージの提示、4段階目：導入後の月次レビュー会議の実施、5段階目：年1回の経営層向け成果報告会の開催",
+        "成功率": 72,
+        "参照商談数": 18,
+        "有効フラグ": true,
+        "作成日時": "2024-04-15T09:30:00Z",
+        "更新日時": "2025-01-20T14:45:00Z",
+        "作成者": "rec-u-0847"
+      },
+      {
+        "成功パターンID": "rec-001",
+        "パターン名": "中堅流通企業への季節商品バンドル提案",
+        "説明": "中堅規模の流通企業に対して、季節変動に対応した複数商品のバンドル提案を行い、発注ロット数の増加と継続受注を実現したパターン。春夏秋冬の季節ごとに最適な商品組み合わせを提案することで、在庫効率化と売上安定化を同時に実現。",
+        "業種": "流通・小売業",
+        "商品カテゴリ": "日用雑貨・季節商品",
+        "成功要因": "顧客の季節別販売データを事前分析し、各時期の売れ筋商品を組み合わせて提案したこと。また、バンドル購入による割引率を5～8%に設定し、顧客の利益率を維持しながらボリュームメリットを提供したこと。営業担当者が定期的に訪問し、販売実績をフィードバックして提案内容を改善し続けたこと。",
+        "推奨アプローチ": "1)初回訪問時に過去3年の販売実績データ分析結果を提示し、信頼構築を図る。2)季節ごとの最適商品組み合わせを3～4パターン提案し、顧客の選択肢を確保する。3)バンドル購入時の単価削減効果を明確に数値化して説明する。4)月次の販売実績報告会を設定し、次シーズンの提案改善に活かす。5)複数の商品部門の営業担当者が同席し、総合的なソリューション提案として位置付ける。",
+        "成功率": 72,
+        "参照商談数": 18,
+        "有効フラグ": true,
+        "作成日時": "2024-08-15T09:30:00+09:00",
+        "更新日時": "2025-01-20T14:45:00+09:00",
+        "作成者": "rec-u-0847"
+      },
+      {
+        "成功パターンID": "rec-001",
+        "パターン名": "スタートアップ向けクラウドインフラ導入パターン",
+        "説明": "成長段階にあるIT企業が、既存オンプレミス環境からクラウドベースのインフラストラクチャへ移行する際の営業アプローチ。急速なスケーリング需要に対応しながら、コスト最適化を実現するパターン。",
+        "業種": "情報通信業",
+        "商品カテゴリ": "クラウドインフラストラクチャ・SaaS",
+        "成功要因": "初期段階での技術検証支援と無料トライアル期間の活用により信頼構築、CTO・技術責任者への直接的なアプローチ、段階的なスケーリングプランの提示、従量課金モデルによる初期投資負担の軽減",
+        "推奨アプローチ": "1.LinkedIn等で技術リーダーをターゲット化し、ホワイトペーパーやケーススタディを活用した認知形成、2.技術POC（概念実証）の無料実施を提案、3.既存インフラの課題診断レポート提供、4.スケーリング時の段階的な料金体系説明、5.導入後の技術サポート体制を強調、6.業界内での類似企業の成功事例紹介",
+        "成功率": 68,
+        "参照商談数": 22,
+        "有効フラグ": true,
+        "作成日時": "2024-06-15T09:30:00Z",
+        "更新日時": "2025-01-22T14:15:00Z",
+        "作成者": "rec-user-0847"
+      },
+      {
+        "成功パターンID": "rec-001",
+        "パターン名": "医療機関への高額機器導入の段階的提案",
+        "説明": "大型医療機器（MRI、CT、手術支援ロボット等）の導入を検討している医療機関に対し、初期段階での経営層への概要提案から、詳細な技術検証、導入後の運用支援までを段階的に実施するパターン。複数の意思決定者を巻き込みながら、長期的な信頼関係を構築する営業手法。",
+        "業種": "医療・福祉",
+        "商品カテゴリ": "医療機器・診断装置",
+        "成功要因": "経営層と医療スタッフの異なるニーズを段階的に把握し、それぞれに対応した提案資料を作成したこと。導入後の運用シミュレーションと導入効果の可視化により、投資判断の不安を払拭できたこと。既導入施設での実績紹介と導入事例の詳細なヒアリングにより、信頼性を向上させたこと。",
+        "推奨アプローチ": "第1段階：経営企画部門への経営効率化・患者満足度向上の観点からの概要提案。第2段階：医療技術部門・放射線科等の実務部門への技術仕様・操作性・保守体制の詳細説明。第3段階：導入効果シミュレーション・ROI分析の提示と予算化支援。第4段階：導入契約後の技術トレーニング・運用マニュアル整備・初期運用支援。各段階で複数回の訪問と資料提供を計画し、意思決定プロセスに寄り添うこと。",
+        "成功率": 68,
+        "参照商談数": 22,
+        "有効フラグ": true,
+        "作成日時": "2024-06-15T10:30:00Z",
+        "更新日時": "2025-01-20T14:45:00Z",
+        "作成者": "rec-usr-0847"
+      },
+      {
+        "成功パターンID": "rec-001",
+        "パターン名": "小売チェーン店への段階的導入と継続サポート",
+        "説明": "複数店舗を持つ小売チェーン店に対して、パイロット店舗での導入を経て全店舗への展開を行い、定期的なフォローアップと運用支援を継続するパターン。初期導入から運用定着までの包括的なサポート体制が特徴。",
+        "業種": "小売業",
+        "商品カテゴリ": "POSシステム・在庫管理ソリューション",
+        "成功要因": "パイロット店舗での成功事例の可視化、経営層への定量的な効果説明（売上向上率15～20%、業務効率化30%）、導入後の継続的な運用支援と現場スタッフへの教育、チェーン本部と各店舗間の連携体制の構築",
+        "推奨アプローチ": "1.経営層へのヒアリングで全体課題を把握、2.1～2店舗でのパイロット導入（3ヶ月）、3.パイロット成果を数値化し全店舗展開の承認取得、4.段階的な全店舗導入（月2～3店舗ペース）、5.導入後3ヶ月間の集中サポート、6.以降は月次の運用レビュー会議を実施",
+        "成功率": 87,
+        "参照商談数": 23,
+        "有効フラグ": true,
+        "作成日時": "2024-04-15T09:30:00",
+        "更新日時": "2025-01-22T14:15:00",
+        "作成者": "rec-user-042"
+      },
+      {
+        "成功パターンID": "rec-001",
+        "パターン名": "建設業界の春季需要対応営業戦略",
+        "説明": "建設業界では春季（3月～5月）に新年度予算の執行と工事発注が集中する傾向がある。この時期に営業活動を強化し、現場責任者や発注担当者への提案を積極化することで、高い受注率を実現するパターン。",
+        "業種": "建設業",
+        "商品カテゴリ": "建設機械・工具・安全用品",
+        "成功要因": "予算執行の時間的制約により発注判断が迅速化される点、複数現場の同時進行により購買量が増加する点、年度初めの新規取引先開拓意欲が高い点",
+        "推奨アプローチ": "2月中旬から営業活動を開始し、3月第1週までに主要顧客への提案資料配布を完了。現場視察を通じた課題ヒアリングと、春季キャンペーン価格の早期提示が効果的。決裁権者との面談を優先し、予算化段階での関係構築を重視する。",
+        "成功率": 68,
+        "参照商談数": 47,
+        "有効フラグ": true,
+        "作成日時": "2024-11-15T09:30:00+09:00",
+        "更新日時": "2025-01-22T14:45:00+09:00",
+        "作成者": "rec-user-089"
+      },
+      {
+        "成功パターンID": "rec-001",
+        "パターン名": "金融機関向け規制対応ソリューション提案",
+        "説明": "金融機関の規制対応業務を効率化するクラウドベースのコンプライアンス管理ソリューション。顧客企業の内部統制強化と報告書作成の自動化を実現し、監査対応時間を大幅に削減するパターン。",
+        "業種": "金融・保険",
+        "商品カテゴリ": "コンプライアンス管理システム",
+        "成功要因": "金融庁の規制強化に伴う顧客ニーズの高まり、既存システムとの連携容易性、導入後の業務時間削減効果の明確さ、専任サポートチームによる丁寧な導入支援",
+        "推奨アプローチ": "規制動向セミナーを通じた接触、顧客の規制対応部門責任者への直接訪問、導入企業の事例紹介、ROI試算シートを用いた経営層への提案、段階的な導入プラン提示",
+        "成功率": 68,
+        "参照商談数": 25,
+        "有効フラグ": true,
+        "作成日時": "2024-04-15T09:30:00",
+        "更新日時": "2025-01-22T14:45:00",
+        "作成者": "rec-user-0847"
+      },
+      {
+        "成功パターンID": "rec-001",
+        "パターン名": "飲食業既存顧客紹介による新規開拓",
+        "説明": "飲食業界の既存顧客からの紹介を通じて新規顧客を開拓するパターン。既存顧客との信頼関係を活用し、紹介顧客に対して高い成約率を達成する営業手法。",
+        "業種": "飲食業",
+        "商品カテゴリ": "POS・会計システム、食材仕入れシステム、配達管理システム",
+        "成功要因": "既存顧客からの信頼性が高く、紹介先企業が同業種であるため課題認識が共通している。既存顧客の成功事例が導入効果の実証となり、紹介先の購買意欲が高まる。既存顧客との関係維持により長期的な顧客基盤が形成される。",
+        "推奨アプローチ": "既存顧客への定期的なフォローアップと満足度向上を優先。紹介キャンペーンとして紹介特典を設定。紹介先企業に対しては既存顧客の導入事例を具体的に提示し、同じ課題解決が可能であることを強調。初回提案時に既存顧客の担当者同席を検討。",
+        "成功率": 68,
+        "参照商談数": 47,
+        "有効フラグ": true,
+        "作成日時": "2024-06-15T10:30:00+09:00",
+        "更新日時": "2025-01-20T14:45:00+09:00",
+        "作成者": "rec-user-0042"
+      },
+      {
+        "成功パターンID": "rec-001",
+        "パターン名": "地方自治体への段階的関係構築型入札対応",
+        "説明": "地方自治体との長期的な信頼関係を構築しながら、公開入札案件に段階的に対応するパターン。初期接触から提案、契約までの各段階で自治体の要件を丁寧にヒアリングし、カスタマイズされたソリューションを提示することで、高い落札率を実現する。",
+        "業種": "情報通信・システムインテグレーション",
+        "商品カテゴリ": "自治体向け業務システム・クラウドサービス",
+        "成功要因": "①事前のニーズ調査による要件の正確な把握、②複数年契約による安定性の提示、③地元企業との連携による実装体制の充実、④予算枠内での柔軟な提案スキーム、⑤担当部署との継続的なコミュニケーション",
+        "推奨アプローチ": "1.入札公告前の情報収集段階で自治体の現状課題をヒアリング、2.仕様書作成段階での技術的助言提供、3.入札説明会での丁寧な対応と質問への迅速な回答、4.提案資料に自治体の業務フローを反映させた具体的な運用イメージを記載、5.落札後の迅速な体制構築と定期的なレビュー会議の実施",
+        "成功率": 68,
+        "参照商談数": 22,
+        "有効フラグ": true,
+        "作成日時": "2024-06-15T09:30:00Z",
+        "更新日時": "2025-01-20T14:45:00Z",
+        "作成者": "rec-user-0847"
+      },
+      {
+        "成功パターンID": "rec-001",
+        "パターン名": "製薬企業への技術仕様書ベース詳細提案",
+        "説明": "製薬企業の研究開発部門に対して、製品の技術仕様書を事前に共有し、具体的な数値データと検証結果に基づいた詳細な提案を実施するパターン。顧客の技術的要件を正確に理解した上で、カスタマイズされたソリューションを提案することで、高い受注率を実現。",
+        "業種": "医薬品製造業",
+        "商品カテゴリ": "医薬品製造装置・分析機器",
+        "成功要因": "事前の技術仕様書共有により顧客の潜在的課題を正確に把握、提案内容の信頼性向上、複数部門の合意形成が効率化、導入後の運用イメージが明確化、競合他社との差別化が容易",
+        "推奨アプローチ": "①初回訪問時に顧客の既存システムと技術要件をヒアリング、②技術仕様書を詳細に分析し検証環境で試験実施、③GMP対応状況、精度検証結果、コスト削減効果を数値化した提案資料を作成、④研究開発責任者、品質保証部長、調達担当者を交えた合同説明会を開催、⑤導入後の保守体制と技術サポート体制を明示",
+        "成功率": 78,
+        "参照商談数": 32,
+        "有効フラグ": true,
+        "作成日時": "2024-06-15T09:30:00Z",
+        "更新日時": "2025-01-22T14:45:00Z",
+        "作成者": "rec-user-0847"
+      }
+    ],
+    "商談条件": [
+      {
+        "商談条件ID": "rec-001",
+        "商談ID": "rec-deal-2024-0847",
+        "条件種別": "予算規模",
+        "条件値": "1000万円以上",
+        "優先度": 1,
+        "マッチ度": 92,
+        "備考": "大手製造業（自動車部品サプライヤー）向けの年間契約案件。予算規模1000万円以上の大型案件であり、決定権者は購買部長級。過去の類似案件（2023年度）との成功パターンとの高いマッチを確認。",
+        "作成日時": "2024-11-15T09:30:00+09:00",
+        "更新日時": "2024-12-10T14:22:00+09:00",
+        "作成者": "rec-user-佐藤花子"
+      },
+      {
+        "商談条件ID": "rec-001",
+        "商談ID": "rec-deal-2024-0847",
+        "条件種別": "決定者属性",
+        "条件値": "経営層（CTO/CIO/経営企画責任者）",
+        "優先度": 1,
+        "マッチ度": 92,
+        "備考": "システム導入案件のため経営層の承認が必須。中堅IT企業の場合、技術責任者と経営層の双方が関与することが多い。現在の接触者は情報システム部長だが、最終決定権者への接触を優先すること。",
+        "作成日時": "2024-11-15T10:30:00+09:00",
+        "更新日時": "2024-12-08T14:22:00+09:00",
+        "作成者": "rec-user-佐藤花子"
+      },
+      {
+        "商談条件ID": "rec-001",
+        "商談ID": "rec-deal-2024-0847",
+        "条件種別": "予算規模",
+        "条件値": "初期導入予算300万円以下",
+        "優先度": 1,
+        "マッチ度": 85,
+        "備考": "スタートアップ企業向けの段階的導入プラン。初期3ヶ月は基本機能のみ、その後段階的に拡張予定。決定者は技術責任者（CTO）で、予算承認権は代表取締役。資金調達直後のため予算確保は可能だが、ROI実績が重要な判断基準となる。",
+        "作成日時": "2024-11-15T10:30:00+09:00",
+        "更新日時": "2025-01-22T14:15:00+09:00",
+        "作成者": "rec-user-佐藤花子"
+      },
+      {
+        "商談条件ID": "rec-001",
+        "商談ID": "rec-deal-0847",
+        "条件種別": "決定者属性",
+        "条件値": "コンプライアンス責任者・法務部長級",
+        "優先度": 1,
+        "マッチ度": 92,
+        "備考": "金融機関のコンプライアンス重視案件のため、決定権を持つコンプライアンス責任者との接触が必須。過去の成功事例では法務部長以上の職位での承認率が95%以上。",
+        "作成日時": "2024-11-15T09:30:00+09:00",
+        "更新日時": "2025-01-22T14:15:00+09:00",
+        "作成者": "rec-user-2156"
+      },
+      {
+        "商談条件ID": "rec-001",
+        "商談ID": "rec-deal-2024-0847",
+        "条件種別": "企業規模",
+        "条件値": "店舗数50店舗以上300店舗未満",
+        "優先度": 1,
+        "マッチ度": 85,
+        "備考": "中堅小売チェーン向け。大型チェーンより意思決定が早く、地域密着型の提案が響きやすい。既存システム導入実績あり。",
+        "作成日時": "2024-11-15T09:30:00+09:00",
+        "更新日時": "2024-11-20T14:15:00+09:00",
+        "作成者": "rec-user-佐藤花子"
+      },
+      {
+        "商談条件ID": "rec-001",
+        "商談ID": "rec-deal-2024-0847",
+        "条件種別": "決定者属性",
+        "条件値": "医療機関の経営層・医事課長以上",
+        "優先度": 1,
+        "マッチ度": 92,
+        "備考": "大学附属病院または200床以上の総合病院が対象。医療情報システムの導入経験者が望ましい。前回の失敗事例から決定権限のある経営層との接触が必須条件。",
+        "作成日時": "2024-11-15T09:30:00+09:00",
+        "更新日時": "2025-01-20T14:22:00+09:00",
+        "作成者": "rec-user-佐藤花子"
+      },
+      {
+        "商談条件ID": "rec-001",
+        "商談ID": "rec-deal-0847",
+        "条件種別": "予算規模",
+        "条件値": "500万円〜1000万円",
+        "優先度": 1,
+        "マッチ度": 85,
+        "備考": "既存顧客の佐藤電機工業からのアップセル案件。現在の基本契約は月額50万円。今期内にシステム拡張を検討中との情報あり。営業担当の鈴木花子が確度高いと報告。",
+        "作成日時": "2024-11-15T09:30:00Z",
+        "更新日時": "2024-12-08T14:22:00Z",
+        "作成者": "rec-user-0312"
+      },
+      {
+        "商談条件ID": "rec-001",
+        "商談ID": "rec-deal-0847",
+        "条件種別": "現在の契約状況",
+        "条件値": "競合他社サービス利用中",
+        "優先度": 1,
+        "マッチ度": 85,
+        "備考": "A社製システムを2年間利用。契約更新時期が2025年3月で、切り替えのタイミングが最適。既存ユーザーからの乗り換え支援プログラムの適用可能。",
+        "作成日時": "2024-11-15T10:30:00+09:00",
+        "更新日時": "2024-12-08T14:22:00+09:00",
+        "作成者": "rec-user-0523"
+      },
+      {
+        "商談条件ID": "rec-001",
+        "商談ID": "rec-deal-2024-0847",
+        "条件種別": "予算規模",
+        "条件値": "5,000万円～10,000万円",
+        "優先度": 1,
+        "マッチ度": 85,
+        "備考": "厚生労働省の福祉システム構築案件。予算規模は過去3年の同類案件から推定。入札参加資格として建設業許可（土木一式）が必須。",
+        "作成日時": "2024-11-15T09:30:00+09:00",
+        "更新日時": "2024-12-08T14:22:00+09:00",
+        "作成者": "rec-user-佐藤花子"
+      },
+      {
+        "商談条件ID": "rec-001",
+        "商談ID": "rec-deal-2024-0847",
+        "条件種別": "予算規模",
+        "条件値": "5000万円以上1億円未満",
+        "優先度": 1,
+        "マッチ度": 92,
+        "備考": "グローバル企業の日本支社統一導入案件。全国50拠点への段階的導入を想定。初期投資5000万円、3年契約で総額1.5億円規模。決定権は日本支社長（山田健一）と本社IT部門にあり、承認プロセスに60日程度要する見込み。",
+        "作成日時": "2024-11-15T09:30:00+09:00",
+        "更新日時": "2024-12-08T14:22:00+09:00",
+        "作成者": "rec-user-佐藤花子"
+      }
+    ],
+    "推奨履歴": [
+      {
+        "推奨履歴ID": "rec-001",
+        "ログインユーザーID": "usr-0847",
+        "顧客ID": "cst-5623",
+        "商談ID": "deal-3891",
+        "成功パターンID": "pat-0156",
+        "推奨内容": "既存顧客である株式会社山田製造所は現在、基本的なクラウドストレージサービスを利用中です。同社の業務規模拡大に伴い、データ分析ツールとのセット提案を推奨します。類似企業での成功事例から、このタイミングでのクロスセル提案は成約率が高いと予測されます。",
+        "推奨タイプ": "クロスセル提案",
+        "信頼度スコア": 82,
+        "推奨実施フラグ": true,
+        "実施結果": "成功",
+        "結果コメント": "営業担当者の佐藤花子が2025年1月15日に顧客訪問時に提案を実施。顧客の経営企画部長が前向きな反応を示し、2月からの導入契約が成立しました。追加契約金額は月額25万円、初期導入費用50万円となりました。",
+        "作成日時": "2025-01-10T09:30:00",
+        "実施日時": "2025-01-15T14:45:00",
+        "更新日時": "2025-01-20T11:20:00",
+        "作成者": "AI-Agent-Sales-v2.1"
+      },
+      {
+        "推奨履歴ID": "rec-001",
+        "ログインユーザーID": "user-0847",
+        "顧客ID": "cust-5392",
+        "商談ID": "deal-2841",
+        "成功パターンID": "pattern-0156",
+        "推奨内容": "同業他社との競争が激化している状況です。顧客の予算制約を踏まえ、段階的な導入プランの提案と初期導入費用の15%値引きを組み合わせたアプローチを推奨します。これにより顧客の意思決定を加速でき、失注リスクを軽減できると予想されます。",
+        "推奨タイプ": "商談条件",
+        "信頼度スコア": 78,
+        "推奨実施フラグ": false,
+        "実施結果": null,
+        "結果コメント": null,
+        "作成日時": "2024-11-15T10:30:00+09:00",
+        "実施日時": null,
+        "更新日時": "2024-11-15T10:30:00+09:00",
+        "作成者": "AI-Agent-Sales-001"
+      },
+      {
+        "推奨履歴ID": "rec-001",
+        "ログインユーザーID": "usr-0847",
+        "顧客ID": "cst-2156",
+        "商談ID": "deal-5923",
+        "成功パターンID": "pat-0312",
+        "推奨内容": "同業種の建設機械商社での成功事例から、初回訪問時に顧客の既存設備稼働状況をヒアリングした上で、メンテナンスコスト削減効果を数値化した提案資料を提示することが効果的です。特に中堅建設会社では年間運用コスト20-30%削減の実績が確認されています。初回面談では経営層ではなく現場管理者との関係構築を優先し、2回目以降に経営層への提案に繋げるアプローチを推奨します。",
+        "推奨タイプ": "提案アプローチ",
+        "信頼度スコア": 87,
+        "推奨実施フラグ": true,
+        "実施結果": "成功",
+        "結果コメント": "推奨通り現場管理者の佐藤課長と関係構築ができました。既存設備の課題をヒアリングでき、当社製品との相性が良いことが確認されました。3週間後に経営層への提案予定で、商談が次段階に進みました。",
+        "作成日時": "2024-11-15 09:30:00",
+        "実施日時": "2024-11-22 14:00:00",
+        "更新日時": "2024-12-06 16:45:00",
+        "作成者": "AI-Agent-Sales-Advisor-v2.1"
+      },
+      {
+        "推奨履歴ID": "rec-001",
+        "ログインユーザーID": "usr-0847",
+        "顧客ID": "cst-5392",
+        "商談ID": "opp-2841",
+        "成功パターンID": "pat-0156",
+        "推奨内容": "初期接触から2週間が経過し、顧客の関心度が高まっている段階です。ここでのフォローアップ会議開催により、具体的なニーズ把握と信頼関係の深化が期待できます。過去の同様案件では、この段階での対面会議実施により成約率が73%向上しています。推奨として、今週中に顧客の経営層を交えた30分程度のオンライン会議を提案し、当社のソリューション概要と顧客課題のマッピングを行うことをお勧めします。",
+        "推奨タイプ": "次のアクション",
+        "信頼度スコア": 78,
+        "推奨実施フラグ": false,
+        "実施結果": "保留",
+        "結果コメント": "顧客側の都合で今月中の会議開催が難しいとの連絡を受けました。来月初旬での開催を調整中です。営業担当者との打ち合わせで、顧客の決算時期を考慮した上で、来月10日以降の会議開催を目指すことで合意しました。",
+        "作成日時": "2024-11-15T10:30:00",
+        "実施日時": null,
+        "更新日時": "2024-11-22T14:15:00",
+        "作成者": "AI-Agent-Sales-001"
+      },
+      {
+        "推奨履歴ID": "rec-001",
+        "ログインユーザーID": "user-0847",
+        "顧客ID": "cust-5623",
+        "商談ID": "deal-2891",
+        "成功パターンID": "pattern-156",
+        "推奨内容": "商談金額8,500万円の大型案件のため、顧客企業の経営層を含む複数決裁者へのアプローチが必須です。ステークホルダー分析結果から、①購買部長（予算権限者）への技術仕様説明、②経営企画室長（戦略的判断者）へのビジネスインパクト提示、③現場責任者（利用者）への運用効率性デモを段階的に実施することで、全層での合意形成が可能と判断されます。特に経営企画室長への初期接触を優先し、経営課題との紐付けを強調してください。",
+        "推奨タイプ": "提案アプローチ",
+        "信頼度スコア": 87,
+        "推奨実施フラグ": true,
+        "実施結果": "成功",
+        "結果コメント": "推奨通り経営企画室長の山田由美氏への事前ブリーフィングを実施し、経営課題との紐付けを説明したところ、強い関心を示していただきました。その後、購買部長と現場責任者を交えた3者会議を開催し、全層での合意を得られました。最終的に契約締結に至り、商談成功となりました。",
+        "作成日時": "2024-11-08T14:32:00+09:00",
+        "実施日時": "2024-11-15T10:00:00+09:00",
+        "更新日時": "2024-12-20T16:45:00+09:00",
+        "作成者": "AI-Agent-Sales-v2.1"
+      },
+      {
+        "推奨履歴ID": "rec-001",
+        "ログインユーザーID": "user-047",
+        "顧客ID": "cust-0892",
+        "商談ID": "deal-2024-1156",
+        "成功パターンID": "pattern-085",
+        "推奨内容": "顧客の予算承認が遅延している状況を踏まえ、決裁者である経理部長・山田花子氏への直接接触を推奨します。過去の同業他社事例では、決裁者への経営効果の説明（ROI：年間450万円の削減効果）が購買決定の加速に有効でした。接触方法は経営層向けプレゼンテーション資料を事前送付した上での経営会議での提案が推奨されます。",
+        "推奨タイプ": "再接触戦略",
+        "信頼度スコア": 72,
+        "推奨実施フラグ": true,
+        "実施結果": "失敗",
+        "結果コメント": "決裁者への接触を試みましたが、顧客側の経営方針変更により新規システム導入の予算が全て凍結されることになりました。山田花子経理部長からは『今年度下半期の経営環境悪化に伴い、IT投資は来年度以降の検討となる』との連絡を受けました。再接触戦略自体は適切でしたが、マクロ経済環境の急変により対応できませんでした。",
+        "作成日時": "2024-08-15T10:30:00",
+        "実施日時": "2024-09-02T14:15:00",
+        "更新日時": "2024-09-05T09:45:00",
+        "作成者": "AI-Agent-SalesBoost-v2.1"
+      },
+      {
+        "推奨履歴ID": "rec-001",
+        "ログインユーザーID": "usr-0847",
+        "顧客ID": "cst-2156",
+        "商談ID": "deal-5423",
+        "成功パターンID": "pat-0312",
+        "推奨内容": "同じ流通業界のA社での成功事例を参考に、現在の提案内容を修正することを推奨します。具体的には、システム導入による業務効率化の数値化（作業時間30%削減、人件費年間800万円削減）を強調し、ROI計算を3年スパンで提示することで、経営層の意思決定を加速させることができます。また、導入後の運用サポート体制を明確化し、既存システムとの連携実績を2件以上提示することで、顧客の導入リスクを軽減できます。",
+        "推奨タイプ": "提案アプローチ",
+        "信頼度スコア": 87,
+        "推奨実施フラグ": true,
+        "実施結果": "成功",
+        "結果コメント": "提案内容を修正し、ROI計算書と同業種の導入事例資料2件を追加した提案資料を作成しました。顧客の経営企画部長との面談で数値化されたメリットが高く評価され、翌週に稟議申請が承認され、商談がクロージングステージに進みました。契約予定金額は当初予想の1,200万円から1,500万円に拡大しました。",
+        "作成日時": "2024-11-15T10:30:00",
+        "実施日時": "2024-11-18T14:20:00",
+        "更新日時": "2024-11-28T09:15:00",
+        "作成者": "AI-Agent-SalesAdvisor-v2.1"
+      },
+      {
+        "推奨履歴ID": "rec-001",
+        "ログインユーザーID": "rec-u-0847",
+        "顧客ID": "rec-c-5293",
+        "商談ID": "rec-d-1562",
+        "成功パターンID": "rec-sp-0312",
+        "推奨内容": "本顧客は過去3年間で類似製品の導入経験があり、技術検証よりも導入後の運用サポート体制を重視する傾向が見られます。初期提案では機能面での差別化を強調するアプローチが推奨されますが、成功パターン分析から判断すると、導入実績企業の事例紹介と専任サポートチームの配置を前面に出した提案アプローチが受注確度を15%向上させる可能性があります。",
+        "推奨タイプ": "提案アプローチ",
+        "信頼度スコア": 78,
+        "推奨実施フラグ": false,
+        "実施結果": "別アプローチ選択",
+        "結果コメント": "AIの推奨は妥当でしたが、顧客の経営層との事前面談で価格競争力が最優先課題であることが判明しました。そのため、コスト最適化と段階的導入プランを軸とした提案に変更し、結果として受注に至りました。運用サポート面は契約後の詳細協議に先送りしました。",
+        "作成日時": "2024-11-08 14:32:15",
+        "実施日時": "2024-11-12 10:15:00",
+        "更新日時": "2024-11-15 16:45:30",
+        "作成者": "AI-Agent-Sales-v2.1"
+      },
+      {
+        "推奨履歴ID": "rec-001",
+        "ログインユーザーID": "user-0847",
+        "顧客ID": "cust-2156",
+        "商談ID": "deal-5923",
+        "成功パターンID": "pattern-0312",
+        "推奨内容": "顧客の年間予算が500万円に限定されているため、クラウドシステムの導入を3段階に分けることを推奨します。第1段階（1月）：基本モジュール導入で200万円、第2段階（4月）：分析機能追加で180万円、第3段階（10月）：連携機能実装で120万円。各段階で段階的な効果を実感させることで、追加投資の判断を容易にできます。",
+        "推奨タイプ": "商談条件",
+        "信頼度スコア": 87,
+        "推奨実施フラグ": true,
+        "実施結果": "成功",
+        "結果コメント": "顧客担当者（田中一郎氏）が予算分割案に強く賛同し、第1段階の契約を2024年12月に締結。導入後の効果測定を経て、2025年3月に第2段階の追加発注決定。顧客満足度も高く、3月末までに累計380万円の受注を達成。",
+        "作成日時": "2024-11-15T10:30:00+09:00",
+        "実施日時": "2024-11-20T14:15:00+09:00",
+        "更新日時": "2025-03-28T16:45:00+09:00",
+        "作成者": "AIAgent-Recommendation-v2.1"
+      }
+    ],
+    "推奨根拠": [
+      {
+        "推奨根拠ID": "rec-001-20250115-7f3a",
+        "推奨履歴ID": "rec-hist-20250115-4b2c",
+        "成功パターンID": "rec-pattern-2024-0847",
+        "根拠タイプ": "過去成功事例",
+        "根拠内容": "顧客は過去12ヶ月間にオフィス家具カテゴリから合計8件の購入実績があり、特に人間工学椅子と昇降デスクの購入から3ヶ月後に照明器具を追加購入した事例が2件確認されました。同様の購買パターンを示す顧客セグメントでは、照明器具提案時の成約率が68%に達しています。",
+        "信頼度スコア": 76,
+        "参照データ": "顧客ID:C-2847-TANAKA | 過去購買履歴:2024年3月(アーロンチェア ¥189,000)→2024年6月(スタンディングデスク ¥245,000)→2024年9月(LEDデスクライト ¥28,500) | 類似成功事例:5件 | 同セグメント成約率:68% | 購買間隔平均:92日",
+        "作成日時": "2025-01-15T09:32:47+09:00",
+        "更新日時": "2025-01-15T09:32:47+09:00",
+        "作成者": "AI_Agent_Sales_001"
+      },
+      {
+        "推奨根拠ID": "rec-001",
+        "推奨履歴ID": "rec-hist-0847",
+        "成功パターンID": "rec-pattern-0523",
+        "根拠タイプ": "過去成功事例",
+        "根拠内容": "製造業向けIoTソリューションは、同規模（従業員数150～300名）の自動車部品メーカー3社で導入後、生産効率が平均18%向上し、不良率が2.3%から0.8%に低下した実績がある。本社案件も同じく生産ラインの可視化が主要課題であり、導入パターンが合致している。",
+        "信頼度スコア": 87,
+        "参照データ": "成功事例：①鈴木精密工業（2023年8月導入、ROI達成期間9ヶ月）②山田自動車部品（2024年2月導入、年間コスト削減額2,400万円）③佐藤機械製作所（2024年5月導入、稼働率改善12%）。顧客属性マッチ度：業種一致度95%、企業規模一致度92%、予算帯一致度88%。",
+        "作成日時": "2025-01-15T09:30:45Z",
+        "更新日時": "2025-01-15T09:30:45Z",
+        "作成者": "AI_Agent_Yamada"
+      },
+      {
+        "推奨根拠ID": "rec-001",
+        "推奨履歴ID": "rec-hist-0847",
+        "成功パターンID": "rec-pat-0523",
+        "根拠タイプ": "顧客属性マッチ",
+        "根拠内容": "当顧客は初期導入から18ヶ月経過し、基本プランの利用率が平均95%に達している。同一業界の成長段階顧客23社のうち、21社がこのタイミングでプレミアムプランへアップグレードしており、その後の年間利用額は平均340万円から890万円に増加している。顧客の月次ログイン頻度も過去3ヶ月で28%増加しており、機能拡張への需要が高まっていることが示唆される。",
+        "信頼度スコア": 87,
+        "参照データ": "顧客ID:CUS-20230415-0892、業界:製造業、従業員数:250名、初期導入日:2023年9月12日、現在プラン:ベーシック、月次利用コスト:28,500円、直近3ヶ月の利用モジュール数:8/12、ユーザー数:34名、サポートチケット発行数:月平均2.3件、NPS:72、同業他社ベンチマーク:アップグレード率78%",
+        "作成日時": "2025-01-15T10:32:47+09:00",
+        "更新日時": "2025-01-15T10:32:47+09:00",
+        "作成者": "AI-Agent-営業支援-v2.1"
+      },
+      {
+        "推奨根拠ID": "rec-001-2024-11-15-8f3a",
+        "推奨履歴ID": "rec-hist-2024-11-15-5b2c",
+        "成功パターンID": "rec-pattern-2024-09-22-3d7e",
+        "根拠タイプ": "市場トレンド",
+        "根拠内容": "2024年Q4における中堅製造業向けDX投資が前年比38%増加。特にサプライチェーン可視化ソリューションへの需要が急増。対象顧客は自動車部品製造業で、既存ERP導入実績があり、次段階のデジタル化投資タイミングが最適。同業他社3社が当該ソリューション導入済みで、業界標準化の兆候あり。",
+        "信頼度スコア": 82,
+        "参照データ": "出典：矢野経済研究所『2024年製造業DX市場調査』、IDC Japan『アジア太平洋地域エンタープライズソリューション市場予測2024-2025』、顧客ヒアリング記録（2024年10月18日、田中太郎営業部長）、競合動向調査（2024年11月1日〜11月10日実施）",
+        "作成日時": "2024-11-15T09:30:00+09:00",
+        "更新日時": "2024-11-15T09:30:00+09:00",
+        "作成者": "AI_Agent_Sales_001"
+      },
+      {
+        "推奨根拠ID": "rec-001",
+        "推奨履歴ID": "rec-hist-0847",
+        "成功パターンID": "rec-pattern-0523",
+        "根拠タイプ": "過去成功事例",
+        "根拠内容": "同一業界の製造業向けSaaS導入案件で、3ヶ月以上停滞していた案件に対して、導入効果の可視化資料と現場責任者向けのデモンストレーションを実施したことで、意思決定が加速し受注に至った。本案件も同様に顧客内での合意形成が課題となっているため、同じアプローチが有効と判断される。",
+        "信頼度スコア": 82,
+        "参照データ": "案件名：株式会社鈴木精密工業 ERP導入案件（2024年3月受注）、停滞期間：98日、打開策実施後の意思決定期間：14日、導入効果試算額：年間450万円のコスト削減、参考ROI：18ヶ月",
+        "作成日時": "2025-01-15T09:30:00+09:00",
+        "更新日時": "2025-01-15T09:30:00+09:00",
+        "作成者": "AI_Agent_Sales_Analyzer_v2.1"
+      },
+      {
+        "推奨根拠ID": "rec-20250115-001",
+        "推奨履歴ID": "rec-20250115-hist-042",
+        "成功パターンID": "rec-pattern-seasonal-upsell-003",
+        "根拠タイプ": "季節トレンド・時期的要因",
+        "根拠内容": "1月は新年度予算の執行時期であり、IT関連企業の設備投資ニーズが高まる。同顧客は過去3年間、1月〜2月に大型案件を発注する傾向が確認されている。現在の契約内容（基本ライセンス）から、エンタープライズプラン（ストレージ容量3倍、ユーザー数無制限）へのアップセルが最適なタイミング。",
+        "信頼度スコア": 78,
+        "参照データ": "顧客ID:CUST-2024-08765、過去発注履歴：2024年1月15日に150万円、2023年1月22日に120万円の契約更新実績。業界レポート「2025年IT予算動向」より、金融・保険業界の予算配分比率が前年比+23%と予測。同顧客は金融業界向けシステム開発企業。",
+        "作成日時": "2025-01-15T09:30:45+09:00",
+        "更新日時": "2025-01-15T09:30:45+09:00",
+        "作成者": "AI-Agent-Yamada-Sales"
+      },
+      {
+        "推奨根拠ID": "rec-001",
+        "推奨履歴ID": "rec-hist-2024-0847",
+        "成功パターンID": "rec-pat-1203",
+        "根拠タイプ": "顧客属性マッチ",
+        "根拠内容": "従業員数150名、年間IT予算1,200万円の中堅製造業。過去12ヶ月の同規模顧客導入事例では、スタンダードプランの採用率が87%。本顧客の既存システム環境（Windows Server 2019、オンプレミス運用）との互換性を考慮し、段階的なクラウド移行を見据えたスタンダードプランが最適。プレミアムプランは過剰機能となり、ベーシックプランでは保守性に課題。",
+        "信頼度スコア": 82,
+        "参照データ": "顧客企業: 株式会社佐藤精密工業、業種: 金属加工製造、従業員数: 152名、年間IT予算: 1,180万円、現在の主要システム: SAP ERP、基幹DB: Oracle 11g、年間保守費用: 340万円、今年度の新規投資枠: 280万円、意思決定者: 情報システム部長 鈴木健一、導入希望時期: 2025年Q2、同規模成功事例件数: 23件（スタンダードプラン導入企業）",
+        "作成日時": "2025-01-15T09:32:47+09:00",
+        "更新日時": "2025-01-15T09:32:47+09:00",
+        "作成者": "AI_Agent_Sales_Recommender_v2.1"
+      },
+      {
+        "推奨根拠ID": "rec-001",
+        "推奨履歴ID": "rec-hist-0847",
+        "成功パターンID": "rec-pat-0512",
+        "根拠タイプ": "過去成功事例",
+        "根拠内容": "同一業界の中堅製造業顧客で、契約更新時期の3ヶ月前に競合他社の提案資料が確認された顧客に対し、カスタマイズ導入支援と専任サポート体制の強化を提案した結果、契約継続率が87%に達した。本顧客も同様の兆候が見られるため、同じ維持施策の適用が有効と判断。",
+        "信頼度スコア": 78,
+        "参照データ": "2023年度同業他社流出防止事例：鈴木工業株式会社（年間取引額2,800万円）、提案実施日2023年11月15日、契約継続決定日2024年2月22日、施策内容：専任営業担当者配置、四半期ビジネスレビュー開始、カスタム機能開発優先化、緊急対応SLA設定",
+        "作成日時": "2025-01-28T14:32:15+09:00",
+        "更新日時": "2025-01-28T14:32:15+09:00",
+        "作成者": "AI_Agent_Sales_Retention_v2.1"
+      },
+      {
+        "推奨根拠ID": "rec-20250115-0847",
+        "推奨履歴ID": "rec-20250115-0001",
+        "成功パターンID": "rec-20241203-cross-dept-001",
+        "根拠タイプ": "過去成功事例",
+        "根拠内容": "営業部門と製造部門の連携により、大規模受注案件（年間契約金額8,500万円）を2024年度に成約した実績があります。本案件も営業・製造・品質保証・物流の4部門統合提案が必要な構造であり、同一の組織横断的アプローチが有効と判断されます。前案件では各部門の課題を統合的に解決することで、顧客の導入期間を6ヶ月短縮し、初期投資コストを12%削減できました。",
+        "信頼度スコア": 87,
+        "参照データ": "案件名：XYZ製造業様システム統合プロジェクト（2024年4月～2024年12月完了）、担当営業：佐藤花子、製造部長：鈴木健一、成約金額：85,000千円、顧客業種：精密機械製造、組織構成：営業・製造・品質・物流4部門、提案方式：統合ソリューション型、顧客満足度スコア：94/100",
+        "作成日時": "2025-01-15T08:47:32+09:00",
+        "更新日時": "2025-01-15T08:47:32+09:00",
+        "作成者": "AI_Agent_CrossDept_001"
+      },
+      {
+        "推奨根拠ID": "rec-001-20250115-ch001",
+        "推奨履歴ID": "rec-hist-20250115-0847",
+        "成功パターンID": "rec-pattern-reeng-002",
+        "根拠タイプ": "過去成功事例",
+        "根拠内容": "同一業界の中堅製造業で、利用頻度低下から3ヶ月経過した顧客に対して、業界別カスタマイズ機能の紹介と専任サポート担当者の配置を実施した結果、利用再開率が78%に達した。本顧客も同じ機械部品業界であり、過去6ヶ月の利用頻度が月平均2.3回から0.8回に低下していることから、同様の施策が有効と判断される。",
+        "信頼度スコア": 82,
+        "参照データ": "成功事例ID: case-2024-0456, 対象顧客: 株式会社オートパーツ工業, 施策実施期間: 2024年7月〜9月, 利用再開率: 78%, 3ヶ月後継続率: 71%, 本顧客の過去利用パターン: 2024年1月〜6月の平均ログイン間隔32日、最終ログイン: 2025年1月8日（27日前）",
+        "作成日時": "2025-01-15T14:32:00+09:00",
+        "更新日時": "2025-01-15T14:32:00+09:00",
+        "作成者": "AI-ReengagementAgent-v2.1"
+      }
+    ]
+  },
+  "shellHtml": "<!doctype html>\n<html lang=\"ja\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>AIエージェント推奨支援システム</title>\n  <style>\n:root {\n  --primary: #0066cc;\n  --primary-hover: #0052a3;\n  --bg-main: #f0f4f9;\n  --bg-card: #ffffff;\n  --bg-sidebar: #e8ecf1;\n  --border: #d0d8e0;\n  --text: #1a1a1a;\n  --text-muted: #666666;\n  --top-bar-bg: #ffffff;\n  --top-bar-border: #d0d8e0;\n  --success: #2ecc71;\n  --warning: #f39c12;\n  --danger: #e74c3c;\n}\n\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\nbody {\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;\n  background: var(--bg-main);\n  color: var(--text);\n  line-height: 1.5;\n}\n\n.shell {\n  display: flex;\n  flex-direction: column;\n  height: 100vh;\n}\n\n.header {\n  background: var(--top-bar-bg);\n  border-bottom: 1px solid var(--top-bar-border);\n  padding: 12px 24px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  flex-shrink: 0;\n  height: 56px;\n}\n\n.header-left {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n}\n\n.logo {\n  font-size: 14px;\n  font-weight: 700;\n  color: var(--primary);\n  letter-spacing: -0.5px;\n}\n\n.header-title {\n  font-size: 13px;\n  font-weight: 500;\n  color: var(--text);\n}\n\n.header-right {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\n\n.user-avatar {\n  width: 32px;\n  height: 32px;\n  border-radius: 50%;\n  background: var(--primary);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: white;\n  font-size: 12px;\n  font-weight: 600;\n  flex-shrink: 0;\n}\n\n.user-name {\n  font-size: 12px;\n  color: var(--text);\n  font-weight: 500;\n}\n\n.logout-link {\n  font-size: 12px;\n  color: var(--primary);\n  text-decoration: none;\n  cursor: pointer;\n  transition: color 0.2s;\n}\n\n.logout-link:hover {\n  color: var(--primary-hover);\n}\n\n.main-container {\n  display: flex;\n  flex: 1;\n  overflow: hidden;\n}\n\n.sidebar {\n  width: 240px;\n  background: var(--bg-sidebar);\n  border-right: 1px solid var(--border);\n  overflow-y: auto;\n  flex-shrink: 0;\n  padding: 12px 0;\n}\n\n.nav-section {\n  padding: 8px 0;\n}\n\n.nav-section-title {\n  font-size: 10px;\n  font-weight: 700;\n  text-transform: uppercase;\n  color: var(--text-muted);\n  padding: 8px 16px;\n  letter-spacing: 0.5px;\n}\n\n.nav-item {\n  display: block;\n  padding: 10px 16px;\n  font-size: 13px;\n  color: var(--text);\n  text-decoration: none;\n  cursor: pointer;\n  transition: background 0.15s, color 0.15s;\n  border-left: 3px solid transparent;\n}\n\n.nav-item:hover {\n  background: rgba(0, 102, 204, 0.08);\n}\n\n.nav-item.aivic-active {\n  background: rgba(0, 102, 204, 0.12);\n  color: var(--primary);\n  border-left-color: var(--primary);\n  font-weight: 500;\n}\n\n.content-area {\n  flex: 1;\n  overflow-y: auto;\n  background: var(--bg-main);\n}\n\n[data-aivic-panel] {\n  width: 100%;\n  height: 100%;\n}\n\n.panel-container {\n  padding: 24px;\n  height: 100%;\n  overflow-y: auto;\n}\n\n.page-header {\n  margin-bottom: 24px;\n}\n\n.page-title {\n  font-size: 20px;\n  font-weight: 700;\n  color: var(--text);\n  margin-bottom: 4px;\n}\n\n.page-subtitle {\n  font-size: 13px;\n  color: var(--text-muted);\n}\n\n.kpi-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: 16px;\n  margin-bottom: 24px;\n}\n\n.kpi-card {\n  background: var(--bg-card);\n  border: 1px solid var(--border);\n  border-radius: 6px;\n  padding: 16px;\n}\n\n.kpi-label {\n  font-size: 11px;\n  font-weight: 600;\n  text-transform: uppercase;\n  color: var(--text-muted);\n  margin-bottom: 8px;\n  letter-spacing: 0.3px;\n}\n\n.kpi-value {\n  font-size: 24px;\n  font-weight: 700;\n  color: var(--text);\n  margin-bottom: 4px;\n}\n\n.kpi-meta {\n  font-size: 12px;\n  color: var(--text-muted);\n}\n\n.section-card {\n  background: var(--bg-card);\n  border: 1px solid var(--border);\n  border-radius: 6px;\n  margin-bottom: 16px;\n}\n\n.section-header {\n  padding: 16px;\n  border-bottom: 1px solid var(--border);\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.section-title {\n  font-size: 14px;\n  font-weight: 600;\n  color: var(--text);\n}\n\n.section-body {\n  padding: 16px;\n}\n\n.form-group {\n  margin-bottom: 16px;\n}\n\n.form-label {\n  display: block;\n  font-size: 12px;\n  font-weight: 600;\n  color: var(--text);\n  margin-bottom: 6px;\n}\n\n.form-input,\n.form-select,\n.form-textarea {\n  width: 100%;\n  padding: 8px 12px;\n  font-size: 13px;\n  border: 1px solid var(--border);\n  border-radius: 4px;\n  background: var(--bg-card);\n  color: var(--text);\n  font-family: inherit;\n}\n\n.form-input:focus,\n.form-select:focus,\n.form-textarea:focus {\n  outline: none;\n  border-color: var(--primary);\n  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);\n}\n\n.form-textarea {\n  resize: vertical;\n  min-height: 80px;\n}\n\n.button {\n  padding: 8px 16px;\n  font-size: 13px;\n  font-weight: 500;\n  border: none;\n  border-radius: 4px;\n  cursor: pointer;\n  transition: all 0.2s;\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n}\n\n.button-primary {\n  background: var(--primary);\n  color: white;\n}\n\n.button-primary:hover {\n  background: var(--primary-hover);\n}\n\n.button-secondary {\n  background: var(--bg-main);\n  color: var(--text);\n  border: 1px solid var(--border);\n}\n\n.button-secondary:hover {\n  background: rgba(0, 0, 0, 0.04);\n}\n\n.button-danger {\n  background: var(--danger);\n  color: white;\n}\n\n.button-danger:hover {\n  background: #c0392b;\n}\n\n.button-group {\n  display: flex;\n  gap: 8px;\n  margin-top: 16px;\n}\n\n.table-wrapper {\n  overflow-x: auto;\n}\n\n.table {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 13px;\n}\n\n.table thead {\n  background: rgba(0, 0, 0, 0.02);\n  border-bottom: 1px solid var(--border);\n}\n\n.table th {\n  padding: 10px 12px;\n  text-align: left;\n  font-weight: 600;\n  color: var(--text);\n  font-size: 12px;\n}\n\n.table td {\n  padding: 10px 12px;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n\n.table tbody tr:hover {\n  background: rgba(0, 0, 0, 0.02);\n}\n\n.badge {\n  display: inline-block;\n  padding: 4px 8px;\n  border-radius: 3px;\n  font-size: 11px;\n  font-weight: 600;\n}\n\n.badge-success {\n  background: rgba(46, 204, 113, 0.15);\n  color: #27ae60;\n}\n\n.badge-warning {\n  background: rgba(243, 156, 18, 0.15);\n  color: #d68910;\n}\n\n.badge-danger {\n  background: rgba(231, 76, 60, 0.15);\n  color: #c0392b;\n}\n\n.badge-info {\n  background: rgba(0, 102, 204, 0.15);\n  color: var(--primary);\n}\n\n.stepper {\n  display: flex;\n  gap: 0;\n  margin-bottom: 24px;\n}\n\n.step {\n  flex: 1;\n  display: flex;\n  align-items: center;\n  position: relative;\n}\n\n.step-number {\n  width: 32px;\n  height: 32px;\n  border-radius: 50%;\n  background: var(--bg-main);\n  border: 2px solid var(--border);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 12px;\n  font-weight: 600;\n  color: var(--text-muted);\n  flex-shrink: 0;\n  z-index: 2;\n}\n\n.step.active .step-number {\n  background: var(--primary);\n  border-color: var(--primary);\n  color: white;\n}\n\n.step.completed .step-number {\n  background: var(--success);\n  border-color: var(--success);\n  color: white;\n}\n\n.step-label {\n  font-size: 12px;\n  font-weight: 500;\n  color: var(--text);\n  margin-left: 8px;\n}\n\n.step-line {\n  flex: 1;\n  height: 2px;\n  background: var(--border);\n  margin: 0 8px;\n  position: relative;\n  top: -16px;\n}\n\n.step.completed .step-line {\n  background: var(--success);\n}\n\n.modal-overlay {\n  display: none;\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background: rgba(0, 0, 0, 0.4);\n  z-index: 1000;\n  align-items: center;\n  justify-content: center;\n}\n\n.modal-overlay.active {\n  display: flex;\n}\n\n.modal {\n  background: var(--bg-card);\n  border-radius: 8px;\n  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);\n  max-width: 500px;\n  width: 90%;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n\n.modal-header {\n  padding: 16px;\n  border-bottom: 1px solid var(--border);\n  font-size: 14px;\n  font-weight: 600;\n  color: var(--text);\n}\n\n.modal-body {\n  padding: 16px;\n}\n\n.modal-footer {\n  padding: 16px;\n  border-top: 1px solid var(--border);\n  display: flex;\n  gap: 8px;\n  justify-content: flex-end;\n}\n\n.tabs {\n  display: flex;\n  border-bottom: 1px solid var(--border);\n  margin-bottom: 16px;\n  gap: 0;\n}\n\n.tab {\n  padding: 12px 16px;\n  font-size: 13px;\n  font-weight: 500;\n  color: var(--text-muted);\n  cursor: pointer;\n  border-bottom: 2px solid transparent;\n  transition: all 0.2s;\n  white-space: nowrap;\n}\n\n.tab:hover {\n  color: var(--text);\n}\n\n.tab.active {\n  color: var(--primary);\n  border-bottom-color: var(--primary);\n}\n\n.tab-content {\n  display: none;\n}\n\n.tab-content.active {\n  display: block;\n}\n\n.recommendation-card {\n  background: var(--bg-card);\n  border: 1px solid var(--border);\n  border-left: 4px solid var(--primary);\n  border-radius: 6px;\n  padding: 16px;\n  margin-bottom: 16px;\n}\n\n.recommendation-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  margin-bottom: 12px;\n}\n\n.recommendation-title {\n  font-size: 13px;\n  font-weight: 600;\n  color: var(--text);\n}\n\n.recommendation-status {\n  font-size: 11px;\n  font-weight: 600;\n}\n\n.recommendation-body {\n  font-size: 12px;\n  color: var(--text-muted);\n  line-height: 1.6;\n  margin-bottom: 12px;\n}\n\n.recommendation-evidence {\n  background: rgba(0, 0, 0, 0.02);\n  border-left: 2px solid var(--border);\n  padding: 8px 12px;\n  margin-bottom: 12px;\n  font-size: 12px;\n  color: var(--text-muted);\n}\n\n.recommendation-actions {\n  display: flex;\n  gap: 8px;\n}\n\n.recommendation-actions button {\n  flex: 1;\n  padding: 6px 12px;\n  font-size: 12px;\n}\n\n.match-score {\n  display: inline-block;\n  padding: 4px 8px;\n  background: rgba(0, 102, 204, 0.1);\n  color: var(--primary);\n  border-radius: 3px;\n  font-size: 11px;\n  font-weight: 600;\n}\n\n.condition-tag {\n  display: inline-block;\n  padding: 4px 8px;\n  background: var(--bg-main);\n  border: 1px solid var(--border);\n  border-radius: 3px;\n  font-size: 11px;\n  color: var(--text-muted);\n  margin-right: 4px;\n  margin-bottom: 4px;\n}\n\n.empty-state {\n  text-align: center;\n  padding: 40px 24px;\n  color: var(--text-muted);\n}\n\n.empty-state-icon {\n  font-size: 48px;\n  margin-bottom: 12px;\n  opacity: 0.3;\n}\n\n.empty-state-title {\n  font-size: 14px;\n  font-weight: 600;\n  color: var(--text);\n  margin-bottom: 4px;\n}\n\n.empty-state-text {\n  font-size: 12px;\n  color: var(--text-muted);\n}\n\n.loading-spinner {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  border: 2px solid var(--border);\n  border-top-color: var(--primary);\n  border-radius: 50%;\n  animation: spin 0.6s linear infinite;\n}\n\n@keyframes spin {\n  to { transform: rotate(360deg); }\n}\n\n.divider {\n  height: 1px;\n  background: var(--border);\n  margin: 16px 0;\n}\n\n.text-muted {\n  color: var(--text-muted);\n  font-size: 12px;\n}\n\n.text-small {\n  font-size: 12px;\n}\n\n.text-center {\n  text-align: center;\n}\n\n.mt-8 { margin-top: 8px; }\n.mt-12 { margin-top: 12px; }\n.mt-16 { margin-top: 16px; }\n.mb-8 { margin-bottom: 8px; }\n.mb-12 { margin-bottom: 12px; }\n.mb-16 { margin-bottom: 16px; }\n.gap-8 { gap: 8px; }\n.gap-12 { gap: 12px; }\n.gap-16 { gap: 16px; }\n\n  </style>\n  <!--AIVIC_GLOBALS-->\n</head>\n<body>\n  <div class=\"shell\">\n    <header class=\"header\">\n      <div class=\"header-left\">\n        <div class=\"logo\">AIエージェント推奨支援</div>\n      </div>\n      <div class=\"header-right\">\n        <div class=\"user-avatar\">U</div>\n        <div class=\"user-name\">ユーザー</div>\n        <a href=\"./login.html\" class=\"logout-link\">ログアウト</a>\n      </div>\n    </header>\n\n    <div class=\"main-container\">\n      <aside class=\"sidebar\">\n        <div class=\"nav-section\">\n          <div class=\"nav-section-title\">業務</div>\n          <a class=\"nav-item aivic-active\" data-aivic-nav=\"scr-1785571913372\" onclick=\"window.showScreen('scr-1785571913372')\">\n            推奨ダッシュボード\n          </a>\n        </div>\n      </aside>\n\n      <main class=\"content-area\">\n        <div data-aivic-panel=\"scr-1785571913372\"></div>\n      </main>\n    </div>\n  </div>\n\n  <!--AIVIC_RUNTIME-->\n</body>\n</html>"
+}
