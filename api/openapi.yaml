@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: 営業プロセス監査・分析管理システム API
+  title: 共通 API
   version: 0.1.0
 paths:
   /resources:
