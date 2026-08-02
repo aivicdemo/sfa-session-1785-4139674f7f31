@@ -1,0 +1,16 @@
+import { calculateProcessComplianceDeviationScore } from "../../src/logic/it-1-br-2-1-2-1";
+
+describe("営業データ品質検証エンジン - 標準プロセス遵守度スコア計算", () => {
+  // SCEN-283
+  test("成約ステップが標準プロセスから1日早いとき、乖離度として正の値が計算される", () => {
+    const standardProcessScheduledDate = new Date("2024-01-15T00:00:00Z");
+    const actualPerformanceDate = new Date("2024-01-14T00:00:00Z");
+
+    const deviationScore = calculateProcessComplianceDeviationScore({
+      scheduledDate: standardProcessScheduledDate,
+      actualDate: actualPerformanceDate,
+    });
+
+    expect(deviationScore).toBe(1.0);
+  });
+});
