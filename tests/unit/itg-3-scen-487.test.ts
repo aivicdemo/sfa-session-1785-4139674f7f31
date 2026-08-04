@@ -1,27 +1,33 @@
 import { calculateImprovementPriorityRank } from '../../src/logic/itg-3';
 
 describe('AIエージェント推奨支援システム - 改善優先度ランク算出機能', () => {
-  // SCEN-487
-  test('改善対象項目の影響度が null のとき、エラーが発生する', () => {
-    const improvementItems = [
+  test('SCEN-487: 改善対象項目の影響度が null のとき、エラーが発生する', () => {
+    const improvementItemsWithNullImpact = [
       {
         itemId: 'item-001',
-        itemName: 'データ品質スコア',
+        itemName: 'データ入力品質改善',
         impactScore: null,
-        currentValue: 75,
-        targetValue: 95,
+        urgencyLevel: 'high',
+        estimatedEffort: 5,
       },
       {
         itemId: 'item-002',
-        itemName: '営業プロセス標準化達成度',
-        impactScore: 8.5,
-        currentValue: 60,
-        targetValue: 90,
+        itemName: 'プロセス標準化',
+        impactScore: 85,
+        urgencyLevel: 'medium',
+        estimatedEffort: 8,
       },
     ];
 
-    expect(() => calculateImprovementPriorityRank(improvementItems)).toThrow(
-      /INVALID_IMPACT_SCORE/
-    );
+    expect(() =>
+      calculateImprovementPriorityRank(improvementItemsWithNullImpact)
+    ).toThrow(/INVALID_IMPACT_SCORE/);
+
+    try {
+      calculateImprovementPriorityRank(improvementItemsWithNullImpact);
+    } catch (error: any) {
+      expect(error.message).toContain('改善対象項目の影響度が不正です');
+      expect(error.message).toContain('各項目の影響度は0以上の数値である必要があります');
+    }
   });
 });

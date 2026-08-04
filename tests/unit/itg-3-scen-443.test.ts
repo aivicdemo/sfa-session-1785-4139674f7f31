@@ -1,43 +1,49 @@
-import { evaluateTransactionDataQuality } from "../../src/logic/itg-3";
+import { evaluateOperationalTransactionDataQuality } from '../../src/logic/itg-3';
 
-describe("AIエージェント推奨支援システム - 営業トランザクションデータ品質評価", () => {
+describe('AIエージェント推奨支援システム - 営業トランザクションデータ品質評価', () => {
   // SCEN-443
-  test("営業トランザクションのエラー件数が複数件の場合、件数に応じたスコアが算出される", () => {
-    const transactionErrors = [
+  test('営業トランザクションのエラー件数が複数件の場合、件数に応じたスコアが算出される', () => {
+    const transactionData = {
+      transactionId: 'TXN-20240115-001',
+      customerId: 'CUST-12345',
+      dealAmount: 1500000,
+      dealStage: 'negotiation',
+      proposalDate: '2024-01-15',
+      createdAt: '2024-01-15T10:00:00Z',
+    };
+
+    const detectedErrors = [
       {
-        error_id: "ERR001",
-        error_type: "data_type_mismatch",
-        severity: "high",
-        field_name: "revenue_amount",
+        errorId: 'ERR-001',
+        errorType: 'データ型不正',
+        severity: 'high',
+        field: 'dealAmount',
       },
       {
-        error_id: "ERR002",
-        error_type: "required_field_missing",
-        severity: "medium",
-        field_name: "customer_code",
+        errorId: 'ERR-002',
+        errorType: '必須項目欠落',
+        severity: 'medium',
+        field: 'dealDescription',
       },
       {
-        error_id: "ERR003",
-        error_type: "format_invalid",
-        severity: "low",
-        field_name: "contract_date",
+        errorId: 'ERR-003',
+        errorType: '形式不正',
+        severity: 'low',
+        field: 'proposalDate',
       },
     ];
 
-    const result = evaluateTransactionDataQuality({
-      transaction_id: "TXN20240115001",
-      errors: transactionErrors,
-    });
+    const result = evaluateOperationalTransactionDataQuality(
+      transactionData,
+      detectedErrors
+    );
 
-    expect(result.quality_score).toBe(65);
-    expect(result.quality_score).toBeGreaterThanOrEqual(0);
-    expect(result.quality_score).toBeLessThanOrEqual(100);
-    expect(Number.isInteger(result.quality_score)).toBe(true);
-    expect(result.error_count).toBe(3);
-    expect(result.severity_breakdown).toEqual({
-      high: 1,
-      medium: 1,
-      low: 1,
-    });
+    const expectedScore = 65;
+    expect(result.qualityScore).toBe(expectedScore);
+    expect(result.qualityScore).toBeGreaterThanOrEqual(0);
+    expect(result.qualityScore).toBeLessThanOrEqual(100);
+    expect(Number.isInteger(result.qualityScore)).toBe(true);
+    expect(result.errorCount).toBe(3);
+    expect(result.baseScore).toBe(100);
   });
 });

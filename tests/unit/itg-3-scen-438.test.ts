@@ -1,18 +1,23 @@
 import { evaluateDataQuality } from '../../src/logic/itg-3';
 
-describe('AIエージェント推奨支援システム', () => {
+describe('AIエージェント推奨支援システム - 顧客マスタ品質評価', () => {
   // SCEN-438
-  test('顧客マスタの品質評価機能 - エラー件数0件の場合、該当カテゴリのスコアが満点で算出される', () => {
-    const testCustomerData = {
-      customerId: 'CUST-TEST-001',
-      category: '顧客基本情報',
-      errorCount: 0,
+  test('顧客マスタのエラー件数が0件の場合、該当カテゴリのスコアが満点で算出される', () => {
+    const testCustomerId = 'CUST-TEST-001';
+    const errorCount = 0;
+    const category = '顧客基本情報';
+    const expectedScoreValue = 100;
+
+    const qualityInput = {
+      customerId: testCustomerId,
+      errorCount: errorCount,
+      category: category,
     };
 
-    const result = evaluateDataQuality(testCustomerData);
+    const result = evaluateDataQuality(qualityInput);
 
-    expect(result.scoreValue).toBe(100);
-    expect(result.category).toBe('顧客基本情報');
+    expect(result.scoreValue).toBe(expectedScoreValue);
+    expect(result.category).toBe(category);
     expect(result.errorCount).toBe(0);
   });
 });

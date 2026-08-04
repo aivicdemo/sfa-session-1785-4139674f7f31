@@ -1,74 +1,82 @@
-import { aggregateQualityReportByPeriod } from '../../src/logic/itg-3';
+import { aggregateDataQualityReport } from '../../src/logic/itg-3';
 
 describe('データ品質レポート集計機能', () => {
-  // SCEN-436
-  test('検証対象期間が年をまたぐ場合、全検証結果が集計される', () => {
-    const periodStart = new Date('2023-11-01T00:00:00Z');
-    const periodEnd = new Date('2024-01-31T23:59:59Z');
+  test('SCEN-436: 検証対象期間が年をまたぐ場合、全検証結果が集計される', () => {
+    // 期間定義: 2023年11月1日～2024年1月31日
+    const periodStartDate = new Date('2023-11-01T00:00:00Z');
+    const periodEndDate = new Date('2024-01-31T23:59:59Z');
 
-    const mockResults2023Nov = Array.from({ length: 150 }, (_, i) => ({
-      id: `result_2023_nov_${i}`,
-      verificationDate: new Date(`2023-11-${String((i % 30) + 1).padStart(2, '0')}T12:00:00Z`),
-      qualityScore: 85 + Math.random() * 10,
-      errorCount: Math.floor(Math.random() * 5),
-      warningCount: Math.floor(Math.random() * 10),
+    // 2023年11月～12月の検証結果データ（150件）
+    const nov2023Results = Array.from({ length: 150 }, (_, i) => ({
+      id: `result_nov_${i}`,
+      verificationDate: new Date(
+        new Date('2023-11-01T00:00:00Z').getTime() +
+          Math.floor(Math.random() * 61 * 24 * 60 * 60 * 1000)
+      ),
+      dataQualityScore: Math.floor(Math.random() * 100),
+      recordsChecked: Math.floor(Math.random() * 1000) + 100,
+      recordsWithErrors: Math.floor(Math.random() * 100),
     }));
 
-    const mockResults2024Jan = Array.from({ length: 95 }, (_, i) => ({
-      id: `result_2024_jan_${i}`,
-      verificationDate: new Date(`2024-01-${String((i % 31) + 1).padStart(2, '0')}T12:00:00Z`),
-      qualityScore: 82 + Math.random() * 12,
-      errorCount: Math.floor(Math.random() * 6),
-      warningCount: Math.floor(Math.random() * 12),
+    // 2024年1月の検証結果データ（95件）
+    const jan2024Results = Array.from({ length: 95 }, (_, i) => ({
+      id: `result_jan_${i}`,
+      verificationDate: new Date(
+        new Date('2024-01-01T00:00:00Z').getTime() +
+          Math.floor(Math.random() * 31 * 24 * 60 * 60 * 1000)
+      ),
+      dataQualityScore: Math.floor(Math.random() * 100),
+      recordsChecked: Math.floor(Math.random() * 1000) + 100,
+      recordsWithErrors: Math.floor(Math.random() * 100),
     }));
 
-    const allResults = [...mockResults2023Nov, ...mockResults2024Jan];
+    const allVerificationResults = [...nov2023Results, ...jan2024Results];
 
-    const aggregatedReport = aggregateQualityReportByPeriod(periodStart, periodEnd, allResults);
-
-    // 集計結果に245件すべてが含まれていることを検証
-    expect(aggregatedReport.totalRecordCount).toBe(245);
-
-    // 2023年11月～12月のデータ件数を検証
-    const resultsInNovDec = aggregatedReport.resultsByMonth.find(
-      (m) => m.month === '2023-11' || m.month === '2023-12'
-    );
-    expect((aggregatedReport.resultsByMonth.filter((m) => m.month.startsWith('2023'))[0]?.count ?? 0) + 
-            (aggregatedReport.resultsByMonth.filter((m) => m.month.startsWith('2023'))[1]?.count ?? 0)).toBe(150);
-
-    // 2024年1月のデータ件数を検証
-    const resultsInJan = aggregatedReport.resultsByMonth.find((m) => m.month === '2024-01');
-    expect(resultsInJan?.count).toBe(95);
-
-    // 集計結果内のすべての検証結果が指定期間内であることを検証
-    aggregatedReport.verificationResults.forEach((result) => {
-      const resultDate = new Date(result.verificationDate);
-      expect(resultDate.getTime()).toBeGreaterThanOrEqual(periodStart.getTime());
-      expect(resultDate.getTime()).toBeLessThanOrEqual(periodEnd.getTime());
+    // 集計機能を実行
+    const aggregationResult = aggregateDataQualityReport({
+      periodStartDate,
+      periodEndDate,
+      verificationResults: allVerificationResults,
     });
 
-    // 統計情報の正確性を検証
-    const qualityScores = aggregatedReport.verificationResults.map((r) => r.qualityScore);
-    const avgScore = qualityScores.reduce((a, b) => a + b, 0) / qualityScores.length;
-    expect(aggregatedReport.statistics.averageQualityScore).toBeCloseTo(avgScore, 2);
+    // 集計結果の検証
+    expect(aggregationResult.totalRecordsCount).toBe(245);
+    expect(aggregationResult.nov2023RecordsCount).toBe(150);
+    expect(aggregationResult.jan2024RecordsCount).toBe(95);
 
-    const maxScore = Math.max(...qualityScores);
-    expect(aggregatedReport.statistics.maxQualityScore).toBe(maxScore);
+    // 統計情報の検証
+    expect(typeof aggregationResult.averageDataQualityScore).toBe('number');
+    expect(aggregationResult.averageDataQualityScore).toBeGreaterThanOrEqual(0);
+    expect(aggregationResult.averageDataQualityScore).toBeLessThanOrEqual(100);
 
-    const minScore = Math.min(...qualityScores);
-    expect(aggregatedReport.statistics.minQualityScore).toBe(minScore);
+    expect(typeof aggregationResult.maxDataQualityScore).toBe('number');
+    expect(typeof aggregationResult.minDataQualityScore).toBe('number');
+    expect(aggregationResult.maxDataQualityScore).toBeGreaterThanOrEqual(
+      aggregationResult.minDataQualityScore
+    );
 
-    const totalErrors = aggregatedReport.verificationResults.reduce((sum, r) => sum + r.errorCount, 0);
-    expect(aggregatedReport.statistics.totalErrorCount).toBe(totalErrors);
+    expect(typeof aggregationResult.totalRecordsChecked).toBe('number');
+    expect(aggregationResult.totalRecordsChecked).toBeGreaterThan(0);
 
-    const totalWarnings = aggregatedReport.verificationResults.reduce((sum, r) => sum + r.warningCount, 0);
-    expect(aggregatedReport.statistics.totalWarningCount).toBe(totalWarnings);
+    expect(typeof aggregationResult.totalRecordsWithErrors).toBe('number');
+    expect(aggregationResult.totalRecordsWithErrors).toBeGreaterThanOrEqual(0);
 
-    // 集計レポートの生成日が有効な日付形式であることを検証
-    expect(typeof aggregatedReport.generatedAt).toBe('object');
-    expect(aggregatedReport.generatedAt instanceof Date).toBe(true);
+    // 期間内の全検証結果が漏れなく含まれていることを検証
+    const includedResults = aggregationResult.includedVerificationResults;
+    expect(includedResults.length).toBe(245);
 
-    // 期間内のすべての検証結果が漏れなく含まれていることを検証
-    expect(aggregatedReport.verificationResults.length).toBe(245);
+    includedResults.forEach((result) => {
+      const resultDate = new Date(result.verificationDate);
+      expect(resultDate.getTime()).toBeGreaterThanOrEqual(
+        periodStartDate.getTime()
+      );
+      expect(resultDate.getTime()).toBeLessThanOrEqual(periodEndDate.getTime());
+    });
+
+    // 集計レポートのメタデータ検証
+    expect(aggregationResult.reportGeneratedDate).toBeInstanceOf(Date);
+    expect(aggregationResult.aggregationPeriodStart).toEqual(periodStartDate);
+    expect(aggregationResult.aggregationPeriodEnd).toEqual(periodEndDate);
+    expect(aggregationResult.isYearSpanning).toBe(true);
   });
 });

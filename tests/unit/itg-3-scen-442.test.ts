@@ -6,7 +6,7 @@ describe('AIエージェント推奨支援システム - 営業トランザク�
     const transactionDataset = {
       totalCount: 100,
       errorCount: 1,
-      normalCount: 99,
+      validCount: 99,
     };
 
     const baseScore = 100;
@@ -15,7 +15,7 @@ describe('AIエージェント推奨支援システム - 営業トランザク�
 
     const result = evaluateTransactionDataQuality(transactionDataset);
 
-    expect(result.qualityScore).toBe(99);
-    expect(result.qualityScore).toBe(expectedScore);
+    expect(result.score).toBe(expectedScore);
+    expect(result.score).toBe(99);
   });
 });

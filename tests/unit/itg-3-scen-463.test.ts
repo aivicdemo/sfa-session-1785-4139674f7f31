@@ -1,8 +1,8 @@
-import { trackImprovementResults } from '../../src/logic/itg-3';
+import { trackImprovementMetrics } from '../../src/logic/itg-3';
 
-describe('AIエージェント推奨支援システム', () => {
+describe('AIエージェント推奨支援システム - 改善実績トラッキング機能', () => {
   // SCEN-463
-  test('改善実績トラッキング機能 - 改善前スコアから改善後スコアへの変化が複数項目にわたる場合、全項目の改善度が集計される', () => {
+  test('改善前スコアから改善後スコアへの変化が複数項目にわたる場合、全項目の改善度が集計される', () => {
     const preImprovementScores = {
       itemA: 60,
       itemB: 70,
@@ -15,21 +15,24 @@ describe('AIエージェント推奨支援システム', () => {
       itemC: 65,
     };
 
-    const mockAIRecommendationEngine = {
-      evaluatePatternRelevance: jest.fn((item: string, preSocore: number, postScore: number) => {
-        return postScore - preSocore;
+    const mockAIEngine = {
+      evaluatePatternRelevance: jest.fn((item, preScore, postScore) => {
+        return postScore - preScore;
       }),
+      generateRecommendation: jest.fn(),
+      findSimilarPatterns: jest.fn(),
+      explainRecommendationReasoning: jest.fn(),
     };
 
-    const result = trackImprovementResults(
+    const result = trackImprovementMetrics(
       preImprovementScores,
       postImprovementScores,
-      mockAIRecommendationEngine
+      mockAIEngine
     );
 
-    expect(result.totalImprovementDegree).toBe(45);
-    expect(result.averageImprovementDegree).toBe(15);
-    expect(result.numberOfImprovedItems).toBe(3);
+    expect(result.totalImprovementPoints).toBe(45);
+    expect(result.averageImprovementPoints).toBe(15);
+    expect(result.improvementItemCount).toBe(3);
     expect(result.itemBreakdown).toEqual({
       itemA: 15,
       itemB: 15,

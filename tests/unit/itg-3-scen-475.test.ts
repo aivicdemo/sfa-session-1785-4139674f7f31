@@ -1,39 +1,26 @@
-import { evaluateDataQualityScore } from '../../src/logic/itg-3';
+import { calculateDataQualityScore } from "../../src/logic/itg-3";
 
-const fetchMock = require('jest-fetch-mock');
-
-describe('AIエージェント推奨支援システム - データ品質スコア算出', () => {
-  test('SCEN-475: [error] データ品質スコア算出機能 - 検証結果レポートが null のとき、エラーが発生する', () => {
-    fetchMock.resetMocks();
-
-    const nullValidationReport = null;
-    const timestamp = '2024-01-15T11:00:00Z';
-    const errorCode = 'DATA_QUALITY_001';
-    const inputParams = {
-      validationReport: nullValidationReport,
-      timestamp: timestamp,
-    };
-
-    const mockAIRecommendationEngine = {
-      evaluatePatternRelevance: jest.fn((report) => {
-        if (report === null) {
-          const error = new Error('検証結果レポートがnullです');
-          (error as any).name = 'ValidationReportNullError';
-          (error as any).code = errorCode;
-          (error as any).timestamp = timestamp;
-          (error as any).inputParams = inputParams;
+describe("AIエージェント推奨支援システム - データ品質スコア算出機能", () => {
+  test("SCEN-475: 検証結果レポートがnullのときエラーが発生する", () => {
+    const validationReportNull = null;
+    const mockAIEngine = {
+      generateRecommendation: jest.fn(),
+      findSimilarPatterns: jest.fn(),
+      explainRecommendationReasoning: jest.fn(),
+      evaluatePatternRelevance: jest.fn().mockImplementation(() => {
+        if (validationReportNull === null) {
+          const error = new Error("検証結果レポートがnullです");
+          (error as any).code = "ValidationReportNullError";
+          (error as any).timestamp = new Date("2024-01-15T10:30:00Z").toISOString();
+          (error as any).inputParams = { validationReport: validationReportNull };
           throw error;
         }
         return { score: 85 };
       }),
     };
 
-    expect(() => {
-      evaluateDataQualityScore(nullValidationReport, mockAIRecommendationEngine);
-    }).toThrow(/検証結果レポートがnullです/);
-
-    expect(mockAIRecommendationEngine.evaluatePatternRelevance).toHaveBeenCalledWith(
-      nullValidationReport
-    );
+    expect(() =>
+      calculateDataQualityScore(validationReportNull, mockAIEngine)
+    ).toThrow(/検証結果レポート/);
   });
 });

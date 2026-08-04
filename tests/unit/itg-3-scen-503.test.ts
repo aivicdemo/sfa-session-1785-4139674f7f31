@@ -1,39 +1,40 @@
-import { determineSalesGuidancePolicy } from '../../src/logic/itg-3';
+import { determineGuidancePolicyForSalesPerson } from '../../src/logic/itg-3';
 
-describe('AIエージェント推奨支援システム - 指導方針決定機能', () => {
+describe('AIエージェント推奨支援システム', () => {
   test('SCEN-503: 指導対象項目が null のとき、エラーが発生する', () => {
     const mockAIEngine = {
       generateRecommendation: jest.fn().mockResolvedValue({
-        recommendationId: 'rec_001',
-        approachType: 'PROPOSAL_TIMING',
+        recommendationId: 'rec-123',
+        proposedApproach: 'test approach',
         confidence: 85,
-        reasoning: 'Based on purchase history analysis'
       }),
       findSimilarPatterns: jest.fn(),
       explainRecommendationReasoning: jest.fn(),
-      evaluatePatternRelevance: jest.fn()
+      evaluatePatternRelevance: jest.fn(),
     };
 
     const mockFileStorage = {
       uploadRecommendationReport: jest.fn(),
       generateDownloadUrl: jest.fn(),
-      deleteExpiredReports: jest.fn()
+      deleteExpiredReports: jest.fn(),
     };
 
-    const invalidGuidancePolicyRequest = {
-      salesPersonId: 'sp_001',
-      dealId: 'deal_001',
-      customerId: 'cust_001',
-      customerIndustry: 'Manufacturing',
-      customerScale: 'Large',
-      guidanceTargetItem: null,
-      guidanceType: 'IMPROVEMENT',
-      dealStage: 'PROPOSAL'
+    const guidancePolicyRequest = {
+      salesPersonId: 'sp-001',
+      dealId: 'deal-100',
+      customerInfo: {
+        customerId: 'cust-001',
+        industry: 'technology',
+        companyScale: 'large',
+      },
+      guidanceTargetItem: null as any,
+      dealProgress: 'proposal_stage',
+      timestamp: new Date('2026-08-01T10:00:00Z'),
     };
 
     expect(() =>
-      determineSalesGuidancePolicy(
-        invalidGuidancePolicyRequest,
+      determineGuidancePolicyForSalesPerson(
+        guidancePolicyRequest,
         mockAIEngine,
         mockFileStorage
       )

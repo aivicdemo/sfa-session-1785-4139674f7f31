@@ -1,21 +1,36 @@
 import { calculateImprovementPriorityRank } from '../../src/logic/itg-3';
 
-describe('AIエージェント推奨支援システム - 改善優先度ランク算出', () => {
-  test('SCEN-490: 重要度スコアが0から100の範囲外のとき、エラーが発生する', () => {
-    // ステップ2: 重要度スコア = -1 のとき、エラーが発生する
-    expect(() => calculateImprovementPriorityRank({ importanceScore: -1 })).toThrow(/重要度スコア/);
+describe('AIエージェント推奨支援システム - 改善優先度ランク算出機能', () => {
+  // SCEN-490: [error] 改善優先度ランク算出機能 - 重要度スコアが 0 から 100 の範囲外のとき、エラーが発生する
+  test('should throw error when importance_score is less than 0', () => {
+    const input_params = {
+      importance_score: -1,
+    };
+    expect(() => calculateImprovementPriorityRank(input_params)).toThrow(/重要度スコア/);
+  });
 
-    // ステップ3: 重要度スコア = 101 のとき、エラーが発生する
-    expect(() => calculateImprovementPriorityRank({ importanceScore: 101 })).toThrow(/重要度スコア/);
+  test('should throw error when importance_score is greater than 100', () => {
+    const input_params = {
+      importance_score: 101,
+    };
+    expect(() => calculateImprovementPriorityRank(input_params)).toThrow(/重要度スコア/);
+  });
 
-    // ステップ4: 重要度スコア = 0 のとき（境界値・有効値）、エラーが発生しない
-    const resultAtZero = calculateImprovementPriorityRank({ importanceScore: 0 });
-    expect(resultAtZero).toBeDefined();
-    expect(typeof resultAtZero.rank).toBe('string');
+  test('should succeed when importance_score is 0 (valid boundary)', () => {
+    const input_params = {
+      importance_score: 0,
+    };
+    const result = calculateImprovementPriorityRank(input_params);
+    expect(result).toBeDefined();
+    expect(typeof result.priority_rank).toBe('string');
+  });
 
-    // ステップ5: 重要度スコア = 100 のとき（境界値・有効値）、エラーが発生しない
-    const resultAtHundred = calculateImprovementPriorityRank({ importanceScore: 100 });
-    expect(resultAtHundred).toBeDefined();
-    expect(typeof resultAtHundred.rank).toBe('string');
+  test('should succeed when importance_score is 100 (valid boundary)', () => {
+    const input_params = {
+      importance_score: 100,
+    };
+    const result = calculateImprovementPriorityRank(input_params);
+    expect(result).toBeDefined();
+    expect(typeof result.priority_rank).toBe('string');
   });
 });

@@ -1,40 +1,31 @@
-import { describe, test, expect, beforeEach } from "@jest/globals";
-import { calculateImprovementTargets } from "../../src/logic/itg-3";
+import { describe, test, expect, beforeEach } from '@jest/globals';
+import { calculateImprovementTargets } from '../../src/logic/itg-3';
 
-interface AIRecommendationEngineStub {
-  generateRecommendation: jest.Mock;
-}
-
-interface InconsistencyLog {
-  id: string;
-  message: string;
-  severity: string;
-}
-
-describe("AIエージェント推奨支援システム - 改善対象項目の算出機能", () => {
-  let aiEngineStub: AIRecommendationEngineStub;
+describe('AIエージェント推奨支援システム - 改善対象項目の算出機能', () => {
+  let aiRecommendationEngineStub: any;
 
   beforeEach(() => {
-    aiEngineStub = {
+    aiRecommendationEngineStub = {
       generateRecommendation: jest.fn().mockResolvedValue({
-        recommendedApproach: "standard_approach",
+        recommendationId: 'rec-001',
+        proposedApproach: 'enhanced-follow-up-strategy',
         confidenceScore: 85,
-        rationale: "Based on similar patterns",
+        rationale: 'Based on historical success patterns',
       }),
     };
   });
 
   // SCEN-495
-  test("should throw error when inconsistencyLog is null", () => {
-    const nullInconsistencyLog: InconsistencyLog | null = null;
-    const targetDate = new Date("2024-01-15T11:00:00Z");
+  test('should throw ValidationError when inconsistencyLog is null', async () => {
+    const testInput = {
+      inconsistencyLog: null,
+      qualityScore: 78,
+      improvementPriority: 'HIGH',
+      aiRecommendationEngine: aiRecommendationEngineStub,
+    };
 
-    expect(() =>
-      calculateImprovementTargets(
-        nullInconsistencyLog,
-        aiEngineStub,
-        targetDate
-      )
-    ).toThrow(/データ不整合ログ/);
+    await expect(async () => {
+      await calculateImprovementTargets(testInput);
+    }).rejects.toThrow(/不整合ログ/);
   });
 });

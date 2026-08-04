@@ -1,37 +1,55 @@
-import { generateRecommendation } from '../../src/logic/itg-3';
+import { generateRecommendationWithGuidance } from '../../src/logic/itg-3';
 
 describe('AIエージェント推奨支援システム - 指導施策推奨機能', () => {
-  // SCEN-468: [normal] スコアが最高水準（81～100点）の場合、「継続維持」が推奨される
-  test('スコア85点（最高水準）の案件に対して「継続維持」推奨と根拠説明を返す', () => {
-    const mock_AIRecommendationEngine = {
-      generateRecommendation: jest.fn().mockResolvedValue({
+  test('SCEN-468: スコア85点（81～100点）の場合、「継続維持」が推奨される', () => {
+    // Arrange: テストデータの準備
+    const caseInfo = {
+      caseId: 'CASE-20240115-001',
+      score: 85,
+      customerIndustry: 'IT',
+      dealSize: 50000000,
+      dealStage: 'proposal',
+      salesPersonExperience: 5,
+    };
+
+    // AIRecommendationEngineのスタブ設定
+    const mockAIRecommendationEngine = {
+      generateRecommendation: jest.fn().mockReturnValue({
         recommendedStrategy: '継続維持',
         confidenceScore: 92,
-        reasoningExplanation: '現在のスコア水準（81～100点）を維持するため、既存の営業活動を継続することを推奨します。',
+        reasoning: '現在のスコア水準（81～100点）を維持するため、既存の営業活動を継続することを推奨します',
       }),
+      findSimilarPatterns: jest.fn().mockReturnValue([
+        {
+          patternId: 'PAT-001',
+          matchScore: 0.88,
+          successRate: 0.89,
+        },
+      ]),
     };
 
-    const input_caseData = {
-      caseId: 'CASE-001',
-      customerName: 'テスト顧客A',
-      performanceScore: 85,
-      industry: 'IT',
-      dealStage: 'proposal',
-      salesApproach: '既存営業活動',
-    };
+    // Act: 指導施策推奨機能を実行
+    const result = generateRecommendationWithGuidance(caseInfo, mockAIRecommendationEngine);
 
-    return generateRecommendation(
-      input_caseData,
-      mock_AIRecommendationEngine,
-    ).then((result) => {
-      expect(result.recommendedStrategy).toBe('継続維持');
-      expect(result.confidenceScore).toBe(92);
-      expect(result.reasoningExplanation).toContain('現在のスコア水準（81～100点）を維持するため');
-      expect(result.reasoningExplanation).toContain('既存の営業活動を継続することを推奨します');
+    // Assert: 推奨施策フィールドが「継続維持」であることを確認
+    expect(result.recommendedStrategy).toBe('継続維持');
 
-      expect(mock_AIRecommendationEngine.generateRecommendation).toHaveBeenCalledWith(
-        input_caseData,
-      );
+    // Assert: 推奨根拠説明文が生成されていることを確認
+    expect(result.reasoning).toBe('現在のスコア水準（81～100点）を維持するため、既存の営業活動を継続することを推奨します');
+
+    // Assert: 信頼度スコアが0～100の範囲内であることを確認
+    expect(result.confidenceScore).toBe(92);
+
+    // Assert: AIRecommendationEngineのgenerateRecommendationメソッドが呼び出されたことを確認
+    expect(mockAIRecommendationEngine.generateRecommendation).toHaveBeenCalledWith(caseInfo);
+
+    // Assert: 画面表示用のフォーマット情報が生成されていることを確認
+    expect(result.displayFormat).toEqual({
+      strategyLabel: '継続維持',
+      reasoningText: '現在のスコア水準（81～100点）を維持するため、既存の営業活動を継続することを推奨します',
+      scoreRangeMin: 81,
+      scoreRangeMax: 100,
+      currentScore: 85,
     });
   });
 });

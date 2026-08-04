@@ -1,47 +1,43 @@
-import { evaluateCustomerDataQuality } from '../../src/logic/itg-3';
+import { evaluateCustomerMasterQuality } from '../../src/logic/itg-3';
 
 describe('AIエージェント推奨支援システム - 顧客マスタ品質評価', () => {
   // SCEN-439
   test('顧客マスタのエラー件数が1件の場合、スコアが正しく減点される', () => {
-    // 準備：エラー1件（顧客名が欠落）を含む顧客レコード
-    const customerRecordsWithOneError = [
+    const customerRecords = [
       {
-        customerId: 'CUST001',
+        customerId: 'CUST-001',
         customerName: '',
         industry: 'Manufacturing',
         scale: 'Large',
-        contactEmail: 'contact@example.com',
-        phone: '090-1234-5678',
-        status: 'Active',
+        registrationDate: '2024-01-15',
+        lastContactDate: '2024-08-01',
+      },
+      {
+        customerId: 'CUST-002',
+        customerName: 'ABC Corporation',
+        industry: 'Finance',
+        scale: 'Medium',
+        registrationDate: '2024-02-20',
+        lastContactDate: '2024-08-02',
       },
     ];
 
-    // 実行：品質評価ロジックを実行
-    const result = evaluateCustomerDataQuality(customerRecordsWithOneError);
+    const result = evaluateCustomerMasterQuality(customerRecords);
 
-    // 検証：スコアが95点（100 - 5*1件 = 95）であること
     expect(result.qualityScore).toBe(95);
-
-    // 検証：エラー件数が1件であること
     expect(result.errorCount).toBe(1);
-
-    // 検証：減点内訳にエラー内容と理由が記録されていること
-    expect(result.deductionDetails).toContainEqual(
-      expect.objectContaining({
-        errorType: 'Missing Required Field',
-        fieldName: 'customerName',
-        deductionPoints: 5,
-        reason: '顧客名が未設定',
-      })
+    expect(result.deductionAmount).toBe(5);
+    expect(result.baseScore).toBe(100);
+    expect(result.errorDetails).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          customerId: 'CUST-001',
+          errorContent: '顧客名が未設定',
+          deductionReason: '必須項目（顧客名）が空値のため、データ品質基準に不適合',
+        }),
+      ])
     );
-
-    // 検証：スコア計算根拠が記録されていること
-    expect(result.scoringBasis).toEqual(
-      expect.objectContaining({
-        baseScore: 100,
-        totalDeduction: 5,
-        errorDetails: expect.any(Array),
-      })
-    );
+    expect(result.calculationBasis).toContain('エラー件数1件');
+    expect(result.calculationBasis).toContain('減点5点');
   });
 });

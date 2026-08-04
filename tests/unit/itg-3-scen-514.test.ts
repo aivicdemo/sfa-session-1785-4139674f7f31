@@ -1,24 +1,23 @@
 import { checkImprovementItemsConsistency } from '../../src/logic/itg-3';
 
-describe('AIエージェント推奨支援システム', () => {
-  // SCEN-514
-  test('改善対象項目の件数と改善優先度ランク情報の件数が一致していないとき、エラーをスロー', () => {
+describe('AIエージェント推奨支援システム - 改善対象項目と改善優先度ランクの整合性検証', () => {
+  test('SCEN-514: 改善対象項目と改善優先度ランク情報の件数が一致していないときはエラーをスロー', () => {
     const improvementItems = [
-      { id: 'item_1', name: '顧客情報の品質向上' },
-      { id: 'item_2', name: 'データ入力形式の統一' },
-      { id: 'item_3', name: '営業提案の精度改善' },
+      { id: 'item-1', name: '提案資料の形式統一' },
+      { id: 'item-2', name: 'ニーズ把握の深掘り' },
+      { id: 'item-3', name: 'フォローアップタイミング調整' },
     ];
 
-    const priorityRankInfos = [
-      { rankId: 'rank_1', rank: 'HIGH', itemId: 'item_1' },
-      { rankId: 'rank_2', rank: 'MEDIUM', itemId: 'item_2' },
-      { rankId: 'rank_3', rank: 'LOW', itemId: 'item_3' },
-      { rankId: 'rank_4', rank: 'HIGH', itemId: 'item_4' },
-      { rankId: 'rank_5', rank: 'MEDIUM', itemId: 'item_5' },
+    const priorityRanks = [
+      { id: 'rank-1', level: 'HIGH', itemId: 'item-1' },
+      { id: 'rank-2', level: 'MEDIUM', itemId: 'item-2' },
+      { id: 'rank-3', level: 'MEDIUM', itemId: 'item-3' },
+      { id: 'rank-4', level: 'LOW', itemId: 'item-4' },
+      { id: 'rank-5', level: 'LOW', itemId: 'item-5' },
     ];
 
     expect(() =>
-      checkImprovementItemsConsistency(improvementItems, priorityRankInfos)
-    ).toThrow(/件数が一致していません/);
+      checkImprovementItemsConsistency(improvementItems, priorityRanks)
+    ).toThrow(/改善対象項目の件数.*改善優先度ランク情報の件数.*一致/);
   });
 });

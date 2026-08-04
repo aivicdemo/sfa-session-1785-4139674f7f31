@@ -1,22 +1,7 @@
-import { defineDecidingGuidancePolicy } from '../../src/logic/itg-3';
+import { decideSalesPersonGuidance } from '../../src/logic/itg-3';
 
-describe('AIエージェント推奨支援システム - 指導方針の決定機能', () => {
-  // SCEN-498
-  test('営業担当者IDがnullのとき、バリデーションエラーが発生する', () => {
-    const salesPersonIdNull = null;
-    const customerInfo = {
-      customerId: 'CUST001',
-      customerName: '株式会社テスト',
-      industry: 'IT',
-      scale: 'large',
-    };
-    const dealConditions = {
-      dealId: 'DEAL001',
-      dealValue: 5000000,
-      dealStage: 'proposal',
-      dealTimeline: '2024-12-31',
-    };
-
+describe('AIエージェント推奨支援システム - 営業担当者への指導方針決定機能', () => {
+  test('SCEN-498: 営業担当者IDがnullのとき、バリデーションエラーを発生させる', () => {
     const mockAIEngine = {
       generateRecommendation: jest.fn(),
       findSimilarPatterns: jest.fn(),
@@ -30,15 +15,25 @@ describe('AIエージェント推奨支援システム - 指導方針の決定�
       deleteExpiredReports: jest.fn(),
     };
 
-    expect(() =>
-      defineDecidingGuidancePolicy(
-        salesPersonIdNull,
-        customerInfo,
-        dealConditions,
-        mockAIEngine,
-        mockFileStorage
-      )
-    ).toThrow(/salesPersonId|営業担当者/i);
+    const input = {
+      salesPersonId: null,
+      customerInfo: {
+        customerId: 'CUST-001',
+        customerName: 'テスト株式会社',
+        industry: '製造業',
+        scale: 'large',
+      },
+      dealCondition: {
+        dealId: 'DEAL-2024-001',
+        dealStage: 'proposal',
+        proposalAmount: 5000000,
+      },
+      dataQualityScore: 95,
+      aiRecommendationEngine: mockAIEngine,
+      fileStorageAdapter: mockFileStorage,
+    };
+
+    expect(() => decideSalesPersonGuidance(input)).toThrow(/salesPersonId|INVALID_SALESPERSON_ID/);
 
     expect(mockAIEngine.generateRecommendation).not.toHaveBeenCalled();
     expect(mockAIEngine.findSimilarPatterns).not.toHaveBeenCalled();

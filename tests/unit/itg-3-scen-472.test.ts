@@ -1,87 +1,98 @@
 import { generateRecommendationReport } from '../../src/logic/itg-3';
 
-describe('AIエージェント推奨支援システム - レポートメタデータ生成', () => {
-  test('SCEN-472: レポート生成ユーザーが正しく記録される', async () => {
-    const userId = 'test-user-001';
+describe('AIエージェント推奨支援システム - レポートメタデータ生成機能', () => {
+  // SCEN-472
+  test('レポート生成ユーザーが正しく記録される', async () => {
+    const testUserId = 'test-user-001';
     const reportGeneratedAt = new Date('2026-08-01T10:30:00Z');
     const s3Key = 'reports/test-user-001/20260801_recommendation_001.pdf';
     const reportFilename = '20260801_recommendation_001.pdf';
 
-    // スタブ: AIRecommendationEngine.generateRecommendation
     const mockAIEngine = {
       generateRecommendation: jest.fn().mockResolvedValue({
-        recommendationId: 'rec-001',
-        proposalApproach: 'High-touch account management for enterprise clients',
-        confidenceScore: 92,
-        successPatternMatches: [
-          {
-            patternId: 'pat-001',
-            matchScore: 0.95,
-            customerSegment: 'Enterprise',
-          },
-        ],
-        reasoning: 'Based on successful patterns in similar customer profiles',
+        recommendation_id: 'rec-001',
+        customer_id: 'cust-001',
+        approach: 'consultative_approach',
+        confidence_score: 85,
+        reasoning: '過去の類似案件から成功パターンを抽出',
+        created_at: reportGeneratedAt.toISOString(),
       }),
+      findSimilarPatterns: jest.fn(),
+      explainRecommendationReasoning: jest.fn(),
+      evaluatePatternRelevance: jest.fn(),
     };
 
-    // スタブ: FileStorageAdapter.uploadRecommendationReport
     const mockFileStorage = {
-      uploadRecommendationReport: jest
-        .fn()
-        .mockResolvedValue({
-          s3_key: s3Key,
-          filename: reportFilename,
-          uploadedAt: reportGeneratedAt.toISOString(),
-          fileSize: 245680,
-        }),
+      uploadRecommendationReport: jest.fn().mockResolvedValue({
+        s3_key: s3Key,
+        filename: reportFilename,
+        upload_status: 'success',
+        uploaded_at: reportGeneratedAt.toISOString(),
+      }),
       generateDownloadUrl: jest.fn(),
       deleteExpiredReports: jest.fn(),
     };
 
-    // レポート生成入力データ
-    const reportInput = {
-      customerId: 'cust-001',
-      customerName: 'Acme Corporation',
-      customerIndustry: 'Technology',
-      customerSize: 'Enterprise',
-      dealId: 'deal-001',
-      dealAmount: 250000,
-      dealStage: 'Proposal',
+    const mockDatabase = {
+      insertReportMetadata: jest.fn().mockResolvedValue({
+        id: 'metadata-001',
+        user_id: testUserId,
+        report_filename: reportFilename,
+        s3_key: s3Key,
+        created_by: testUserId,
+        created_at: reportGeneratedAt.toISOString(),
+        updated_at: reportGeneratedAt.toISOString(),
+      }),
     };
 
-    // レポート生成処理を実行
-    const reportMetadata = await generateRecommendationReport(
-      reportInput,
-      userId,
-      reportGeneratedAt,
-      mockAIEngine,
-      mockFileStorage
-    );
+    const input = {
+      userId: testUserId,
+      customerId: 'cust-001',
+      businessDealId: 'deal-001',
+      reportFormat: 'pdf',
+      generatedAt: reportGeneratedAt,
+      aiEngine: mockAIEngine,
+      fileStorage: mockFileStorage,
+      database: mockDatabase,
+    };
 
-    // 検証: レポートメタデータが正しく生成されている
-    expect(reportMetadata).toEqual({
-      created_by: 'test-user-001',
-      report_filename: '20260801_recommendation_001.pdf',
-      s3_key: 'reports/test-user-001/20260801_recommendation_001.pdf',
-      created_at: '2026-08-01T10:30:00Z',
-      user_id: 'test-user-001',
-    });
+    const result = await generateRecommendationReport(input);
 
-    // 検証: AIエンジンが正しく呼び出されている
     expect(mockAIEngine.generateRecommendation).toHaveBeenCalledWith(
       expect.objectContaining({
         customerId: 'cust-001',
-        customerIndustry: 'Technology',
-        customerSize: 'Enterprise',
+        businessDealId: 'deal-001',
       })
     );
 
-    // 検証: ファイルストレージのアップロード処理が実行されている
     expect(mockFileStorage.uploadRecommendationReport).toHaveBeenCalledWith(
       expect.objectContaining({
-        userId: 'test-user-001',
-        timestamp: '2026-08-01T10:30:00Z',
+        userId: testUserId,
+        recommendationId: 'rec-001',
       })
     );
+
+    expect(mockDatabase.insertReportMetadata).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user_id: testUserId,
+        created_by: testUserId,
+        report_filename: reportFilename,
+        s3_key: s3Key,
+      })
+    );
+
+    expect(result).toEqual({
+      metadata_id: 'metadata-001',
+      user_id: testUserId,
+      created_by: testUserId,
+      report_filename: reportFilename,
+      s3_key: s3Key,
+      created_at: reportGeneratedAt.toISOString(),
+    });
+
+    expect(result.created_by).toBe('test-user-001');
+    expect(result.report_filename).toBe('20260801_recommendation_001.pdf');
+    expect(result.s3_key).toBe('reports/test-user-001/20260801_recommendation_001.pdf');
+    expect(result.user_id).toBe('test-user-001');
   });
 });

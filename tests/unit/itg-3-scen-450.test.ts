@@ -33,45 +33,49 @@ describe('AIエージェント推奨支援システム - エラーカテゴリ�
 
     const result = classifyErrorsByCategory(errors);
 
-    expect(result).toEqual({
-      categories: {
-        API_TIMEOUT: {
+    expect(result.categoryAggregations).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          category: 'API_TIMEOUT',
           count: 2,
-          errors: [
-            {
+          errors: expect.arrayContaining([
+            expect.objectContaining({
               errorId: 'ERR001',
               errorMessage: '推奨生成タイムアウト',
               category: 'API_TIMEOUT',
-            },
-            {
+            }),
+            expect.objectContaining({
               errorId: 'ERR002',
               errorMessage: 'APIレート制限超過',
               category: 'API_TIMEOUT',
-            },
-          ],
-        },
-        AUTH_ERROR: {
+            }),
+          ]),
+        }),
+        expect.objectContaining({
+          category: 'AUTH_ERROR',
           count: 3,
-          errors: [
-            {
+          errors: expect.arrayContaining([
+            expect.objectContaining({
               errorId: 'ERR003',
               errorMessage: '不正なAPIキー',
               category: 'AUTH_ERROR',
-            },
-            {
+            }),
+            expect.objectContaining({
               errorId: 'ERR004',
               errorMessage: '認証トークン期限切れ',
               category: 'AUTH_ERROR',
-            },
-            {
+            }),
+            expect.objectContaining({
               errorId: 'ERR005',
               errorMessage: '認証トークン期限切れ',
               category: 'AUTH_ERROR',
-            },
-          ],
-        },
-      },
-      totalCount: 5,
-    });
+            }),
+          ]),
+        }),
+      ])
+    );
+
+    expect(result.totalCount).toBe(5);
+    expect(result.categoryAggregations).toHaveLength(2);
   });
 });

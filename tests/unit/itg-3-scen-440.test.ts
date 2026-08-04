@@ -2,8 +2,8 @@ import { evaluateCustomerMasterQuality } from "../../src/logic/itg-3";
 
 describe("AIエージェント推奨支援システム - 顧客マスタ品質評価", () => {
   // SCEN-440
-  test("エラー件数が複数件の場合、件数に応じたスコアが算出される", () => {
-    const testCases = [
+  test("顧客マスタのエラー件数が複数件の場合、件数に応じたスコアが算出される", () => {
+    const testPatterns = [
       { errorCount: 0, expectedScore: 100 },
       { errorCount: 1, expectedScore: 95 },
       { errorCount: 3, expectedScore: 85 },
@@ -11,22 +11,20 @@ describe("AIエージェント推奨支援システム - 顧客マスタ品質�
       { errorCount: 10, expectedScore: 50 },
     ];
 
-    testCases.forEach(({ errorCount, expectedScore }) => {
-      const customer_master_record = {
-        customer_id: `cust_${errorCount}`,
-        error_count: errorCount,
-        customer_name: "Test Customer",
-        industry: "Technology",
-        employee_count: 100,
+    testPatterns.forEach(({ errorCount, expectedScore }) => {
+      const customerMasterRecord = {
+        id: `customer_${errorCount}`,
+        name: "テスト顧客",
+        industry: "製造業",
+        scale: "大企業",
+        errorCount: errorCount,
       };
 
-      const result = evaluateCustomerMasterQuality(
-        customer_master_record
-      );
+      const result = evaluateCustomerMasterQuality(customerMasterRecord);
 
-      expect(result.quality_score).toBe(expectedScore);
-      expect(typeof result.quality_score).toBe("number");
-      expect(Number.isInteger(result.quality_score)).toBe(true);
+      expect(result.score).toBe(expectedScore);
+      expect(typeof result.score).toBe("number");
+      expect(Number.isInteger(result.score)).toBe(true);
     });
   });
 });

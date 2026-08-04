@@ -1,37 +1,41 @@
-import { describe, test, expect, beforeEach, jest } from '@jest/globals';
-import { decideGuidanceStrategy } from '../../src/logic/itg-3';
+import { decideSalesGuidancePolicy } from '../../src/logic/itg-3';
 
-describe('AIエージェント推奨支援システム - 指導方針決定機能', () => {
-  let aiEngineStub: jest.Mock;
-  let fileStorageStub: jest.Mock;
-
-  beforeEach(() => {
-    aiEngineStub = jest.fn();
-    fileStorageStub = jest.fn();
-  });
-
-  // SCEN-504
-  test('指導対象項目が空配列のとき、ValidationErrorをスロー', () => {
+describe('AIエージェント推奨支援システム - 営業担当者への指導方針決定', () => {
+  test('SCEN-504: 指導対象項目が空配列のとき、ValidationErrorがスローされる', () => {
     const salesPersonId = 'SP001';
     const dealInfo = {
       dealId: 'DEAL20240115001',
-      customerName: 'テスト顧客',
+      customerId: 'CUST001',
       dealAmount: 5000000,
       dealStage: 'proposal',
+      createdAt: new Date('2024-01-15T10:00:00Z'),
     };
     const guidanceItems: string[] = [];
 
-    expect(() => {
-      decideGuidanceStrategy(
+    const mockAIRecommendationEngine = {
+      generateRecommendation: jest.fn(),
+      findSimilarPatterns: jest.fn(),
+      explainRecommendationReasoning: jest.fn(),
+      evaluatePatternRelevance: jest.fn(),
+    };
+
+    const mockFileStorageAdapter = {
+      uploadRecommendationReport: jest.fn(),
+      generateDownloadUrl: jest.fn(),
+      deleteExpiredReports: jest.fn(),
+    };
+
+    expect(() =>
+      decideSalesGuidancePolicy(
         salesPersonId,
         dealInfo,
         guidanceItems,
-        { generateRecommendation: aiEngineStub } as any,
-        { uploadRecommendationReport: fileStorageStub } as any
-      );
-    }).toThrow(/guidanceItems/);
+        mockAIRecommendationEngine,
+        mockFileStorageAdapter
+      )
+    ).toThrow(/guidanceItems|指導対象項目/);
 
-    expect(aiEngineStub).not.toHaveBeenCalled();
-    expect(fileStorageStub).not.toHaveBeenCalled();
+    expect(mockAIRecommendationEngine.generateRecommendation).not.toHaveBeenCalled();
+    expect(mockFileStorageAdapter.uploadRecommendationReport).not.toHaveBeenCalled();
   });
 });

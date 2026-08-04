@@ -1,103 +1,72 @@
-import { generateRecommendationReport } from '../../src/logic/itg-3';
+import { generateReportMetadata } from '../../src/logic/itg-3';
 
 describe('AIエージェント推奨支援システム - レポートメタデータ生成', () => {
-  test('SCEN-470: [normal] レポート生成時刻が正しく記録される', () => {
-    // テスト実行時刻を基準時刻として固定
-    const baselineTime = new Date('2026-08-01T08:09:40.805Z');
-    const baselineTimeMs = baselineTime.getTime();
+  test('SCEN-470: レポート生成時刻が正しく記録される', () => {
+    // テスト実行時刻を基準時刻として記録
+    const testExecutionTime = new Date('2026-08-01T08:09:40.805Z');
+    const baselineTimestamp = testExecutionTime.getTime();
 
-    // AIRecommendationEngineスタブの定義
-    const mockAIEngine = {
+    // AIRecommendationEngineのスタブを定義
+    const aiRecommendationEngineStub = {
       generateRecommendation: jest.fn().mockResolvedValue({
-        proposalApproach: 'テスト提案アプローチ',
+        recommendedApproach: '顧客業種「金融」×商談段階「初回提案」の成功パターンを適用',
         confidenceScore: 85,
-        rootCauses: ['過去事例との高い一致度'],
+        successPatternId: 'SP-FIN-001',
+        reasoning: '過去3件の類似案件で成約率95%を達成'
       }),
-      findSimilarPatterns: jest.fn().mockResolvedValue([
-        {
-          patternId: 'PATTERN-001',
-          matchScore: 0.92,
-          successRate: 0.88,
-        },
-      ]),
-      explainRecommendationReasoning: jest.fn().mockResolvedValue({
-        explanation: 'テスト根拠説明',
-      }),
-      evaluatePatternRelevance: jest.fn().mockResolvedValue({
-        relevanceScore: 82,
-      }),
+      findSimilarPatterns: jest.fn(),
+      explainRecommendationReasoning: jest.fn(),
+      evaluatePatternRelevance: jest.fn()
     };
 
-    // FileStorageAdapterスタブの定義
-    const mockFileStorage = {
-      uploadRecommendationReport: jest.fn().mockResolvedValue({
-        reportId: 'RPT-2026-08-01-001',
-        uploadedAt: '2026-08-01T08:09:40.805Z',
-      }),
-      generateDownloadUrl: jest.fn().mockResolvedValue({
-        url: 'https://s3.example.com/reports/RPT-2026-08-01-001',
-        expiresAt: '2026-08-08T08:09:40.805Z',
-      }),
-      deleteExpiredReports: jest.fn().mockResolvedValue({
-        deletedCount: 5,
-      }),
-    };
-
-    // 新規案件データの入力パラメータ
-    const newDealData = {
-      customerId: 'CUST-2026-001',
-      customerName: 'テスト顧客A',
-      industry: '金融',
-      scale: 'large',
-      dealTitle: 'システム導入提案',
+    // 新規案件データ（入力パラメータ）
+    const proposalInput = {
+      customerId: 'CUST-20260801-001',
+      customerIndustry: 'finance',
+      customerSize: 'large',
+      dealStage: 'initial_proposal',
       dealAmount: 5000000,
-      dealStage: 'discovery',
-      expectedClosureDate: '2026-09-30',
-      salesRepId: 'SR-2026-001',
+      dealTimeline: '2026-09-30',
+      contactPerson: 'Yamada Taro',
+      proposalTopic: 'Digital transformation consulting'
     };
 
-    // レポートメタデータ生成機能を呼び出す
-    const reportMetadata = generateRecommendationReport(
-      newDealData,
-      mockAIEngine,
-      mockFileStorage,
-      baselineTime
+    // レポートメタデータ生成処理を実行
+    const generatedReport = generateReportMetadata(proposalInput, aiRecommendationEngineStub);
+
+    // 期待結果の検証
+    // 1. 生成されたレポートオブジェクトが存在すること
+    expect(generatedReport).toBeDefined();
+
+    // 2. 生成時刻フィールドが存在すること
+    expect(generatedReport.generatedAt).toBeDefined();
+
+    // 3. 生成時刻がISO 8601形式であること
+    expect(generatedReport.generatedAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+
+    // 4. 生成時刻がテスト実行時刻から±2秒以内の精度で一致すること
+    const generatedTimestamp = new Date(generatedReport.generatedAt).getTime();
+    const timeDifference = Math.abs(generatedTimestamp - baselineTimestamp);
+    expect(timeDifference).toBeLessThanOrEqual(2000); // ±2秒 = 2000ミリ秒
+
+    // 5. レポートメタデータがレポートファイルメタデータテーブルに保存される際も同じタイムスタンプが使用されていることを検証
+    expect(generatedReport.fileMetadata).toBeDefined();
+    expect(generatedReport.fileMetadata.createdAt).toBe(generatedReport.generatedAt);
+
+    // 6. 推奨内容が正しく含まれていること
+    expect(generatedReport.recommendation).toBeDefined();
+    expect(generatedReport.recommendation.recommendedApproach).toBe(
+      '顧客業種「金融」×商談段階「初回提案」の成功パターンを適用'
     );
+    expect(generatedReport.recommendation.confidenceScore).toBe(85);
 
-    // 生成されたレポートメタデータから生成時刻フィールドを取得
-    const generatedAt = new Date(reportMetadata.generatedAt);
-    const generatedAtMs = generatedAt.getTime();
-
-    // 生成時刻がISO 8601形式で記録されていることを確認
-    expect(reportMetadata.generatedAt).toBe('2026-08-01T08:09:40.805Z');
-
-    // 生成時刻とシステム現在時刻の差分が±2秒以内であることを確認
-    const timeDifferenceMs = Math.abs(generatedAtMs - baselineTimeMs);
-    expect(timeDifferenceMs).toBeLessThanOrEqual(2000);
-
-    // レポートメタデータの構造を確認
-    expect(reportMetadata).toHaveProperty('reportId');
-    expect(reportMetadata).toHaveProperty('generatedAt');
-    expect(reportMetadata).toHaveProperty('customerId');
-    expect(reportMetadata).toHaveProperty('dealTitle');
-
-    // レポートIDが正しく生成されていることを確認
-    expect(reportMetadata.reportId).toMatch(/^RPT-/);
-
-    // FileStorageAdapterへのアップロード時にも同じタイムスタンプが使用されていることを確認
-    expect(mockFileStorage.uploadRecommendationReport).toHaveBeenCalledWith(
+    // 7. AIRecommendationEngineの generateRecommendation メソッドが呼び出されたことを確認
+    expect(aiRecommendationEngineStub.generateRecommendation).toHaveBeenCalledWith(
       expect.objectContaining({
-        generatedAt: '2026-08-01T08:09:40.805Z',
+        customerId: 'CUST-20260801-001',
+        customerIndustry: 'finance',
+        dealStage: 'initial_proposal'
       })
     );
-
-    // アップロード結果から生成時刻が一致していることを確認
-    const uploadResult = mockFileStorage.uploadRecommendationReport(
-      reportMetadata
-    );
-    expect(uploadResult).resolves.toMatchObject({
-      reportId: 'RPT-2026-08-01-001',
-      uploadedAt: '2026-08-01T08:09:40.805Z',
-    });
   });
 });

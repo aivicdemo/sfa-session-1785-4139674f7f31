@@ -1,44 +1,39 @@
-import { describe, test, expect, beforeEach } from "@jest/globals";
-import { decideGuidancePolicy } from "../../src/logic/itg-3";
+import { decideSalesCoachingPolicy } from "../../src/logic/itg-3";
 
 describe("AIエージェント推奨支援システム - 営業担当者への指導方針決定", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  // SCEN-499
-  test("営業担当者IDが空文字列のとき、バリデーションエラーが発生する", () => {
-    const mockRecommendationEngine = {
+  test("SCEN-499: 営業担当者IDが空文字列のとき、バリデーションエラーが発生する", () => {
+    const mockAIEngine = {
       generateRecommendation: jest.fn(),
       findSimilarPatterns: jest.fn(),
       explainRecommendationReasoning: jest.fn(),
       evaluatePatternRelevance: jest.fn(),
     };
 
-    const guidanceInput = {
-      salesPersonId: "",
-      customerInfo: {
-        customerId: "CUST-001",
-        industry: "製造業",
-        revenue: 50000000,
-      },
-      dealConditions: {
-        dealId: "DEAL-001",
-        productCategory: "システム導入",
-        dealStage: "提案中",
-        dealAmount: 5000000,
-      },
-      dataQualityScore: 95,
-      improvementPriority: "高",
-      improvementTargetItems: ["顧客名表記", "業種分類"],
+    const validCustomerInfo = {
+      customerId: "CUST-001",
+      customerName: "テスト顧客",
+      industry: "IT",
+      scale: "large",
     };
 
+    const validDealCondition = {
+      dealId: "DEAL-001",
+      dealStage: "negotiation",
+      estimatedAmount: 5000000,
+      closingDate: "2024-12-31",
+    };
+
+    const invalidSalesPersonId = "";
+
     expect(() =>
-      decideGuidancePolicy(guidanceInput, mockRecommendationEngine)
+      decideSalesCoachingPolicy(
+        invalidSalesPersonId,
+        validCustomerInfo,
+        validDealCondition,
+        mockAIEngine
+      )
     ).toThrow(/営業担当者ID/);
 
-    expect(
-      mockRecommendationEngine.generateRecommendation
-    ).not.toHaveBeenCalled();
+    expect(mockAIEngine.generateRecommendation).not.toHaveBeenCalled();
   });
 });

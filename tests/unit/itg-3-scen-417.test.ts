@@ -1,36 +1,24 @@
-import { describe, test, expect, beforeEach } from '@jest/globals';
-import { calculateDataQualityScore } from '../../src/logic/itg-3';
+import { evaluateDataQualityScoreAndRank } from '../../src/logic/itg-3';
 
-describe('AIエージェント推奨支援システム - データ品質スコア算出機能', () => {
+describe('AIエージェント推奨支援システム - データ品質スコア算出', () => {
   // SCEN-417
-  test('スコアがちょうど閾値（80点）の場合、正しい改善優先度ランクが付与される', () => {
-    const mockAIRecommendationEngine = {
-      generateRecommendation: jest.fn(),
-      findSimilarPatterns: jest.fn(),
-      explainRecommendationReasoning: jest.fn(),
-      evaluatePatternRelevance: jest.fn().mockReturnValue(80.0),
-    };
+  test('スコア80点の場合、正しい改善優先度ランクが付与される', () => {
+    const completeness = 80;
+    const accuracy = 80;
+    const consistency = 80;
+    const timeliness = 80;
 
-    const mockFileStorageAdapter = {
-      uploadRecommendationReport: jest.fn(),
-      generateDownloadUrl: jest.fn(),
-      deleteExpiredReports: jest.fn(),
-    };
+    const expectedScore = 80.0;
+    const expectedRank = 'C';
 
-    const inputData = {
-      completeness: 0.8,
-      accuracy: 0.8,
-      consistency: 0.8,
-      timeliness: 0.8,
-    };
+    const result = evaluateDataQualityScoreAndRank({
+      completeness,
+      accuracy,
+      consistency,
+      timeliness,
+    });
 
-    const result = calculateDataQualityScore(
-      inputData,
-      mockAIRecommendationEngine,
-      mockFileStorageAdapter
-    );
-
-    expect(result.score).toBe(80.0);
-    expect(result.improvementPriorityRank).toBe('C');
+    expect(result.score).toBe(expectedScore);
+    expect(result.rank).toBe(expectedRank);
   });
 });

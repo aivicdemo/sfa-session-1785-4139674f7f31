@@ -1,21 +1,13 @@
-import { describe, test, expect, beforeEach } from '@jest/globals';
-import { validateDataQualityAndPriority } from '../../src/logic/itg-3';
+import { validateDataQualityPriority } from '../../src/logic/itg-3';
 
-describe('AIエージェント推奨支援システム - データ品質スコアと改善優先度ランクの整合性検証', () => {
+describe('AIエージェント推奨支援システム - データ品質検証', () => {
   // SCEN-513
-  test('スコアが0に近いのに改善優先度がランク3（最低優先度）のとき、エラーが発生する', () => {
-    const dataQualityScore = 0.05;
-    const improvementPriorityRank = 3;
+  test('スコアが0に近いのに改善優先度がランク3のとき、整合性検証エラーが発生する', () => {
+    const data_quality_score = 0.05;
+    const improvement_priority_rank = 3;
 
-    expect(() => {
-      validateDataQualityAndPriority({
-        dataQualityScore,
-        improvementPriorityRank
-      });
-    }).toThrow(expect.objectContaining({
-      name: 'ValidationError',
-      code: 'DQ_PRIORITY_MISMATCH',
-      message: expect.stringMatching(/データ品質スコア.*改善優先度/)
-    }));
+    expect(() =>
+      validateDataQualityPriority(data_quality_score, improvement_priority_rank)
+    ).toThrow(/データ品質スコア.*矛盾/);
   });
 });

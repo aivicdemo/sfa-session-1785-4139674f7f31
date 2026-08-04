@@ -1,27 +1,36 @@
-import { decideGuidancePolicyForSalesStaff } from '../../src/logic/itg-3';
+import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
+import { decideSalesGuidancePolicy } from '../../src/logic/itg-3';
 
 describe('AIエージェント推奨支援システム - 営業担当者への指導方針決定機能', () => {
-  // SCEN-509
-  test('[error] 指導実施期限が null のとき、エラーが発生する', () => {
-    const salesStaffId = 'STAFF-001';
-    const guidanceContent = '顧客ニーズ分析スキルの強化';
-    const recommendationBasis = '過去3件の商談で顧客ニーズ抽出が不十分だったパターンを検出';
-    const guidanceDeadline = null;
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-    const testInput = {
-      salesStaffId,
-      guidanceContent,
-      recommendationBasis,
-      guidanceDeadline,
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  // SCEN-509
+  test('指導実施期限が null のとき、エラーが発生する', () => {
+    const invalidInput = {
+      salesPersonId: 'SP001',
+      guidanceContent: '顧客ニーズのヒアリング精度を向上させるための提案アプローチの改善',
+      recommendationBasis: '過去の成功パターンとの照合結果から、初回提案時の質問項目が不足していることが判明',
+      guidanceDeadline: null,
+      dataQualityScore: 85,
+      improvementPriorityRank: 1,
+      targetImprovementItems: ['顧客課題の抽出方法', '提案内容の適合度判定'],
     };
 
-    expect(() => decideGuidancePolicyForSalesStaff(testInput)).toThrow(
-      expect.objectContaining({
-        errorType: 'ValidationError',
-        message: expect.stringContaining('指導実施期限（guidanceDeadline）は必須項目です。null は許可されません'),
-        fieldName: 'guidanceDeadline',
-        errorCode: 'REQUIRED_FIELD_NULL',
-      })
-    );
+    expect(() => decideSalesGuidancePolicy(invalidInput)).toThrow(/guidanceDeadline/);
+
+    try {
+      decideSalesGuidancePolicy(invalidInput);
+    } catch (error: any) {
+      expect(error.name).toBe('ValidationError');
+      expect(error.message).toContain('指導実施期限');
+      expect(error.fieldName).toBe('guidanceDeadline');
+      expect(error.errorCode).toBe('REQUIRED_FIELD_NULL');
+    }
   });
 });

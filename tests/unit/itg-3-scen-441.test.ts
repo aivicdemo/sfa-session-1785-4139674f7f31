@@ -1,85 +1,90 @@
-import { evaluateOperationalTransactionQuality } from '../../src/logic/itg-3';
+import { evaluateTransactionDataQuality } from "../../src/logic/itg-3";
 
-describe('AIエージェント推奨支援システム - 営業トランザクションデータの品質評価', () => {
-  test('SCEN-441: 営業トランザクションのエラー件数が0件の場合、該当カテゴリのスコアが満点で算出される', () => {
-    // Arrange: モック化された外部API呼び出し
-    const mockAIRecommendationEngine = {
+describe("AIエージェント推奨支援システム - 営業トランザクションデータ品質評価", () => {
+  // SCEN-441
+  test("営業トランザクションのエラー件数が0件の場合、該当カテゴリのスコアが満点で算出される", () => {
+    // Arrange: モック化されたAIRecommendationEngine
+    const mockAIEngine = {
       generateRecommendation: jest.fn(),
       findSimilarPatterns: jest.fn(),
       explainRecommendationReasoning: jest.fn(),
       evaluatePatternRelevance: jest.fn(),
     };
 
-    const mockFileStorageAdapter = {
+    // Arrange: モック化されたFileStorageAdapter
+    const mockFileStorage = {
       uploadRecommendationReport: jest.fn(),
       generateDownloadUrl: jest.fn(),
       deleteExpiredReports: jest.fn(),
     };
 
-    // 営業トランザクションデータセット: エラー0件の正常データ5件
-    const operationalTransactionData = [
+    // Arrange: エラー0件のトランザクションデータセット
+    const transactionDataset = [
       {
-        transactionId: 'TXN-001',
-        category: 'proposal_followup',
-        dealId: 'DEAL-001',
-        customerId: 'CUST-001',
-        proposalDate: '2024-01-15',
-        followupStatus: 'completed',
-        errors: [],
+        id: "txn_001",
+        category: "proposal_followup",
+        dealId: "deal_001",
+        customerId: "cust_001",
+        proposalContent: "Initial proposal for cloud migration",
+        followupDate: "2024-01-15T10:00:00Z",
+        errorCount: 0,
+        status: "completed",
       },
       {
-        transactionId: 'TXN-002',
-        category: 'proposal_followup',
-        dealId: 'DEAL-002',
-        customerId: 'CUST-002',
-        proposalDate: '2024-01-16',
-        followupStatus: 'completed',
-        errors: [],
+        id: "txn_002",
+        category: "proposal_followup",
+        dealId: "deal_002",
+        customerId: "cust_002",
+        proposalContent: "Cost optimization proposal",
+        followupDate: "2024-01-16T11:30:00Z",
+        errorCount: 0,
+        status: "completed",
       },
       {
-        transactionId: 'TXN-003',
-        category: 'proposal_followup',
-        dealId: 'DEAL-003',
-        customerId: 'CUST-003',
-        proposalDate: '2024-01-17',
-        followupStatus: 'completed',
-        errors: [],
+        id: "txn_003",
+        category: "proposal_followup",
+        dealId: "deal_003",
+        customerId: "cust_003",
+        proposalContent: "Security enhancement proposal",
+        followupDate: "2024-01-17T09:15:00Z",
+        errorCount: 0,
+        status: "completed",
       },
       {
-        transactionId: 'TXN-004',
-        category: 'proposal_followup',
-        dealId: 'DEAL-004',
-        customerId: 'CUST-004',
-        proposalDate: '2024-01-18',
-        followupStatus: 'completed',
-        errors: [],
+        id: "txn_004",
+        category: "proposal_followup",
+        dealId: "deal_004",
+        customerId: "cust_004",
+        proposalContent: "Digital transformation roadmap",
+        followupDate: "2024-01-18T14:45:00Z",
+        errorCount: 0,
+        status: "completed",
       },
       {
-        transactionId: 'TXN-005',
-        category: 'proposal_followup',
-        dealId: 'DEAL-005',
-        customerId: 'CUST-005',
-        proposalDate: '2024-01-19',
-        followupStatus: 'completed',
-        errors: [],
+        id: "txn_005",
+        category: "proposal_followup",
+        dealId: "deal_005",
+        customerId: "cust_005",
+        proposalContent: "AI implementation strategy",
+        followupDate: "2024-01-19T13:20:00Z",
+        errorCount: 0,
+        status: "completed",
       },
     ];
 
-    const evaluationCategory = 'proposal_followup';
-
     // Act: 品質評価機能を実行
-    const evaluationResult = evaluateOperationalTransactionQuality(
-      operationalTransactionData,
-      evaluationCategory,
-      mockAIRecommendationEngine,
-      mockFileStorageAdapter
+    const evaluationResult = evaluateTransactionDataQuality(
+      transactionDataset,
+      "proposal_followup",
+      mockAIEngine,
+      mockFileStorage
     );
 
-    // Assert: 該当カテゴリのスコアが満点で算出されることを検証
+    // Assert: 該当カテゴリのスコアが満点で算出されることを確認
     expect(evaluationResult.categoryScore).toBe(100);
-    expect(typeof evaluationResult.categoryScore).toBe('number');
+    expect(typeof evaluationResult.categoryScore).toBe("number");
     expect(evaluationResult.transactionCount).toBe(5);
     expect(evaluationResult.errorCount).toBe(0);
-    expect(evaluationResult.evaluationStatus).toBe('completed');
+    expect(evaluationResult.evaluationStatus).toBe("completed");
   });
 });

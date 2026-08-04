@@ -1,27 +1,27 @@
-import { calculateDataQualityReportPriority } from '../../src/logic/itg-3';
+import { calculateImprovementPriorityRank } from '../../src/logic/itg-3';
 
-describe('AIエージェント推奨支援システム', () => {
+describe('AIエージェント推奨支援システム - 改善優先度ランク算出', () => {
   // SCEN-492
-  test('改善優先度ランク算出機能 - 実装難易度が0から100の範囲外のときエラーが発生する', () => {
-    const baseParams = {
-      dataQualityScore: 75,
-      completenessScore: 80,
-      accuracyScore: 85,
-      consistencyScore: 90,
-      implementationDifficulty: -1,
-    };
+  test('実装難易度が0から100の範囲外のときエラーが発生する', () => {
+    const validDataQualityScore = 75;
+    const validImprovement = 50;
 
+    const outOfRangeNegative = -1;
     expect(() =>
-      calculateDataQualityReportPriority(baseParams)
+      calculateImprovementPriorityRank(
+        validDataQualityScore,
+        validImprovement,
+        outOfRangeNegative,
+      ),
     ).toThrow(/実装難易度は0から100の範囲内/);
 
-    const paramsExceedingMax = {
-      ...baseParams,
-      implementationDifficulty: 101,
-    };
-
+    const outOfRangeExceeded = 101;
     expect(() =>
-      calculateDataQualityReportPriority(paramsExceedingMax)
+      calculateImprovementPriorityRank(
+        validDataQualityScore,
+        validImprovement,
+        outOfRangeExceeded,
+      ),
     ).toThrow(/実装難易度は0から100の範囲内/);
   });
 });
